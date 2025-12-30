@@ -17,13 +17,18 @@ const firebaseConfig = {
 console.log('🔥 Starting Firebase initialization...');
 
 // Initialize Firebase
-let app, database, auth;
+let app, database, auth, secondaryApp, secondaryAuth;
 
 try {
+  // Primary app for main authentication
   app = initializeApp(firebaseConfig);
   database = getDatabase(app);
   auth = getAuth(app);
-  
+
+  // Secondary app for creating new users without logging out current user
+  secondaryApp = initializeApp(firebaseConfig, 'Secondary');
+  secondaryAuth = getAuth(secondaryApp);
+
   // Set persistence to LOCAL so session persists across browser refreshes and tabs
   setPersistence(auth, browserLocalPersistence)
     .then(() => {
@@ -32,13 +37,14 @@ try {
     .catch((error) => {
       console.error('❌ Error setting persistence:', error);
     });
-  
+
   console.log('✅ Firebase initialized successfully');
   console.log('✅ Database:', database ? 'Connected' : 'Not connected');
   console.log('✅ Auth:', auth ? 'Ready' : 'Not ready');
+  console.log('✅ Secondary Auth:', secondaryAuth ? 'Ready' : 'Not ready');
 } catch (error) {
   console.error('❌ Firebase initialization failed:', error);
   throw error;
 }
 
-export { database, auth };
+export { database, auth, secondaryAuth };

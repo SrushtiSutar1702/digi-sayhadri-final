@@ -7,6 +7,22 @@ import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import './ProductionIncharge.css';
 
+const SYSTEM_EMPLOYEES = [
+    { id: 'sys_1', employeeName: 'Super Admin', email: 'superadmin@gmail.com', department: 'Management', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_2', employeeName: 'Production Incharge', email: 'productionincharge@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_3', employeeName: 'Production Incharge (Alt)', email: 'proin@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_4', employeeName: 'Video Head', email: 'video@gmail.com', department: 'video', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_5', employeeName: 'Graphics Head', email: 'graphics@gmail.com', department: 'graphics', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_6', employeeName: 'Social Media Head', email: 'social@gmail.com', department: 'social-media', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_7', employeeName: 'Strategy Head', email: 'head@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_8', employeeName: 'Strategy Management', email: 'strategy@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-25T00:00:00.000Z' },
+    { id: 'sys_9', employeeName: 'Social Media Emp', email: 'socialemp@gmail.com', department: 'social-media', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_10', employeeName: 'Strategy Emp', email: 'strategyemp@gmail.com', department: 'strategy', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_11', employeeName: 'Graphics Emp', email: 'graphicemp@gmail.com', department: 'graphics', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_12', employeeName: 'Video Emp', email: 'videoemp@gmail.com', department: 'video', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_13', employeeName: 'Production Admin', email: 'admin@gmail.com', department: 'production', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+];
+
 const ViewEmployees = () => {
     const navigate = useNavigate();
     const { toasts, showToast, removeToast } = useToast();
@@ -51,18 +67,22 @@ const ViewEmployees = () => {
             console.log('ViewEmployees: Raw employees data:', data);
 
             if (data) {
-                const employeesArray = Object.keys(data)
+                const dbEmployees = Object.keys(data)
                     .map(key => ({
                         id: key,
                         ...data[key]
                     }))
                     .filter(employee => !employee.deleted); // Filter out deleted employees
 
-                console.log('ViewEmployees: Employees loaded:', employeesArray.length, employeesArray);
-                setEmployees(employeesArray);
+                // Merge system employees with database employees (avoiding duplicates if they were added to DB)
+                const dbEmails = new Set(dbEmployees.map(e => e.email?.toLowerCase()));
+                const uniqueSystemEmployees = SYSTEM_EMPLOYEES.filter(se => !dbEmails.has(se.email?.toLowerCase()));
+
+                const combinedEmployees = [...uniqueSystemEmployees, ...dbEmployees];
+                console.log('ViewEmployees: Employees loaded (System + DB):', combinedEmployees.length);
+                setEmployees(combinedEmployees);
             } else {
-                console.log('ViewEmployees: No employees found in database');
-                setEmployees([]);
+                setEmployees(SYSTEM_EMPLOYEES);
             }
         });
 
@@ -108,6 +128,10 @@ const ViewEmployees = () => {
         }
 
         try {
+            if (SYSTEM_EMPLOYEES.some(se => se.id === employeeId)) {
+                showToast('System accounts cannot be disabled via this panel.', 'warning', 3000);
+                return;
+            }
             const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
             const employeeRef = ref(database, `employees/${employeeId}`);
             await update(employeeRef, {
@@ -136,6 +160,11 @@ const ViewEmployees = () => {
     const handleSaveEmployeeEdits = async () => {
         if (!editingEmployee || !editingEmployee.id) {
             showToast('❌ No employee selected for editing', 'error', 3000);
+            return;
+        }
+
+        if (editingEmployee.isSystem) {
+            showToast('❌ System accounts cannot be edited.', 'error', 3000);
             return;
         }
 
@@ -173,92 +202,19 @@ const ViewEmployees = () => {
 
     // Handle delete employee
     const handleDeleteEmployee = async (employee) => {
-        if (!window.confirm(`Are you sure you want to PERMANENTLY delete employee "${employee.employeeName}"?\n\nThis action will:\n1. Remove the employee record permanently\n2. Unassign all their tasks and clients\n\nThis action CANNOT be undone.`)) {
+        if (!window.confirm(`Are you sure you want to delete ${employee.employeeName}? This action cannot be undone.`)) {
             return;
         }
 
         try {
-            const { get } = await import('firebase/database');
-            const updates = {};
+            const employeeRef = ref(database, `employees/${employee.id}`);
+            await update(employeeRef, {
+                deleted: true,
+                deletedAt: new Date().toISOString(),
+                deletedBy: 'Production Incharge'
+            });
 
-            // 1. Fetch all tasks and clients to check for assignments
-            // We need to do this because we don't have them in state here
-            const tasksSnapshot = await get(ref(database, 'tasks'));
-            const clientsSnapshot = await get(ref(database, 'clients'));
-            const strategyClientsSnapshot = await get(ref(database, 'strategyClients'));
-
-            // 2. Unassign Tasks
-            if (tasksSnapshot.exists()) {
-                const tasksData = tasksSnapshot.val();
-                Object.keys(tasksData).forEach(taskId => {
-                    const task = tasksData[taskId];
-                    if (
-                        task.assignedTo === employee.id ||
-                        task.assignedTo === employee.email ||
-                        task.assignedTo === employee.employeeName ||
-                        task.assignedEmployee === employee.id ||
-                        task.assignedEmployee === employee.email ||
-                        task.assignedEmployee === employee.employeeName
-                    ) {
-                        updates[`tasks/${taskId}/assignedTo`] = null;
-                        updates[`tasks/${taskId}/assignedEmployee`] = null;
-                        updates[`tasks/${taskId}/assignedToEmployeeName`] = null;
-
-                        // If task is in progress, move it back to pending or appropriate state
-                        if (task.status === 'in-progress' || task.status === 'assigned-to-department') {
-                            updates[`tasks/${taskId}/status`] = 'pending';
-                        }
-                    }
-                });
-            }
-
-            // 3. Unassign Clients (Regular)
-            if (clientsSnapshot.exists()) {
-                const clientsData = clientsSnapshot.val();
-                Object.keys(clientsData).forEach(clientId => {
-                    const client = clientsData[clientId];
-                    if (
-                        client.assignedToEmployee === employee.id ||
-                        client.assignedToEmployee === employee.email ||
-                        client.assignedToEmployee === employee.employeeName ||
-                        client.assignedEmployee === employee.id ||
-                        client.assignedEmployee === employee.email ||
-                        client.assignedEmployee === employee.employeeName
-                    ) {
-                        updates[`clients/${clientId}/assignedToEmployee`] = null;
-                        updates[`clients/${clientId}/assignedEmployee`] = null;
-                        updates[`clients/${clientId}/assignedToEmployeeName`] = null;
-                    }
-                });
-            }
-
-            // 4. Unassign Strategy Clients
-            if (strategyClientsSnapshot.exists()) {
-                const stratClientsData = strategyClientsSnapshot.val();
-                Object.keys(stratClientsData).forEach(clientId => {
-                    const client = stratClientsData[clientId];
-                    if (
-                        client.assignedToEmployee === employee.id ||
-                        client.assignedToEmployee === employee.email ||
-                        client.assignedToEmployee === employee.employeeName ||
-                        client.assignedEmployee === employee.id ||
-                        client.assignedEmployee === employee.email ||
-                        client.assignedEmployee === employee.employeeName
-                    ) {
-                        updates[`strategyClients/${clientId}/assignedToEmployee`] = null;
-                        updates[`strategyClients/${clientId}/assignedEmployee`] = null;
-                        updates[`strategyClients/${clientId}/assignedToEmployeeName`] = null;
-                    }
-                });
-            }
-
-            // 5. Permanent Delete Employee
-            updates[`employees/${employee.id}`] = null;
-
-            // Execute all updates atomically
-            await update(ref(database), updates);
-
-            showToast(`✅ Employee ${employee.employeeName} permanently deleted and data unassigned!`, 'success', 5000);
+            showToast(`✅ Employee ${employee.employeeName} deleted successfully!`, 'success', 3000);
         } catch (error) {
             console.error('Error deleting employee:', error);
             showToast('❌ Failed to delete employee: ' + error.message, 'error', 5000);
@@ -740,10 +696,10 @@ const ViewEmployees = () => {
                                                             borderRadius: '6px',
                                                             fontSize: '11px',
                                                             fontWeight: '600',
-                                                            backgroundColor: emp.role === 'head' ? '#fef3c7' : '#dbeafe',
-                                                            color: emp.role === 'head' ? '#92400e' : '#1e40af'
+                                                            backgroundColor: emp.isSystem ? '#cffafe' : emp.role === 'head' ? '#fef3c7' : '#dbeafe',
+                                                            color: emp.isSystem ? '#0891b2' : emp.role === 'head' ? '#92400e' : '#1e40af'
                                                         }}>
-                                                            {emp.role === 'head' ? '👑 Head' : '👤 Employee'}
+                                                            {emp.isSystem ? '🔒 System' : (emp.role === 'head' ? '👑 Head' : '👤 Employee')}
                                                         </span>
                                                     </td>
                                                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
@@ -792,26 +748,36 @@ const ViewEmployees = () => {
                                                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                                                         <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                                                             <button
-                                                                onClick={() => handleEditEmployee(emp)}
+                                                                onClick={() => {
+                                                                    if (emp.isSystem) {
+                                                                        showToast('System accounts cannot be edited via this panel.', 'warning', 3000);
+                                                                        return;
+                                                                    }
+                                                                    handleEditEmployee(emp);
+                                                                }}
                                                                 style={{
                                                                     padding: '6px 10px',
-                                                                    background: '#3b82f6',
+                                                                    background: emp.isSystem ? '#9ca3af' : '#3b82f6',
                                                                     color: 'white',
                                                                     border: 'none',
                                                                     borderRadius: '6px',
                                                                     fontSize: '12px',
                                                                     fontWeight: '500',
-                                                                    cursor: 'pointer',
+                                                                    cursor: emp.isSystem ? 'not-allowed' : 'pointer',
                                                                     transition: 'background 0.2s',
                                                                     display: 'flex',
                                                                     alignItems: 'center',
                                                                     gap: '4px'
                                                                 }}
-                                                                onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
-                                                                onMouseOut={(e) => e.currentTarget.style.background = '#3b82f6'}
-                                                                title="Edit Employee"
+                                                                onMouseOver={(e) => {
+                                                                    if (!emp.isSystem) e.currentTarget.style.background = '#2563eb';
+                                                                }}
+                                                                onMouseOut={(e) => {
+                                                                    if (!emp.isSystem) e.currentTarget.style.background = '#3b82f6';
+                                                                }}
+                                                                title={emp.isSystem ? "System Account (Locked)" : "Edit Employee"}
                                                             >
-                                                                ✏️ Edit
+                                                                {emp.isSystem ? '🔒 Locked' : '✏️ Edit'}
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDeleteEmployee(emp)}
