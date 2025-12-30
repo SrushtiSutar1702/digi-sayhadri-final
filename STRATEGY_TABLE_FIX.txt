@@ -1,0 +1,17 @@
+The StrategyDashboard.js file has leftover code from lines 2241-2595 that needs to be deleted.
+
+Delete everything between:
+- Line 2241: Starting with `<td style={{ textAlign: 'center'...`
+- Line 2595: Ending just before `{/* Assign Task Form Modal */}`
+
+This leftover code is from the old expanded section that was removed.
+
+After deletion, the structure should be:
+```
+        </div>  // Line 2240
+
+        {/* Assign Task Form Modal */}  // Line 2241 (after deletion)
+        {showAssignForm && (
+```
+
+The main table now shows all clients with their 4 stages displayed inline in the STAGES column.

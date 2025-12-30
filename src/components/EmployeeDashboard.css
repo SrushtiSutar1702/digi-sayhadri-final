@@ -1,0 +1,488 @@
+/* EmployeeDashboard.css - Professional Employee Panel Design */
+
+/* Dashboard Container */
+.employee-dashboard {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  color: #e9ecf0;
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  position: relative;
+}
+
+body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+
+/* Sidebar Navigation - Default */
+.employee-sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  min-height: 100vh;
+  padding: 24px 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 4px 0 12px rgba(52, 58, 64, 0.15);
+}
+
+/* Video Theme Sidebar */
+.employee-dashboard.video-theme .employee-sidebar {
+  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+}
+
+/* Graphics Theme Sidebar */
+.employee-dashboard.graphics-theme .employee-sidebar {
+  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+}
+
+/* Main Content Area */
+.employee-main-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+  max-width: calc(100vw - 280px);
+  width: calc(100vw - 280px);
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}
+
+.employee-main-content > * {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.employee-main-content * {
+  box-sizing: border-box;
+}
+
+/* Sidebar Header */
+.employee-sidebar-header {
+  padding: 0 24px 32px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 24px;
+}
+
+.employee-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  text-decoration: none;
+}
+
+.employee-sidebar-logo-icon {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.employee-sidebar-logo-text h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.employee-sidebar-logo-text p {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+/* Sidebar Navigation */
+.employee-sidebar-nav {
+  padding: 0 16px;
+}
+
+.employee-sidebar-section {
+  margin-bottom: 32px;
+}
+
+.employee-sidebar-section-title {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 12px 12px;
+}
+
+.employee-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.employee-sidebar-menu-item {
+  margin-bottom: 4px;
+}
+
+.employee-sidebar-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+}
+
+.employee-sidebar-menu-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(4px);
+}
+
+.employee-sidebar-menu-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.employee-sidebar-menu-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: white;
+  border-radius: 0 2px 2px 0;
+}
+
+.employee-sidebar-menu-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* User Profile Section */
+.employee-sidebar-user {
+  position: absolute;
+  bottom: 80px;
+  left: 16px;
+  right: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.employee-sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+}
+
+.employee-sidebar-user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.employee-sidebar-user-details h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.employee-sidebar-user-details p {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Header Styles */
+.employee-header {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+}
+
+.employee-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.employee-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.employee-header-title h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.025em;
+}
+
+.employee-header-title p {
+  margin: 4px 0 0 0;
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Button Styles */
+.employee-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  position: relative;
+  font-family: inherit;
+}
+
+.employee-btn-logout {
+  background: #ef4444 !important;
+  color: white !important;
+  border: 2px solid #dc2626 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 10px 16px !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25), 0 1px 3px rgba(239, 68, 68, 0.35) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.employee-btn-logout:hover {
+  background: #d73925 !important;
+  border-color: #b91c1c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(221, 75, 57, 0.3), 0 3px 6px rgba(221, 75, 57, 0.2) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .employee-sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  }
+  
+  .employee-main-content {
+    margin-left: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    min-height: auto;
+    background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  }
+  
+  .employee-main-content {
+    margin-left: 0;
+  }
+  
+  .employee-dashboard {
+    flex-direction: column;
+  }
+  
+  .employee-sidebar-user {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    margin-top: 24px;
+  }
+}
+/* Daily Report and Team Performance Cards for Employee Dashboard */
+.employee-card.daily-report-card,
+.employee-card.team-performance-card {
+  transition: all 0.3s ease;
+}
+
+.employee-card.daily-report-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(102,126,234,0.3) !important;
+}
+
+.employee-card.team-performance-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(86,171,47,0.3) !important;
+}
+
+/* Mobile responsive for Employee Report Cards */
+@media (max-width: 768px) {
+  .employee-card.daily-report-card,
+  .employee-card.team-performance-card {
+    padding: 16px !important;
+  }
+
+  .employee-card.daily-report-card h2,
+  .employee-card.team-performance-card h2 {
+    font-size: 18px !important;
+  }
+
+  /* Make cards stack vertically on mobile */
+  .employee-card + .employee-card {
+    margin-top: 0 !important;
+  }
+
+  /* Adjust grid for mobile */
+  .employee-card div[style*="grid-template-columns: repeat(2, 1fr)"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .employee-card.daily-report-card,
+  .employee-card.team-performance-card {
+    padding: 12px !important;
+  }
+
+  /* Single column on very small screens */
+  .employee-card div[style*="grid-template-columns: repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Container for both cards */
+.employee-dashboard div[style*="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))"] {
+  margin-bottom: 25px;
+}
+
+@media (max-width: 768px) {
+  .employee-dashboard div[style*="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin-bottom: 20px !important;
+  }
+}
+
+/* Fix horizontal scrolling - Make tables responsive */
+.employee-main-content table {
+  width: 100%;
+  min-width: 1400px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+/* Ensure all content respects viewport width */
+.employee-main-content * {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Make table containers scrollable on small screens */
+.employee-main-content > div {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Responsive table wrapper */
+@media (max-width: 1400px) {
+  .employee-main-content table {
+    font-size: 12px;
+  }
+  
+  .employee-main-content th,
+  .employee-main-content td {
+    padding: 8px 10px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .employee-main-content {
+    max-width: calc(100vw - 240px);
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-main-content {
+    max-width: 100vw;
+    padding: 16px;
+  }
+  
+  .employee-main-content table {
+    font-size: 11px;
+  }
+}
+
+/* Additional Reports Section Fixes */
+.employee-main-content [style*="minHeight: 100vh"] {
+  overflow-x: hidden !important;
+}
+
+.employee-main-content [style*="minHeight: 100vh"] table {
+  max-width: 100%;
+}
+
+.employee-main-content [style*="minHeight: 100vh"] > div {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure all report cards stay within bounds */
+.employee-main-content [style*="borderRadius: 12px"][style*="background"] {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Prevent horizontal scrolling globally */
+html {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+
+/* Force all report cards and containers to respect width */
+.employee-main-content [style*="background: #ffffff"],
+.employee-main-content [style*="background: '#ffffff'"] {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure grid layouts don't overflow */
+.employee-main-content [style*="display: grid"],
+.employee-main-content [style*="display: 'grid'"] {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix any flex containers */
+.employee-main-content [style*="display: flex"],
+.employee-main-content [style*="display: 'flex'"] {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}

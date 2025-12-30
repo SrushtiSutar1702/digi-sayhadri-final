@@ -1,0 +1,944 @@
+/* SuperAdmin Dashboard Styles */
+.superadmin-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Sidebar */
+.superadmin-sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #1F7D53 0%, #1a6b47 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 900; /* Reduced from 1000 to allow modals to appear above */
+}
+
+.superadmin-sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.superadmin-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.superadmin-sidebar-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.superadmin-sidebar-logo-text h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.superadmin-sidebar-logo-text p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.superadmin-sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.superadmin-sidebar-section {
+  margin-bottom: 24px;
+}
+
+.superadmin-sidebar-section-title {
+  padding: 0 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+.superadmin-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.superadmin-sidebar-menu-item {
+  margin: 0;
+}
+
+.superadmin-sidebar-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.superadmin-sidebar-menu-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.superadmin-sidebar-menu-link.active {
+  background: rgba(34, 197, 94, 0.1);
+  color: #09391ae2;
+  border-right: 3px solid #22c55e;
+}
+
+.superadmin-sidebar-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.superadmin-sidebar-user {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.superadmin-sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.superadmin-sidebar-user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.superadmin-sidebar-user-details h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.superadmin-sidebar-user-details p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.superadmin-btn-logout {
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.superadmin-btn-logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Main Content */
+.superadmin-main-content {
+  margin-left: 280px;
+  flex: 1;
+  padding: 32px;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Embedded Dashboard Container */
+.superadmin-embedded-dashboard {
+  position: fixed;
+  top: 0;
+  left: 280px;
+  right: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #f8f9fa;
+  z-index: 100;
+  width: calc(100vw - 280px);
+  max-width: calc(100vw - 280px);
+}
+
+/* CRITICAL FIX: All modals inside embedded dashboard must render at root level z-index */
+.superadmin-embedded-dashboard [style*="position: fixed"][style*="zIndex: 10000"],
+.superadmin-embedded-dashboard [style*="position:fixed"][style*="zIndex:10000"],
+.superadmin-embedded-dashboard [style*="position: fixed"][style*="z-index: 10000"],
+.superadmin-embedded-dashboard [style*="position:fixed"][style*="z-index:10000"] {
+  z-index: 10000 !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+}
+
+/* Strategy Head "Work on Client" modal overlay - MUST appear above sidebar */
+.superadmin-embedded-dashboard > div[style*="position: fixed"][style*="backgroundColor: rgba(0, 0, 0, 0.5)"],
+.superadmin-embedded-dashboard > div[style*="position:fixed"][style*="backgroundColor:rgba(0, 0, 0, 0.5)"],
+.superadmin-embedded-dashboard div[style*="position: fixed"][style*="backgroundColor: rgba(0, 0, 0, 0.5)"][style*="zIndex: 10000"],
+.superadmin-embedded-dashboard div[style*="position:fixed"][style*="backgroundColor:rgba(0, 0, 0, 0.5)"][style*="zIndex:10000"] {
+  z-index: 10000 !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+}
+
+/* Strategy Head modal content - white background container */
+.superadmin-embedded-dashboard div[style*="position: fixed"] > div[style*="backgroundColor: white"],
+.superadmin-embedded-dashboard div[style*="position: fixed"] > div[style*="background: white"],
+.superadmin-embedded-dashboard div[style*="position:fixed"] > div[style*="backgroundColor:white"],
+.superadmin-embedded-dashboard div[style*="position:fixed"] > div[style*="background:white"] {
+  z-index: 10001 !important;
+  position: relative !important;
+}
+
+/* Catch-all for any modal with rgba background (overlay) */
+div[style*="rgba(0, 0, 0, 0.5)"][style*="position: fixed"][style*="zIndex: 10000"],
+div[style*="rgba(0,0,0,0.5)"][style*="position:fixed"][style*="zIndex:10000"] {
+  z-index: 10000 !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+}
+
+/* Hide embedded dashboard sidebars */
+.superadmin-embedded-dashboard .production-sidebar,
+.superadmin-embedded-dashboard .strategy-sidebar,
+.superadmin-embedded-dashboard .video-sidebar,
+.superadmin-embedded-dashboard .graphics-sidebar,
+.superadmin-embedded-dashboard .social-media-sidebar,
+.superadmin-embedded-dashboard .sidebar {
+  display: none !important;
+}
+
+/* Adjust embedded dashboard main content */
+.superadmin-embedded-dashboard .production-main-content,
+.superadmin-embedded-dashboard .strategy-main-content,
+.superadmin-embedded-dashboard .video-main-content,
+.superadmin-embedded-dashboard .graphics-main-content,
+.superadmin-embedded-dashboard .social-media-main-content,
+.superadmin-embedded-dashboard .main-content {
+  margin-left: 0 !important;
+  padding: 32px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Hide embedded dashboard logout buttons */
+.superadmin-embedded-dashboard .production-btn-logout,
+.superadmin-embedded-dashboard .strategy-btn-logout,
+.superadmin-embedded-dashboard .video-btn-logout,
+.superadmin-embedded-dashboard .graphics-btn-logout,
+.superadmin-embedded-dashboard .social-media-btn-logout {
+  display: none !important;
+}
+
+/* Ensure embedded dashboards take full width */
+.superadmin-embedded-dashboard .production-dashboard,
+.superadmin-embedded-dashboard .strategy-dashboard,
+.superadmin-embedded-dashboard .video-dashboard,
+.superadmin-embedded-dashboard .graphics-dashboard,
+.superadmin-embedded-dashboard .social-media-dashboard {
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Prevent horizontal scrolling in embedded content */
+.superadmin-embedded-dashboard * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.superadmin-embedded-dashboard table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+.superadmin-embedded-dashboard .task-card,
+.superadmin-embedded-dashboard .client-card {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix Social Media Dashboard specific layout */
+.superadmin-embedded-dashboard .socialmedia-dashboard {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100vh !important;
+  background: #f8fafc !important;
+  overflow-x: hidden !important;
+}
+
+.superadmin-embedded-dashboard .socialmedia-sidebar {
+  display: none !important;
+}
+
+.superadmin-embedded-dashboard .socialmedia-main-content {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 24px !important;
+  background: #f8fafc !important;
+  box-sizing: border-box !important;
+}
+
+.superadmin-embedded-dashboard .dashboard-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix all dashboard sidebars */
+.superadmin-embedded-dashboard [class*="-sidebar"] {
+  display: none !important;
+}
+
+.superadmin-embedded-dashboard [class*="-main-content"] {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix dashboard containers */
+.superadmin-embedded-dashboard [class*="-dashboard"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Fix header and content areas */
+.superadmin-embedded-dashboard .dashboard-header,
+.superadmin-embedded-dashboard .header-content,
+.superadmin-embedded-dashboard .stats-grid,
+.superadmin-embedded-dashboard .card-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.superadmin-header {
+  margin-bottom: 32px;
+}
+
+.superadmin-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.superadmin-header-left h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.superadmin-header-left p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.superadmin-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.superadmin-filter-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.superadmin-month-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.superadmin-month-input:focus {
+  border-color: #22c55e;
+}
+
+/* Search and Filter Bar */
+.superadmin-search-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+}
+
+.superadmin-search-container {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  align-items: center;
+}
+
+.superadmin-search-container .search-icon {
+  position: absolute;
+  left: 14px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.superadmin-search-input {
+  width: 100%;
+  padding: 12px 40px 12px 44px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+  background: #f9fafb;
+}
+
+.superadmin-search-input:focus {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.superadmin-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.search-clear-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.superadmin-filter-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.superadmin-filter-dropdown .filter-icon {
+  color: #6b7280;
+}
+
+.superadmin-filter-select {
+  flex: 1;
+  padding: 12px 36px 12px 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  background: #f9fafb;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.superadmin-filter-select:hover {
+  border-color: #d1d5db;
+  background: white;
+}
+
+.superadmin-filter-select:focus {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.superadmin-filter-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f3f4f6;
+}
+
+.superadmin-clear-filters-btn {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.superadmin-clear-filters-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.superadmin-clear-filters-btn:active {
+  transform: translateY(0);
+}
+
+/* Active Filters Display */
+.superadmin-active-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 10px;
+  border: 1px solid #bae6fd;
+  flex-wrap: wrap;
+}
+
+.active-filters-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0c4a6e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0c4a6e;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-badge-close {
+  background: none;
+  border: none;
+  color: #0c4a6e;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.filter-badge-close:hover {
+  background: #f0f9ff;
+  color: #ef4444;
+}
+
+/* Statistics Grid */
+.superadmin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.superadmin-stat-card {
+  padding: 24px;
+  border-radius: 16px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.superadmin-stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.superadmin-stat-card .stat-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.superadmin-stat-card .stat-content h3 {
+  margin: 0 0 4px 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.superadmin-stat-card .stat-content p {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.superadmin-stat-card .stat-content small {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Section */
+.superadmin-section {
+  margin-bottom: 32px;
+}
+
+.superadmin-section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 24px 0;
+}
+
+/* Department Grid */
+.superadmin-dept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.superadmin-dept-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.superadmin-dept-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.superadmin-dept-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.superadmin-dept-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.superadmin-dept-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.superadmin-dept-header p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.superadmin-dept-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.superadmin-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.superadmin-stat-item .stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.superadmin-stat-item .stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.superadmin-dept-employees {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #f3f4f6;
+}
+
+.superadmin-dept-employees h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.employee-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.employee-item:hover {
+  background: #f3f4f6;
+}
+
+.employee-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.employee-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.employee-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.employee-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Table */
+.superadmin-table-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.superadmin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.superadmin-table thead {
+  background: #f8f9fa;
+}
+
+.superadmin-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.superadmin-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  color: #374151;
+}
+
+.superadmin-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.dept-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.dept-badge.video {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.dept-badge.graphics {
+  background: #fce7f3;
+  color: #831843;
+}
+
+.dept-badge.social-media {
+  background: #cffafe;
+  color: #155e75;
+}
+
+.dept-badge.strategy {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.dept-badge.production {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-badge.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .superadmin-dept-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .superadmin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .superadmin-main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .superadmin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .superadmin-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
