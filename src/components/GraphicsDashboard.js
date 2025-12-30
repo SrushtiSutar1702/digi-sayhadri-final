@@ -9,6 +9,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import confetti from 'canvas-confetti';
 import './GraphicsDashboard.css';
+import './Dashboard.css';
 
 const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, employeeFilter = 'all' }) => {
   const [tasks, setTasks] = useState([]);
@@ -851,6 +852,99 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
     };
     return statusColors[status] || '#9e9e9e';
   };
+
+  // Calendar helper functions
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    return { daysInMonth, startingDayOfWeek, year, month };
+  };
+
+  const getTasksForDay = (day) => {
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    return tasks.filter(task => {
+      if (!task.deadline) return false;
+      return task.deadline.startsWith(dateStr);
+    });
+  };
+
+  const handlePreviousMonth = () => {
+    setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1));
+    setSelectedCalendarDay(null);
+  };
+
+  const handleNextMonth = () => {
+    setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1));
+    setSelectedCalendarDay(null);
+  };
+
+  const renderCalendar = () => {
+    const { daysInMonth, startingDayOfWeek, year, month } = getDaysInMonth(calendarDate);
+    const days = [];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    dayNames.forEach(name => {
+      days.push(
+        <div key={`day-name-${name}`} className="calendar-day-name">
+          {name}
+        </div>
+      );
+    });
+
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
+    }
+
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayTasks = getTasksForDay(day);
+      const isToday = isCurrentMonth && today.getDate() === day;
+      const isSelected = selectedCalendarDay === day;
+      const hasTasks = dayTasks.length > 0;
+
+      days.push(
+        <div
+          key={`day-${day}`}
+          className={`calendar-day ${isToday ? 'today' : ''} ${hasTasks ? 'has-tasks' : ''} ${isSelected ? 'selected' : ''}`}
+          onClick={() => {
+            if (hasTasks) {
+              setSelectedCalendarDay(day);
+              handleDateClick(`${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`, dayTasks);
+            }
+          }}
+        >
+          <div className="day-number">{day}</div>
+          {hasTasks && (
+            <div className="task-indicators">
+              {dayTasks.slice(0, 3).map((task, idx) => (
+                <div
+                  key={idx}
+                  className="task-indicator"
+                  style={{ backgroundColor: getStatusColor(task.status) }}
+                  title={task.taskName}
+                ></div>
+              ))}
+              {dayTasks.length > 3 && (
+                <div className="task-count">+{dayTasks.length - 3}</div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return days;
+  };
+
 
   // Function to check if task is overdue (shows for all tasks including completed/posted)
   const isTaskOverdue = (deadline) => {
@@ -2929,199 +3023,37 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
         )}
 
         {/* Calendar View - Remains exactly the same */}
+        {/* Calendar View */}
         {showCalendar && (
-          <div className="strategy-card" style={{ marginBottom: '24px' }}>
-            <div className="strategy-modal-header" style={{ padding: '16px 24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Calendar size={20} />
-                <h3 style={{ margin: 0, fontSize: '18px' }}>
-                  📅 Graphics Task Calendar
-                </h3>
+          <div className="card full-width">
+            <div className="card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Calendar size={24} />
+                <h2>📅 Graphics Task Calendar</h2>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <button
-                  onClick={() => setShowCalendar(false)}
-                  className="strategy-modal-close"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '28px',
-                    height: '28px',
-                    color: 'white',
-                    cursor: 'pointer',
-                    fontSize: '16px'
-                  }}
-                >
-                  ×
-                </button>
-              </div>
+              <p style={{ fontSize: '14px', color: '#666', margin: '5px 0 0 0' }}>Tasks shown on their deadlines</p>
             </div>
 
-            <div style={{ padding: '16px 24px' }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '20px',
-                marginBottom: '16px'
-              }}>
-                <button
-                  onClick={() => {
-                    const date = new Date(selectedMonth + '-01');
-                    date.setMonth(date.getMonth() - 1);
-                    setSelectedMonth(date.toISOString().slice(0, 7));
-                  }}
-                  className="strategy-btn strategy-btn-calendar"
-                  style={{
-                    padding: '8px 12px',
-                    fontSize: '14px',
-                    minWidth: 'auto'
-                  }}
-                >
-                  ← Prev
+            <div className="calendar-container">
+              <div className="calendar-navigation">
+                <button onClick={handlePreviousMonth} className="nav-btn">
+                  <ChevronLeft size={20} />
                 </button>
-                <h4 style={{
-                  margin: 0,
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  minWidth: '150px',
-                  textAlign: 'center'
-                }}>
-                  {new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                </h4>
-                <button
-                  onClick={() => {
-                    const date = new Date(selectedMonth + '-01');
-                    date.setMonth(date.getMonth() + 1);
-                    setSelectedMonth(date.toISOString().slice(0, 7));
-                  }}
-                  className="strategy-btn strategy-btn-calendar"
-                  style={{
-                    padding: '8px 12px',
-                    fontSize: '14px',
-                    minWidth: 'auto'
-                  }}
-                >
-                  Next →
+                <h3 className="current-month">
+                  {calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </h3>
+                <button onClick={handleNextMonth} className="nav-btn">
+                  <ChevronRight size={20} />
                 </button>
               </div>
 
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
-                gap: '2px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '8px',
-                padding: '8px',
-                maxWidth: '100%'
-              }}>
-                {/* Calendar Days Header */}
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-                  <div key={day} style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    padding: '8px 4px',
-                    textAlign: 'center',
-                    fontWeight: '600',
-                    fontSize: '12px',
-                    borderRadius: '4px'
-                  }}>
-                    {day}
-                  </div>
-                ))}
-
-                {/* Calendar Days */}
-                {(() => {
-                  const year = parseInt(selectedMonth.split('-')[0]);
-                  const month = parseInt(selectedMonth.split('-')[1]) - 1;
-                  const firstDay = new Date(year, month, 1);
-                  const startDate = new Date(firstDay);
-                  startDate.setDate(startDate.getDate() - firstDay.getDay());
-
-                  const days = [];
-                  for (let i = 0; i < 42; i++) {
-                    const currentDate = new Date(startDate);
-                    currentDate.setDate(startDate.getDate() + i);
-
-                    const isCurrentMonth = currentDate.getMonth() === month;
-                    const isToday = currentDate.toDateString() === new Date().toDateString();
-                    const dateString = formatDateSafe(currentDate);
-
-                    const dayTasks = filteredTasks.filter(task => {
-                      const matchesDate = (task.deadline === dateString);
-                      return matchesDate;
-                    });
-
-                    days.push(
-                      <div
-                        key={i}
-                        onClick={() => handleDateClick(dateString, dayTasks)}
-                        style={{
-                          background: isCurrentMonth ? 'white' : 'transparent',
-                          borderRadius: '4px',
-                          minHeight: '32px',
-                          padding: '4px',
-                          cursor: dayTasks.length > 0 ? 'pointer' : 'default',
-                          position: 'relative',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '12px',
-                          fontWeight: isToday ? '700' : '500',
-                          color: isCurrentMonth ? (isToday ? '#667eea' : '#374151') : '#9ca3af',
-                          backgroundColor: isToday ? '#e0e7ff' : (dayTasks.length > 0 ? '#dcfce7' : 'white'),
-                          border: dayTasks.length > 0 ? '1px solid #10b981' : '1px solid transparent',
-                          transition: 'all 0.2s ease'
-                        }}
-                        title={dayTasks.length > 0 ? `${dayTasks.length} task(s) on this date` : ''}
-                        onMouseEnter={(e) => {
-                          if (dayTasks.length > 0) {
-                            e.target.style.transform = 'scale(1.05)';
-                            e.target.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.transform = 'scale(1)';
-                          e.target.style.boxShadow = 'none';
-                        }}
-                      >
-                        <span>{currentDate.getDate()}</span>
-                        {dayTasks.length > 0 && (
-                          <div style={{
-                            position: 'absolute',
-                            bottom: '2px',
-                            right: '2px',
-                            width: '6px',
-                            height: '6px',
-                            backgroundColor: '#10b981',
-                            borderRadius: '50%',
-                            fontSize: '8px'
-                          }}></div>
-                        )}
-                        {dayTasks.length > 1 && (
-                          <span style={{
-                            position: 'absolute',
-                            top: '2px',
-                            right: '2px',
-                            fontSize: '8px',
-                            fontWeight: '700',
-                            color: '#10b981'
-                          }}>
-                            {dayTasks.length}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  }
-
-                  return days;
-                })()}
+              <div className="calendar-grid">
+                {renderCalendar()}
               </div>
             </div>
           </div>
         )}
+
 
         {/* Reports Section */}
         {showReports && (
@@ -6044,44 +5976,101 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
       )}
 
       {/* Task Modal */}
+      {/* Task Modal */}
       {showTaskModal && (
-        <div className="strategy-modal" onClick={closeTaskModal}>
-          <div className="strategy-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="strategy-modal-header">
-              <h3>
-                📅 Tasks for {selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                }) : ''}
-              </h3>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}
+          onClick={closeTaskModal}
+        >
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            maxWidth: '700px',
+            width: '100%',
+            maxHeight: '80vh',
+            overflow: 'hidden',
+            position: 'relative'
+          }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              padding: '20px',
+              color: 'white',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
+                  🎨 Graphics Tasks for {selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : ''}
+                </h3>
+                <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
+                  {selectedDateTasks.length} task{selectedDateTasks.length !== 1 ? 's' : ''} scheduled
+                </p>
+              </div>
               <button
                 onClick={closeTaskModal}
-                className="strategy-modal-close"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'white',
+                  fontSize: '18px',
+                  transition: 'all 0.2s ease'
+                }}
               >
                 ×
               </button>
             </div>
-            <div className="strategy-modal-body">
-              {selectedDateTasks.length > 0 ? (
+
+            {/* Modal Content */}
+            <div style={{
+              padding: '20px',
+              maxHeight: 'calc(80vh - 80px)',
+              overflowY: 'auto'
+            }}>
+              {selectedDateTasks.length === 0 ? (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '40px 20px',
+                  color: '#666'
+                }}>
+                  <p>No tasks scheduled for this date</p>
+                </div>
+              ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {selectedDateTasks.map((task, index) => (
                     <div key={index} style={{
                       backgroundColor: '#f8f9fa',
                       borderRadius: '12px',
-                      padding: '20px',
-                      border: '1px solid #e9ecef',
-                      transition: 'all 0.2s ease'
-                    }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.boxShadow = 'none';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}>
+                      padding: '16px',
+                      border: '1px solid #e9ecef'
+                    }}>
                       {/* Task Header */}
                       <div style={{
                         display: 'flex',
@@ -6090,58 +6079,78 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                         marginBottom: '12px'
                       }}>
                         <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                            <span style={{ fontSize: '20px' }}>🎨</span>
-                            <h4 style={{
-                              margin: 0,
-                              fontSize: '18px',
-                              fontWeight: '600',
-                              color: '#212529'
-                            }}>
-                              {task.taskName || 'Untitled Task'}
-                            </h4>
-                          </div>
+                          <h4 style={{
+                            margin: '0 0 8px 0',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: '#212529',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}>
+                            <span>🎨 {task.taskName || 'Untitled Task'}</span>
+                          </h4>
                           <div style={{
                             display: 'flex',
                             flexWrap: 'wrap',
                             gap: '12px',
-                            fontSize: '14px',
+                            fontSize: '13px',
                             color: '#666'
                           }}>
-                            <span>   <strong>Client:</strong> {task.clientName || 'N/A'}</span>
-                            <span>📅 <strong>Deadline:</strong> {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'N/A'}</span>
+                            <span>👤 <strong>Client:</strong> {task.clientName || 'N/A'}</span>
                             {task.assignedTo && <span>👨‍💼 <strong>Assigned:</strong> {task.assignedTo}</span>}
+                            <span>🎨 <strong>Type:</strong> Graphics</span>
+                            {task.deadline && (
+                              <span>📅 <strong>Deadline:</strong> {new Date(task.deadline).toLocaleDateString()}</span>
+                            )}
                           </div>
                         </div>
-                        <select
-                          value={task.status}
-                          onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
-                          style={{
-                            padding: '6px 12px',
+                        <div style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'flex-end',
+                          gap: '8px'
+                        }}>
+                          <span style={{
+                            padding: '4px 8px',
                             borderRadius: '12px',
                             fontSize: '11px',
                             fontWeight: '600',
-                            backgroundColor: getStatusColor(task.status),
-                            color: 'white',
-                            border: 'none',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            appearance: 'none',
-                            paddingRight: '24px',
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'right 6px center',
-                            minWidth: '150px'
-                          }}
-                        >
-                          <option value="assigned-to-department" style={{ backgroundColor: '#fff', color: '#333' }}>Assigned to Department</option>
-                          <option value="in-progress" style={{ backgroundColor: '#fff', color: '#333' }}>In Progress</option>
-                          <option value="completed" style={{ backgroundColor: '#fff', color: '#333' }}>Completed</option>
-                          <option value="pending-client-approval" style={{ backgroundColor: '#fff', color: '#333' }}>Pending Client Approval</option>
-                          <option value="approved" style={{ backgroundColor: '#fff', color: '#333' }}>Approved</option>
-                          <option value="posted" style={{ backgroundColor: '#fff', color: '#333' }}>Posted</option>
-                          <option value="revision-required" style={{ backgroundColor: '#fff', color: '#333' }}>Revision Required</option>
-                        </select>
+                            backgroundColor: '#e3f2fd',
+                            color: '#1976d2'
+                          }}>
+                            🎨 GRAPHICS
+                          </span>
+                          <select
+                            value={task.status}
+                            onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '12px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              backgroundColor: getStatusColor(task.status),
+                              color: 'white',
+                              border: 'none',
+                              cursor: 'pointer',
+                              outline: 'none',
+                              appearance: 'none',
+                              paddingRight: '24px',
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'right 6px center',
+                              minWidth: '150px'
+                            }}
+                          >
+                            <option value="assigned-to-department">Assigned to Department</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending-client-approval">Pending Client Approval</option>
+                            <option value="approved">Approved</option>
+                            <option value="posted">Posted</option>
+                            <option value="revision-required">Revision Required</option>
+                          </select>
+                        </div>
                       </div>
 
                       {/* Task Description */}
@@ -6186,19 +6195,12 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div style={{
-                  textAlign: 'center',
-                  padding: '40px 20px',
-                  color: '#666'
-                }}>
-                  <p>No tasks scheduled for this date</p>
-                </div>
               )}
             </div>
           </div>
         </div>
       )}
+
 
       {/* Add Extra Task Modal */}
       {showAddExtraTaskModal && (

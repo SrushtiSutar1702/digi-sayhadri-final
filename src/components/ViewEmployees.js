@@ -27,6 +27,8 @@ const ViewEmployees = () => {
     const navigate = useNavigate();
     const { toasts, showToast, removeToast } = useToast();
     const [employees, setEmployees] = useState([]);
+    const [tasks, setTasks] = useState([]);
+    const [clients, setClients] = useState([]);
     const [employeeListSearch, setEmployeeListSearch] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showEditEmployeeModal, setShowEditEmployeeModal] = useState(false);
@@ -86,8 +88,74 @@ const ViewEmployees = () => {
             }
         });
 
+        const tasksRef = ref(database, 'tasks');
+        const unsubscribeTasks = onValue(tasksRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const tasksArray = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key]
+                }));
+                setTasks(tasksArray);
+            } else {
+                setTasks([]);
+            }
+        });
+
+        const clientsRef = ref(database, 'clients');
+        const unsubscribeClients = onValue(clientsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const clientsArray = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key]
+                }));
+                setClients(prevClients => {
+                    const merged = [...prevClients];
+                    clientsArray.forEach(nc => {
+                        const existingIndex = merged.findIndex(c => c.id === nc.id);
+                        if (existingIndex === -1) {
+                            merged.push(nc);
+                        } else {
+                            merged[existingIndex] = { ...merged[existingIndex], ...nc };
+                        }
+                    });
+                    return merged;
+                });
+            }
+        });
+
+        // Also listen to strategyClients
+        const strategyClientsRef = ref(database, 'strategyClients');
+        const unsubscribeStrategyClients = onValue(strategyClientsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const strategyClientsArray = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key],
+                    source: 'strategy'
+                }));
+
+                setClients(prevClients => {
+                    const merged = [...prevClients];
+                    strategyClientsArray.forEach(sc => {
+                        const existingIndex = merged.findIndex(c => c.id === sc.id);
+                        if (existingIndex === -1) {
+                            merged.push(sc);
+                        } else {
+                            merged[existingIndex] = { ...merged[existingIndex], ...sc };
+                        }
+                    });
+                    return merged;
+                });
+            }
+        });
+
         return () => {
             unsubscribeEmployees();
+            unsubscribeTasks();
+            unsubscribeClients();
+            unsubscribeStrategyClients();
         };
     }, []);
 
@@ -163,8 +231,8 @@ const ViewEmployees = () => {
             return;
         }
 
-        if (editingEmployee.isSystem) {
-            showToast('❌ System accounts cannot be edited.', 'error', 3000);
+        if (editingEmployee.email === 'superadmin@gmail.com') {
+            showToast('❌ The primary Super Admin account cannot be edited here for safety.', 'error', 3000);
             return;
         }
 
@@ -202,24 +270,87 @@ const ViewEmployees = () => {
 
     // Handle delete employee
     const handleDeleteEmployee = async (employee) => {
-        if (!window.confirm(`Are you sure you want to delete ${employee.employeeName}? This action cannot be undone.`)) {
+        if (!employee || (!employee.id && !employee.email)) {
+            showToast('❌ Invalid employee data', 'error');
+            return;
+        }
+
+        if (employee.email === 'superadmin@gmail.com') {
+            showToast('❌ The primary Super Admin account cannot be deleted.', 'error');
+            return;
+        }
+
+        if (!window.confirm(`Are you sure you want to PERMANENTLY delete ${employee.employeeName || employee.email}? This action will unassign all their tasks and clients.`)) {
             return;
         }
 
         try {
-            const employeeRef = ref(database, `employees/${employee.id}`);
-            await update(employeeRef, {
-                deleted: true,
-                deletedAt: new Date().toISOString(),
-                deletedBy: 'Production Incharge'
-            });
+            console.log('🗑️ Starting deletion for employee:', employee);
+            const updates = {};
 
-            showToast(`✅ Employee ${employee.employeeName} deleted successfully!`, 'success', 3000);
+            // 1. Unassign Tasks
+            if (Array.isArray(tasks)) {
+                const empTasks = tasks.filter(t =>
+                    t.assignedTo === employee.id ||
+                    t.assignedTo === employee.email ||
+                    (employee.employeeName && t.assignedTo === employee.employeeName) ||
+                    t.assignedEmployee === employee.id ||
+                    t.assignedEmployee === employee.email ||
+                    (employee.employeeName && t.assignedEmployee === employee.employeeName)
+                );
+
+                console.log(`Found ${empTasks.length} tasks to unassign`);
+                empTasks.forEach(task => {
+                    updates[`tasks/${task.id}/assignedTo`] = null;
+                    updates[`tasks/${task.id}/assignedEmployee`] = null;
+                    updates[`tasks/${task.id}/assignedToEmployeeName`] = null;
+
+                    if (task.status === 'in-progress' || task.status === 'assigned-to-department') {
+                        updates[`tasks/${task.id}/status`] = 'pending';
+                    }
+                });
+            }
+
+            // 2. Unassign Clients
+            if (Array.isArray(clients)) {
+                const empClients = clients.filter(c =>
+                    c.assignedToEmployee === employee.id ||
+                    c.assignedToEmployee === employee.email ||
+                    (employee.employeeName && c.assignedToEmployee === employee.employeeName) ||
+                    c.assignedEmployee === employee.id ||
+                    c.assignedEmployee === employee.email ||
+                    (employee.employeeName && c.assignedEmployee === employee.employeeName)
+                );
+
+                console.log(`Found ${empClients.length} clients to unassign`);
+                empClients.forEach(client => {
+                    const basePath = client.source === 'strategy' ? 'strategyClients' : 'clients';
+                    updates[`${basePath}/${client.id}/assignedToEmployee`] = null;
+                    updates[`${basePath}/${client.id}/assignedEmployee`] = null;
+                    updates[`${basePath}/${client.id}/assignedToEmployeeName`] = null;
+                });
+            }
+
+            // 3. Mark as deleted in database (physical delete or soft delete depending on requirement, here we physically remove like SuperAdmin)
+            if (employee.id) {
+                updates[`employees/${employee.id}`] = null;
+            } else if (employee.email) {
+                const foundEmp = employees.find(e => e.email === employee.email);
+                if (foundEmp && foundEmp.id) {
+                    updates[`employees/${foundEmp.id}`] = null;
+                }
+            }
+
+            console.log('Sending updates to Firebase:', updates);
+            await update(ref(database), updates);
+
+            showToast(`✅ Employee ${employee.employeeName || employee.email} deleted successfully!`, 'success', 3000);
         } catch (error) {
             console.error('Error deleting employee:', error);
             showToast('❌ Failed to delete employee: ' + error.message, 'error', 5000);
         }
     };
+
 
     return (
         <div className="production-dashboard">
@@ -487,7 +618,7 @@ const ViewEmployees = () => {
                 </div>
 
                 {/* Employees List */}
-                <div style={{ padding: '24px' }}>
+                <div style={{ padding: '0 0 32px 0' }}>
                     <div style={{
                         background: 'white',
                         borderRadius: '16px',
@@ -586,36 +717,38 @@ const ViewEmployees = () => {
                                         borderCollapse: 'collapse',
                                         backgroundColor: 'white',
                                         borderRadius: '8px',
+                                        fontSize: '13px',
+                                        minWidth: '900px',
                                         overflow: 'hidden',
                                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                                     }}>
                                         <thead>
                                             <tr style={{ backgroundColor: '#667eea', color: 'white' }}>
-                                                <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
                                                     Name
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
                                                     Email
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
                                                     Password
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
                                                     Department
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
                                                     Role
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
                                                     Status
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
                                                     Created At
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', width: '100px' }}>
                                                     Enable/Disable
                                                 </th>
-                                                <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                                <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', width: '150px' }}>
                                                     Actions
                                                 </th>
                                             </tr>
@@ -629,11 +762,11 @@ const ViewEmployees = () => {
                                                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                                                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
                                                 >
-                                                    <td style={{ padding: '12px 16px' }}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                    <td style={{ padding: '10px 8px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                             <div style={{
-                                                                width: '32px',
-                                                                height: '32px',
+                                                                width: '28px',
+                                                                height: '28px',
                                                                 borderRadius: '50%',
                                                                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                                 display: 'flex',
@@ -641,23 +774,23 @@ const ViewEmployees = () => {
                                                                 justifyContent: 'center',
                                                                 color: 'white',
                                                                 fontWeight: '600',
-                                                                fontSize: '13px'
+                                                                fontSize: '12px'
                                                             }}>
                                                                 {emp.employeeName?.charAt(0).toUpperCase() || 'E'}
                                                             </div>
-                                                            <span style={{ fontWeight: '500', fontSize: '14px', color: '#374151' }}>
+                                                            <span style={{ fontWeight: '500', fontSize: '13px', color: '#374151' }}>
                                                                 {emp.employeeName || 'N/A'}
                                                             </span>
                                                         </div>
                                                     </td>
-                                                    <td style={{ padding: '12px 16px', fontSize: '13px', color: '#6b7280' }}>
+                                                    <td style={{ padding: '10px 8px', fontSize: '12px', color: '#6b7280' }}>
                                                         {emp.email || 'N/A'}
                                                     </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                                    <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                                         <span style={{
                                                             fontFamily: 'monospace',
-                                                            fontSize: '12px',
-                                                            padding: '4px 6px',
+                                                            fontSize: '11px',
+                                                            padding: '2px 4px',
                                                             backgroundColor: '#f3f4f6',
                                                             borderRadius: '4px',
                                                             color: '#374151'
@@ -665,11 +798,11 @@ const ViewEmployees = () => {
                                                             {emp.password || 'N/A'}
                                                         </span>
                                                     </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                                    <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                                         <span style={{
-                                                            padding: '4px 10px',
+                                                            padding: '2px 8px',
                                                             borderRadius: '12px',
-                                                            fontSize: '11px',
+                                                            fontSize: '10px',
                                                             fontWeight: '600',
                                                             backgroundColor: emp.department === 'video' ? '#dbeafe' :
                                                                 emp.department === 'graphics' ? '#fce7f3' :
@@ -690,11 +823,11 @@ const ViewEmployees = () => {
                                                                                 emp.department || 'N/A'}
                                                         </span>
                                                     </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                                    <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                                         <span style={{
-                                                            padding: '4px 8px',
+                                                            padding: '2px 6px',
                                                             borderRadius: '6px',
-                                                            fontSize: '11px',
+                                                            fontSize: '10px',
                                                             fontWeight: '600',
                                                             backgroundColor: emp.isSystem ? '#cffafe' : emp.role === 'head' ? '#fef3c7' : '#dbeafe',
                                                             color: emp.isSystem ? '#0891b2' : emp.role === 'head' ? '#92400e' : '#1e40af'
@@ -702,7 +835,7 @@ const ViewEmployees = () => {
                                                             {emp.isSystem ? '🔒 System' : (emp.role === 'head' ? '👑 Head' : '👤 Employee')}
                                                         </span>
                                                     </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                                    <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                                         <span style={{
                                                             padding: '4px 8px',
                                                             borderRadius: '12px',
@@ -714,18 +847,26 @@ const ViewEmployees = () => {
                                                             {emp.status === 'active' ? '✅ Active' : '❌ Inactive'}
                                                         </span>
                                                     </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', color: '#6b7280' }}>
-                                                        {emp.createdAt ? new Date(emp.createdAt).toLocaleDateString('en-GB') : 'N/A'}
-                                                    </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                                    <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: '11px' }}>{emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : 'N/A'}</td>
+                                                    <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                                         <button
-                                                            onClick={() => handleEmployeeStatusToggle(emp.id, emp.status)}
+                                                            onClick={async () => {
+                                                                const newStatus = emp.status === 'active' ? 'inactive' : 'active';
+                                                                try {
+                                                                    const employeeRef = ref(database, `employees/${emp.id}`);
+                                                                    await update(employeeRef, { status: newStatus });
+                                                                    showToast(`Employee ${newStatus === 'active' ? 'enabled' : 'disabled'} successfully!`, 'success');
+                                                                } catch (error) {
+                                                                    console.error('Error updating employee status:', error);
+                                                                    showToast('Failed to update employee status', 'error');
+                                                                }
+                                                            }}
                                                             style={{
                                                                 position: 'relative',
-                                                                width: '50px',
-                                                                height: '26px',
+                                                                width: '40px',
+                                                                height: '22px',
                                                                 backgroundColor: emp.status === 'active' ? '#10b981' : '#e5e7eb',
-                                                                borderRadius: '13px',
+                                                                borderRadius: '11px',
                                                                 border: 'none',
                                                                 cursor: 'pointer',
                                                                 transition: 'background-color 0.3s',
@@ -734,50 +875,46 @@ const ViewEmployees = () => {
                                                         >
                                                             <div style={{
                                                                 position: 'absolute',
-                                                                top: '3px',
-                                                                left: emp.status === 'active' ? '27px' : '3px',
-                                                                width: '20px',
-                                                                height: '20px',
+                                                                top: '2px',
+                                                                left: emp.status === 'active' ? '20px' : '2px',
+                                                                width: '18px',
+                                                                height: '18px',
                                                                 backgroundColor: 'white',
                                                                 borderRadius: '50%',
                                                                 transition: 'left 0.3s',
-                                                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                                                boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
                                                             }} />
                                                         </button>
                                                     </td>
-                                                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                                    <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                                         <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                                                             <button
                                                                 onClick={() => {
-                                                                    if (emp.isSystem) {
-                                                                        showToast('System accounts cannot be edited via this panel.', 'warning', 3000);
-                                                                        return;
-                                                                    }
                                                                     handleEditEmployee(emp);
                                                                 }}
                                                                 style={{
                                                                     padding: '6px 10px',
-                                                                    background: emp.isSystem ? '#9ca3af' : '#3b82f6',
+                                                                    background: '#3b82f6',
                                                                     color: 'white',
                                                                     border: 'none',
                                                                     borderRadius: '6px',
                                                                     fontSize: '12px',
                                                                     fontWeight: '500',
-                                                                    cursor: emp.isSystem ? 'not-allowed' : 'pointer',
+                                                                    cursor: 'pointer',
                                                                     transition: 'background 0.2s',
                                                                     display: 'flex',
                                                                     alignItems: 'center',
                                                                     gap: '4px'
                                                                 }}
                                                                 onMouseOver={(e) => {
-                                                                    if (!emp.isSystem) e.currentTarget.style.background = '#2563eb';
+                                                                    e.currentTarget.style.background = '#2563eb';
                                                                 }}
                                                                 onMouseOut={(e) => {
-                                                                    if (!emp.isSystem) e.currentTarget.style.background = '#3b82f6';
+                                                                    e.currentTarget.style.background = '#3b82f6';
                                                                 }}
-                                                                title={emp.isSystem ? "System Account (Locked)" : "Edit Employee"}
+                                                                title="Edit Employee"
                                                             >
-                                                                {emp.isSystem ? '🔒 Locked' : '✏️ Edit'}
+                                                                ✏️ Edit
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDeleteEmployee(emp)}
