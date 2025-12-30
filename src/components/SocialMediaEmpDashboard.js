@@ -2,7 +2,7 @@
 import { ref, onValue, update, push } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { Share2, LogOut, CheckCircle, XCircle, Clock, Calendar, AlertCircle, PlayCircle, Send, User, LayoutDashboard, Search, List, Grid, Download, BarChart3, PieChart, TrendingUp } from 'lucide-react';
+import { Share2, LogOut, CheckCircle, XCircle, Clock, Calendar, AlertCircle, PlayCircle, Send, User, LayoutDashboard, Search, List, Grid, Download, BarChart3, PieChart, TrendingUp, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import { jsPDF } from 'jspdf';
@@ -39,19 +39,19 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
   const [selectedReportClients, setSelectedReportClients] = useState(new Set()); // Selected clients for download
   const [selectedReportTaskIds, setSelectedReportTaskIds] = useState(new Set()); // Selected task IDs for download
   const [showReportFormatDropdown, setShowReportFormatDropdown] = useState(false); // Format dropdown for reports
-  
+
   // Reports section filter states (same as GraphicsDashboard)
   const [reportsSearchQuery, setReportsSearchQuery] = useState(''); // Search for reports
   const [reportsEmployeeFilter, setReportsEmployeeFilter] = useState('all'); // Employee filter for reports
   const [reportsClientFilter, setReportsClientFilter] = useState('all'); // Client filter for reports
   const [reportsStatusFilter, setReportsStatusFilter] = useState('all'); // Status filter for reports
-  
+
   // Ad modal states
   const [showAdModal, setShowAdModal] = useState(false);
   const [selectedTaskForPosting, setSelectedTaskForPosting] = useState(null);
   const [adType, setAdType] = useState('');
   const [adCost, setAdCost] = useState('');
-  
+
   // Assign Task modal states
   const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
   const [clients, setClients] = useState([]);
@@ -67,7 +67,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
     taskType: '',
     postDate: ''
   });
-  
+
   const navigate = useNavigate();
   const { toasts, showToast, removeToast } = useToast();
 
@@ -99,7 +99,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
         const clientsList = Object.keys(data).map(key => ({
           id: key,
           ...data[key]
-        })).filter(client => 
+        })).filter(client =>
           client.status !== 'inactive' && client.deleted !== true
         ); // Hide inactive and deleted clients
         setClients(clientsList);
@@ -137,10 +137,10 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
     const clientsRef = ref(database, 'clients');
     const strategyClientsRef = ref(database, 'strategyClients');
     const strategyHeadClientsRef = ref(database, 'strategyHeadClients');
-    
+
     let activeClientIds = new Set();
     let activeClientNames = new Set();
-    
+
     // Listen to all client sources
     const unsubscribeClients = onValue(clientsRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -152,7 +152,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
         });
       }
     });
-    
+
     const unsubscribeStrategyClients = onValue(strategyClientsRef, (snapshot) => {
       if (snapshot.exists()) {
         Object.values(snapshot.val()).forEach(client => {
@@ -163,7 +163,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
         });
       }
     });
-    
+
     const unsubscribeStrategyHeadClients = onValue(strategyHeadClientsRef, (snapshot) => {
       if (snapshot.exists()) {
         Object.values(snapshot.val()).forEach(client => {
@@ -190,7 +190,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
             if (!clientIsActive && (task.clientId || task.clientName)) {
               return false;
             }
-            
+
             // Show tasks assigned to this social media employee
             const isAssignedToMe = task.socialMediaAssignedTo === employeeName || task.assignedTo === employeeName;
 
@@ -259,7 +259,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
 
   const handlePostWithoutAd = () => {
     if (!selectedTaskForPosting) return;
-    
+
     const taskRef = ref(database, `tasks/${selectedTaskForPosting.id}`);
     update(taskRef, {
       status: 'posted',
@@ -275,17 +275,17 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
 
   const handlePostWithAd = () => {
     if (!selectedTaskForPosting) return;
-    
+
     if (!adType) {
       showToast('Please select an ad type', 'warning');
       return;
     }
-    
+
     if (!adCost || parseFloat(adCost) <= 0) {
       showToast('Please enter a valid ad cost', 'warning');
       return;
     }
-    
+
     const taskRef = ref(database, `tasks/${selectedTaskForPosting.id}`);
     update(taskRef, {
       status: 'posted',
@@ -347,7 +347,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
 
       push(tasksRef, taskData);
       showToast('Task assigned successfully!', 'success');
-      
+
       // Reset form
       setNewTask({
         clientName: '',
@@ -443,7 +443,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
   // Handle Reject Task (Request Revision)
   const handleRejectTask = (taskId) => {
     const revisionNote = prompt('Please enter revision notes for the team:');
-    
+
     if (!revisionNote || revisionNote.trim() === '') {
       showToast('Revision note is required', 'warning');
       return;
@@ -1152,590 +1152,841 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
             </div>
 
             {/* Statistics Cards - Always visible when not in Reports */}
-        <div className="stats-row" style={{ marginBottom: '25px' }}>
-          <div
-            className="stat-card stat-total"
-            onClick={() => handleStatCardClick('all')}
-            style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', boxShadow: '0 4px 12px rgba(102,126,234,0.2)', cursor: 'pointer', transition: 'transform 0.2s' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <h3>{stats.total}</h3>
-            <p>Total Tasks</p>
-          </div>
-          <div
-            className="stat-card"
-            onClick={() => handleStatCardClick('in-progress')}
-            style={{ background: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)', color: 'white', boxShadow: '0 4px 12px rgba(116,185,255,0.2)', cursor: 'pointer', transition: 'transform 0.2s' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <h3>{stats.inProgress}</h3>
-            <p>In Progress</p>
-          </div>
-          <div
-            className="stat-card stat-progress"
-            onClick={() => handleStatCardClick('completed')}
-            style={{ background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)', color: 'white', boxShadow: '0 4px 12px rgba(86,171,47,0.2)', cursor: 'pointer', transition: 'transform 0.2s' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <h3>{stats.completed}</h3>
-            <p>Completed</p>
-          </div>
-          <div
-            className="stat-card stat-pending"
-            onClick={() => handleStatCardClick('pending-client-approval')}
-            style={{ background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)', color: 'white', boxShadow: '0 4px 12px rgba(255,107,107,0.2)', cursor: 'pointer', transition: 'transform 0.2s' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <h3>{stats.pendingApproval}</h3>
-            <p>Pending Approval</p>
-          </div>
-          <div
-            className="stat-card"
-            onClick={() => handleStatCardClick('approved')}
-            style={{ background: 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)', color: 'white', boxShadow: '0 4px 12px rgba(0,184,148,0.2)', cursor: 'pointer', transition: 'transform 0.2s' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <h3>{stats.approved}</h3>
-            <p>Approved</p>
-          </div>
-          <div
-            className="stat-card"
-            onClick={() => handleStatCardClick('posted')}
-            style={{ background: 'linear-gradient(135deg, #e91e63 0%, #f48fb1 100%)', color: 'white', boxShadow: '0 4px 12px rgba(233,30,99,0.2)', cursor: 'pointer', transition: 'transform 0.2s' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <h3>{stats.posted}</h3>
-            <p>Posted</p>
-          </div>
-          <div
-            className="stat-card"
-            onClick={() => handleStatCardClick('revision-required')}
-            style={{ background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)', color: 'white', boxShadow: '0 4px 12px rgba(118,75,162,0.2)', cursor: 'pointer', transition: 'transform 0.2s' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <h3>{stats.revisionRequired}</h3>
-            <p>Revision Required</p>
-          </div>
-        </div>
-
-        {/* Daily Report and Weekly Summary Cards - Only visible when Dashboard is active */}
-        {showDashboard && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-            gap: '24px',
-            marginBottom: '25px'
-          }}>
-            {/* Daily Report Card */}
-            <div style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '16px',
-              padding: '28px',
-              color: 'white',
-              boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(102, 126, 234, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.3)';
+            <div className="stats-row" style={{
+              marginBottom: '32px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '24px'
             }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '24px'
-              }}>
-                <h3 style={{
-                  margin: 0,
-                  fontSize: '20px',
-                  fontWeight: '700',
-                  color: 'white'
-                }}>Daily Report</h3>
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <Calendar size={24} />
-                </div>
-              </div>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '16px',
-                marginBottom: '24px'
-              }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isToday(t.deadline)).length}
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>Today's Tasks</div>
-                </div>
-
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isToday(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length}
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>Completed</div>
-                </div>
-
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isToday(t.deadline) && isTaskOverdue(t.deadline) && t.status !== 'completed' && t.status !== 'posted' && t.status !== 'approved').length}
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>Overdue</div>
-                </div>
-
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isToday(t.deadline)).length > 0
-                      ? Math.round((tasks.filter(t => isToday(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length / tasks.filter(t => isToday(t.deadline)).length) * 100)
-                      : 0}%
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>Success Rate</div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setTimeFilter('day');
-                  setShowDashboard(false);
-                  showToast('Viewing today\'s tasks', 'info');
-                }}
+              <div
+                className="stat-card stat-total"
+                onClick={() => handleStatCardClick('all')}
                 style={{
-                  width: '100%',
-                  padding: '14px',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  border: 'none',
-                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #FF9F43 0%, #ff6b6b 100%)',
                   color: 'white',
-                  fontSize: '15px',
-                  fontWeight: '600',
+                  boxShadow: '0 8px 25px rgba(255, 159, 67, 0.4)',
+                  borderRadius: '20px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backdropFilter: 'blur(10px)'
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  padding: '32px 24px',
+                  gap: '20px',
+                  height: '100%'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.35)';
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(255, 159, 67, 0.5)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 159, 67, 0.4)';
                 }}
               >
-                View Today's Tasks
-              </button>
-            </div>
-
-            {/* Weekly Summary Card */}
-            <div style={{
-              background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
-              borderRadius: '16px',
-              padding: '28px',
-              color: 'white',
-              boxShadow: '0 8px 24px rgba(86, 171, 47, 0.3)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(86, 171, 47, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(86, 171, 47, 0.3)';
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '24px'
-              }}>
-                <h3 style={{
-                  margin: 0,
-                  fontSize: '20px',
-                  fontWeight: '700',
-                  color: 'white'
-                }}>Weekly Summary</h3>
                 <div style={{
-                  width: '48px',
-                  height: '48px',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '12px',
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.25)',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  flexShrink: 0
                 }}>
-                  <TrendingUp size={24} />
+                  <Briefcase size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.total}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Total Tasks</p>
+                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Tasks for selected month</span>
                 </div>
               </div>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '16px',
-                marginBottom: '24px'
-              }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isInCurrentWeek(t.deadline)).length}
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>Weekly Tasks</div>
-                </div>
-
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isInCurrentWeek(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length}
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>Completed</div>
-                </div>
-
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isInCurrentWeek(t.deadline) && t.status === 'in-progress').length}
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>In Progress</div>
-                </div>
-
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{
-                    fontSize: '32px',
-                    fontWeight: '700',
-                    marginBottom: '4px'
-                  }}>
-                    {tasks.filter(t => isInCurrentWeek(t.deadline)).length > 0
-                      ? Math.round((tasks.filter(t => isInCurrentWeek(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length / tasks.filter(t => isInCurrentWeek(t.deadline)).length) * 100)
-                      : 0}%
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    opacity: 0.9,
-                    fontWeight: '500'
-                  }}>My Efficiency</div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setTimeFilter('week');
-                  setShowDashboard(false);
-                  showToast('Viewing this week\'s tasks', 'info');
-                }}
+              <div
+                className="stat-card"
+                onClick={() => handleStatCardClick('in-progress')}
                 style={{
-                  width: '100%',
-                  padding: '14px',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  border: 'none',
-                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #54a0ff 0%, #2e86de 100%)',
                   color: 'white',
-                  fontSize: '15px',
-                  fontWeight: '600',
+                  boxShadow: '0 8px 25px rgba(84, 160, 255, 0.4)',
+                  borderRadius: '20px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backdropFilter: 'blur(10px)'
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  padding: '32px 24px',
+                  gap: '20px',
+                  height: '100%'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.35)';
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(84, 160, 255, 0.5)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(84, 160, 255, 0.4)';
                 }}
               >
-                View All Tasks
-              </button>
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <Clock size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.inProgress}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>In Progress</p>
+                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Currently working</span>
+                </div>
+              </div>
+              <div
+                className="stat-card stat-progress"
+                onClick={() => handleStatCardClick('completed')}
+                style={{
+                  background: 'linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%)',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(29, 209, 161, 0.4)',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  padding: '32px 24px',
+                  gap: '20px',
+                  height: '100%'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(29, 209, 161, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(29, 209, 161, 0.4)';
+                }}
+              >
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <CheckCircle size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.completed}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Completed</p>
+                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Successfully finished</span>
+                </div>
+              </div>
+              <div
+                className="stat-card stat-pending"
+                onClick={() => handleStatCardClick('pending-client-approval')}
+                style={{
+                  background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(255, 107, 107, 0.4)',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  padding: '32px 24px',
+                  gap: '20px',
+                  height: '100%'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(255, 107, 107, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
+                }}
+              >
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <AlertCircle size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.pendingApproval}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Pending</p>
+                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Awaiting approval</span>
+                </div>
+              </div>
+              <div
+                className="stat-card"
+                onClick={() => handleStatCardClick('approved')}
+                style={{
+                  background: 'linear-gradient(135deg, #00b894 0%, #00cec9 100%)',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(0, 184, 148, 0.4)',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  padding: '32px 24px',
+                  gap: '20px',
+                  height: '100%'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 184, 148, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 184, 148, 0.4)';
+                }}
+              >
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <CheckCircle size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.approved}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Approved</p>
+                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Ready for production</span>
+                </div>
+              </div>
+              <div
+                className="stat-card"
+                onClick={() => handleStatCardClick('posted')}
+                style={{
+                  background: 'linear-gradient(135deg, #a55eea 0%, #a55eea 100%)',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(165, 94, 234, 0.4)',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  padding: '32px 24px',
+                  gap: '20px',
+                  height: '100%'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(165, 94, 234, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(165, 94, 234, 0.4)';
+                }}
+              >
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <Send size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.posted}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Posted</p>
+                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Published live</span>
+                </div>
+              </div>
+              <div
+                className="stat-card"
+                onClick={() => handleStatCardClick('revision-required')}
+                style={{
+                  background: 'linear-gradient(135deg, #eb4d4b 0%, #ff7979 100%)',
+                  color: 'white',
+                  boxShadow: '0 8px 25px rgba(235, 77, 75, 0.4)',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  padding: '32px 24px',
+                  gap: '20px',
+                  height: '100%'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(235, 77, 75, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(235, 77, 75, 0.4)';
+                }}
+              >
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <XCircle size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.revisionRequired}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Revision Req.</p>
+                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Needs attention</span>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* Search Bar and View Controls - Hidden when Dashboard is active */}
-        {!showDashboard && (
-        <div style={{
-          background: 'white',
-          borderRadius: '12px',
-          padding: '16px 24px',
-          marginBottom: '24px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          display: 'flex',
-          gap: '16px',
-          alignItems: 'center',
-          flexWrap: 'wrap'
-        }}>
-          {/* Search Bar */}
-          <div style={{
-            flex: '1 1 300px',
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center'
-          }}>
-            <Search size={18} style={{
-              position: 'absolute',
-              left: '12px',
-              color: '#9ca3af'
-            }} />
-            <input
-              type="text"
-              placeholder="Search clients, tasks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 12px 10px 40px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '14px',
-                outline: 'none',
-                transition: 'border-color 0.2s'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#667eea'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-            />
-          </div>
+            {/* Daily Report and Weekly Summary Cards - Only visible when Dashboard is active */}
+            {showDashboard && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                gap: '24px',
+                marginBottom: '25px'
+              }}>
+                {/* Daily Report Card */}
+                <div style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  color: 'white',
+                  boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(102, 126, 234, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.3)';
+                  }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '24px'
+                  }}>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      color: 'white'
+                    }}>Daily Report</h3>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Calendar size={24} />
+                    </div>
+                  </div>
 
-          {/* Time Filter Buttons */}
-          <div style={{
-            display: 'flex',
-            gap: '6px',
-            background: '#f3f4f6',
-            padding: '4px',
-            borderRadius: '8px'
-          }}>
-            <button
-              onClick={() => {
-                setTimeFilter('day');
-                showToast('Showing today\'s tasks', 'info');
-              }}
-              style={{
-                padding: '8px 14px',
-                background: timeFilter === 'day' ? '#667eea' : 'transparent',
-                color: timeFilter === 'day' ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s'
-              }}
-            >
-              <Clock size={14} /> Today
-            </button>
-            <button
-              onClick={() => {
-                setTimeFilter('week');
-                showToast('Showing this week\'s tasks', 'info');
-              }}
-              style={{
-                padding: '8px 14px',
-                background: timeFilter === 'week' ? '#667eea' : 'transparent',
-                color: timeFilter === 'week' ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s'
-              }}
-            >
-              <Calendar size={14} /> Week
-            </button>
-            <button
-              onClick={() => {
-                setTimeFilter('month');
-                showToast('Showing this month\'s tasks', 'info');
-              }}
-              style={{
-                padding: '8px 14px',
-                background: timeFilter === 'month' ? '#667eea' : 'transparent',
-                color: timeFilter === 'month' ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s'
-              }}
-            >
-              <Calendar size={14} /> Month
-            </button>
-          </div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '16px',
+                    marginBottom: '24px'
+                  }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isToday(t.deadline)).length}
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>Today's Tasks</div>
+                    </div>
 
-          {/* View Mode Toggle */}
-          <div style={{
-            display: 'flex',
-            gap: '8px',
-            background: '#f3f4f6',
-            padding: '4px',
-            borderRadius: '8px'
-          }}>
-            <button
-              onClick={() => setViewMode('list')}
-              style={{
-                padding: '8px 16px',
-                background: viewMode === 'list' ? '#667eea' : 'transparent',
-                color: viewMode === 'list' ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s'
-              }}
-            >
-              <List size={16} /> List View
-            </button>
-            <button
-              onClick={() => setViewMode('card')}
-              style={{
-                padding: '8px 16px',
-                background: viewMode === 'card' ? '#667eea' : 'transparent',
-                color: viewMode === 'card' ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s'
-              }}
-            >
-              <Grid size={16} /> Card View
-            </button>
-          </div>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isToday(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length}
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>Completed</div>
+                    </div>
 
-          {/* Download All Reports Button */}
-          <button
-            onClick={() => {
-              const groupedTasks = groupTasksByClient(getSearchFilteredTasks());
-              if (groupedTasks.length === 0) {
-                showToast('No tasks to download', 'warning');
-                return;
-              }
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isToday(t.deadline) && isTaskOverdue(t.deadline) && t.status !== 'completed' && t.status !== 'posted' && t.status !== 'approved').length}
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>Overdue</div>
+                    </div>
 
-              // Create HTML content for PDF
-              const htmlContent = `
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isToday(t.deadline)).length > 0
+                          ? Math.round((tasks.filter(t => isToday(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length / tasks.filter(t => isToday(t.deadline)).length) * 100)
+                          : 0}%
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>Success Rate</div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setTimeFilter('day');
+                      setShowDashboard(false);
+                      showToast('Viewing today\'s tasks', 'info');
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      background: 'rgba(255, 255, 255, 0.25)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      color: 'white',
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      backdropFilter: 'blur(10px)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = 'rgba(255, 255, 255, 0.35)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                    }}
+                  >
+                    View Today's Tasks
+                  </button>
+                </div>
+
+                {/* Weekly Summary Card */}
+                <div style={{
+                  background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  color: 'white',
+                  boxShadow: '0 8px 24px rgba(86, 171, 47, 0.3)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(86, 171, 47, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(86, 171, 47, 0.3)';
+                  }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '24px'
+                  }}>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      color: 'white'
+                    }}>Weekly Summary</h3>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <TrendingUp size={24} />
+                    </div>
+                  </div>
+
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '16px',
+                    marginBottom: '24px'
+                  }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isInCurrentWeek(t.deadline)).length}
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>Weekly Tasks</div>
+                    </div>
+
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isInCurrentWeek(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length}
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>Completed</div>
+                    </div>
+
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isInCurrentWeek(t.deadline) && t.status === 'in-progress').length}
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>In Progress</div>
+                    </div>
+
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        fontSize: '32px',
+                        fontWeight: '700',
+                        marginBottom: '4px'
+                      }}>
+                        {tasks.filter(t => isInCurrentWeek(t.deadline)).length > 0
+                          ? Math.round((tasks.filter(t => isInCurrentWeek(t.deadline) && (t.status === 'completed' || t.status === 'posted' || t.status === 'approved')).length / tasks.filter(t => isInCurrentWeek(t.deadline)).length) * 100)
+                          : 0}%
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        opacity: 0.9,
+                        fontWeight: '500'
+                      }}>My Efficiency</div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setTimeFilter('week');
+                      setShowDashboard(false);
+                      showToast('Viewing this week\'s tasks', 'info');
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      background: 'rgba(255, 255, 255, 0.25)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      color: 'white',
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      backdropFilter: 'blur(10px)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = 'rgba(255, 255, 255, 0.35)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                    }}
+                  >
+                    View All Tasks
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Search Bar and View Controls - Hidden when Dashboard is active */}
+            {!showDashboard && (
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '16px 24px',
+                marginBottom: '24px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                display: 'flex',
+                gap: '16px',
+                alignItems: 'center',
+                flexWrap: 'wrap'
+              }}>
+                {/* Search Bar */}
+                <div style={{
+                  flex: '1 1 300px',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  <Search size={18} style={{
+                    position: 'absolute',
+                    left: '12px',
+                    color: '#9ca3af'
+                  }} />
+                  <input
+                    type="text"
+                    placeholder="Search clients, tasks..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px 10px 40px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                    onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                  />
+                </div>
+
+                {/* Time Filter Buttons */}
+                <div style={{
+                  display: 'flex',
+                  gap: '6px',
+                  background: '#f3f4f6',
+                  padding: '4px',
+                  borderRadius: '8px'
+                }}>
+                  <button
+                    onClick={() => {
+                      setTimeFilter('day');
+                      showToast('Showing today\'s tasks', 'info');
+                    }}
+                    style={{
+                      padding: '8px 14px',
+                      background: timeFilter === 'day' ? '#667eea' : 'transparent',
+                      color: timeFilter === 'day' ? 'white' : '#6b7280',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Clock size={14} /> Today
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTimeFilter('week');
+                      showToast('Showing this week\'s tasks', 'info');
+                    }}
+                    style={{
+                      padding: '8px 14px',
+                      background: timeFilter === 'week' ? '#667eea' : 'transparent',
+                      color: timeFilter === 'week' ? 'white' : '#6b7280',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Calendar size={14} /> Week
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTimeFilter('month');
+                      showToast('Showing this month\'s tasks', 'info');
+                    }}
+                    style={{
+                      padding: '8px 14px',
+                      background: timeFilter === 'month' ? '#667eea' : 'transparent',
+                      color: timeFilter === 'month' ? 'white' : '#6b7280',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Calendar size={14} /> Month
+                  </button>
+                </div>
+
+                {/* View Mode Toggle */}
+                <div style={{
+                  display: 'flex',
+                  gap: '8px',
+                  background: '#f3f4f6',
+                  padding: '4px',
+                  borderRadius: '8px'
+                }}>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    style={{
+                      padding: '8px 16px',
+                      background: viewMode === 'list' ? '#667eea' : 'transparent',
+                      color: viewMode === 'list' ? 'white' : '#6b7280',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <List size={16} /> List View
+                  </button>
+                  <button
+                    onClick={() => setViewMode('card')}
+                    style={{
+                      padding: '8px 16px',
+                      background: viewMode === 'card' ? '#667eea' : 'transparent',
+                      color: viewMode === 'card' ? 'white' : '#6b7280',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Grid size={16} /> Card View
+                  </button>
+                </div>
+
+                {/* Download All Reports Button */}
+                <button
+                  onClick={() => {
+                    const groupedTasks = groupTasksByClient(getSearchFilteredTasks());
+                    if (groupedTasks.length === 0) {
+                      showToast('No tasks to download', 'warning');
+                      return;
+                    }
+
+                    // Create HTML content for PDF
+                    const htmlContent = `
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -1760,16 +2011,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     <h1>All Clients Task Report</h1>
                     <p>Social Media Employee: ${employeeName}</p>
                     <p>Generated on ${new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}</p>
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}</p>
                   </div>
                   
                   ${groupedTasks.map(clientGroup => {
-                const clientName = clientGroup[0].clientName || 'Unknown Client';
-                return `
+                      const clientName = clientGroup[0].clientName || 'Unknown Client';
+                      return `
                       <div class="client-section">
                         <div class="client-header">
                           <h2 style="margin: 0; font-size: 16px;">${clientName} (${clientGroup.length} tasks)</h2>
@@ -1798,7 +2049,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                         </table>
                       </div>
                     `;
-              }).join('')}
+                    }).join('')}
 
                   <div class="footer">
                     <p>This report was generated from the Social Media Employee Dashboard</p>
@@ -1808,280 +2059,280 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                 </html>
               `;
 
-              // Create a new window and print as PDF
-              const printWindow = window.open('', '_blank');
-              printWindow.document.write(htmlContent);
-              printWindow.document.close();
+                    // Create a new window and print as PDF
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(htmlContent);
+                    printWindow.document.close();
 
-              setTimeout(() => {
-                printWindow.focus();
-                printWindow.print();
-                setTimeout(() => {
-                  printWindow.close();
-                }, 1000);
-              }, 500);
+                    setTimeout(() => {
+                      printWindow.focus();
+                      printWindow.print();
+                      setTimeout(() => {
+                        printWindow.close();
+                      }, 1000);
+                    }, 500);
 
-              showToast(`PDF report generated for all clients`, 'success');
-            }}
-            style={{
-              padding: '10px 20px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '600',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 2px 8px rgba(102,126,234,0.3)',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 4px 12px rgba(102,126,234,0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 2px 8px rgba(102,126,234,0.3)';
-            }}
-          >
-            <Download size={16} /> Download All Reports (PDF)
-          </button>
-        </div>
-        )}
-
-
-
-        {/* Tasks by Client - Card View - Hidden when Dashboard is active */}
-        {!showDashboard && viewMode === 'card' && !selectedClientForCardView && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '20px',
-            padding: '0'
-          }}>
-            {getSearchFilteredTasks().length === 0 ? (
-              <div style={{
-                gridColumn: '1 / -1',
-                textAlign: 'center',
-                padding: '60px 20px',
-                color: '#9ca3af',
-                background: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-              }}>
-                <Share2 size={64} color="#cbd5e1" />
-                <h3 style={{ margin: '16px 0 8px 0', fontSize: '18px', color: '#6b7280' }}>No tasks found</h3>
-                <p style={{ margin: 0, fontSize: '14px' }}>You don't have any tasks assigned yet.</p>
+                    showToast(`PDF report generated for all clients`, 'success');
+                  }}
+                  style={{
+                    padding: '10px 20px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 2px 8px rgba(102,126,234,0.3)',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(102,126,234,0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 2px 8px rgba(102,126,234,0.3)';
+                  }}
+                >
+                  <Download size={16} /> Download All Reports (PDF)
+                </button>
               </div>
-            ) : (
-              groupTasksByClient(getSearchFilteredTasks()).map((clientGroup) => {
-                const clientName = clientGroup[0].clientName || 'Unknown Client';
-                const totalTasks = clientGroup.length;
-                const completedTasks = clientGroup.filter(t => t.status === 'completed' || t.status === 'posted').length;
-                const inProgressTasks = clientGroup.filter(t => t.status === 'in-progress').length;
-                const clientInitial = clientName.charAt(0).toUpperCase();
+            )}
 
-                return (
-                  <div
-                    key={clientName}
-                    onClick={() => setSelectedClientForCardView(clientName)}
+
+
+            {/* Tasks by Client - Card View - Hidden when Dashboard is active */}
+            {!showDashboard && viewMode === 'card' && !selectedClientForCardView && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: '20px',
+                padding: '0'
+              }}>
+                {getSearchFilteredTasks().length === 0 ? (
+                  <div style={{
+                    gridColumn: '1 / -1',
+                    textAlign: 'center',
+                    padding: '60px 20px',
+                    color: '#9ca3af',
+                    background: 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                  }}>
+                    <Share2 size={64} color="#cbd5e1" />
+                    <h3 style={{ margin: '16px 0 8px 0', fontSize: '18px', color: '#6b7280' }}>No tasks found</h3>
+                    <p style={{ margin: 0, fontSize: '14px' }}>You don't have any tasks assigned yet.</p>
+                  </div>
+                ) : (
+                  groupTasksByClient(getSearchFilteredTasks()).map((clientGroup) => {
+                    const clientName = clientGroup[0].clientName || 'Unknown Client';
+                    const totalTasks = clientGroup.length;
+                    const completedTasks = clientGroup.filter(t => t.status === 'completed' || t.status === 'posted').length;
+                    const inProgressTasks = clientGroup.filter(t => t.status === 'in-progress').length;
+                    const clientInitial = clientName.charAt(0).toUpperCase();
+
+                    return (
+                      <div
+                        key={clientName}
+                        onClick={() => setSelectedClientForCardView(clientName)}
+                        style={{
+                          background: 'linear-gradient(135deg, #5dade2 0%, #3498db 100%)',
+                          borderRadius: '16px',
+                          padding: '0',
+                          boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          overflow: 'hidden'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-4px)';
+                          e.currentTarget.style.boxShadow = '0 8px 20px rgba(52, 152, 219, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(52, 152, 219, 0.3)';
+                        }}
+                      >
+                        {/* Card Header */}
+                        <div style={{
+                          padding: '24px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                          borderBottom: '1px solid rgba(255,255,255,0.2)'
+                        }}>
+                          <div style={{
+                            width: '56px',
+                            height: '56px',
+                            borderRadius: '50%',
+                            background: 'rgba(255,255,255,0.25)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '24px',
+                            fontWeight: '700',
+                            color: 'white',
+                            flexShrink: 0
+                          }}>
+                            {clientInitial}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <h3 style={{
+                              margin: 0,
+                              fontSize: '18px',
+                              fontWeight: '700',
+                              color: 'white',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>
+                              {clientName}
+                            </h3>
+                            <p style={{
+                              margin: '4px 0 0 0',
+                              fontSize: '13px',
+                              color: 'rgba(255,255,255,0.9)',
+                              fontWeight: '500'
+                            }}>
+                              {totalTasks} task{totalTasks !== 1 ? 's' : ''}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Card Stats */}
+                        <div style={{
+                          padding: '20px 24px',
+                          background: 'white',
+                          display: 'flex',
+                          justifyContent: 'space-around',
+                          gap: '12px'
+                        }}>
+                          <div style={{ textAlign: 'center', flex: 1 }}>
+                            <div style={{
+                              fontSize: '28px',
+                              fontWeight: '700',
+                              color: '#3498db',
+                              marginBottom: '4px'
+                            }}>
+                              {totalTasks}
+                            </div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              fontWeight: '500'
+                            }}>
+                              Total Tasks
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'center', flex: 1 }}>
+                            <div style={{
+                              fontSize: '28px',
+                              fontWeight: '700',
+                              color: '#10b981',
+                              marginBottom: '4px'
+                            }}>
+                              {completedTasks}
+                            </div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              fontWeight: '500'
+                            }}>
+                              Completed
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'center', flex: 1 }}>
+                            <div style={{
+                              fontSize: '28px',
+                              fontWeight: '700',
+                              color: '#f59e0b',
+                              marginBottom: '4px'
+                            }}>
+                              {inProgressTasks}
+                            </div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              fontWeight: '500'
+                            }}>
+                              In Progress
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Click to view */}
+                        <div style={{
+                          padding: '12px 24px',
+                          background: 'rgba(52, 152, 219, 0.1)',
+                          textAlign: 'center',
+                          fontSize: '13px',
+                          color: '#3498db',
+                          fontWeight: '600',
+                          fontStyle: 'italic'
+                        }}>
+                          Click to view all tasks
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+
+            {/* Individual Task Cards View - When Client is Selected - Hidden when Dashboard is active */}
+            {!showDashboard && viewMode === 'card' && selectedClientForCardView && (
+              <div>
+                {/* Action Buttons */}
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  marginBottom: '24px',
+                  flexWrap: 'wrap'
+                }}>
+                  <button
+                    onClick={() => setSelectedClientForCardView(null)}
                     style={{
-                      background: 'linear-gradient(135deg, #5dade2 0%, #3498db 100%)',
-                      borderRadius: '16px',
-                      padding: '0',
-                      boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
+                      padding: '12px 24px',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
                       cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      overflow: 'hidden'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(52, 152, 219, 0.4)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(52, 152, 219, 0.3)';
-                    }}
-                  >
-                    {/* Card Header */}
-                    <div style={{
-                      padding: '24px',
+                      fontSize: '14px',
+                      fontWeight: '600',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '16px',
-                      borderBottom: '1px solid rgba(255,255,255,0.2)'
-                    }}>
-                      <div style={{
-                        width: '56px',
-                        height: '56px',
-                        borderRadius: '50%',
-                        background: 'rgba(255,255,255,0.25)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '24px',
-                        fontWeight: '700',
-                        color: 'white',
-                        flexShrink: 0
-                      }}>
-                        {clientInitial}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <h3 style={{
-                          margin: 0,
-                          fontSize: '18px',
-                          fontWeight: '700',
-                          color: 'white',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis'
-                        }}>
-                          {clientName}
-                        </h3>
-                        <p style={{
-                          margin: '4px 0 0 0',
-                          fontSize: '13px',
-                          color: 'rgba(255,255,255,0.9)',
-                          fontWeight: '500'
-                        }}>
-                          {totalTasks} task{totalTasks !== 1 ? 's' : ''}
-                        </p>
-                      </div>
-                    </div>
+                      gap: '8px',
+                      boxShadow: '0 2px 8px rgba(102,126,234,0.3)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(102,126,234,0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 2px 8px rgba(102,126,234,0.3)';
+                    }}
+                  >
+                    ← Back to All Clients
+                  </button>
 
-                    {/* Card Stats */}
-                    <div style={{
-                      padding: '20px 24px',
-                      background: 'white',
-                      display: 'flex',
-                      justifyContent: 'space-around',
-                      gap: '12px'
-                    }}>
-                      <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{
-                          fontSize: '28px',
-                          fontWeight: '700',
-                          color: '#3498db',
-                          marginBottom: '4px'
-                        }}>
-                          {totalTasks}
-                        </div>
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#6b7280',
-                          fontWeight: '500'
-                        }}>
-                          Total Tasks
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{
-                          fontSize: '28px',
-                          fontWeight: '700',
-                          color: '#10b981',
-                          marginBottom: '4px'
-                        }}>
-                          {completedTasks}
-                        </div>
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#6b7280',
-                          fontWeight: '500'
-                        }}>
-                          Completed
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{
-                          fontSize: '28px',
-                          fontWeight: '700',
-                          color: '#f59e0b',
-                          marginBottom: '4px'
-                        }}>
-                          {inProgressTasks}
-                        </div>
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#6b7280',
-                          fontWeight: '500'
-                        }}>
-                          In Progress
-                        </div>
-                      </div>
-                    </div>
+                  <button
+                    onClick={() => {
+                      const clientGroup = groupTasksByClient(getSearchFilteredTasks())
+                        .find(group => group[0].clientName === selectedClientForCardView);
 
-                    {/* Click to view */}
-                    <div style={{
-                      padding: '12px 24px',
-                      background: 'rgba(52, 152, 219, 0.1)',
-                      textAlign: 'center',
-                      fontSize: '13px',
-                      color: '#3498db',
-                      fontWeight: '600',
-                      fontStyle: 'italic'
-                    }}>
-                      Click to view all tasks
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        )}
+                      if (!clientGroup) return;
 
-        {/* Individual Task Cards View - When Client is Selected - Hidden when Dashboard is active */}
-        {!showDashboard && viewMode === 'card' && selectedClientForCardView && (
-          <div>
-            {/* Action Buttons */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              marginBottom: '24px',
-              flexWrap: 'wrap'
-            }}>
-              <button
-                onClick={() => setSelectedClientForCardView(null)}
-                style={{
-                  padding: '12px 24px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 2px 8px rgba(102,126,234,0.3)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 4px 12px rgba(102,126,234,0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(102,126,234,0.3)';
-                }}
-              >
-                ← Back to All Clients
-              </button>
+                      const clientName = selectedClientForCardView;
 
-              <button
-                onClick={() => {
-                  const clientGroup = groupTasksByClient(getSearchFilteredTasks())
-                    .find(group => group[0].clientName === selectedClientForCardView);
-
-                  if (!clientGroup) return;
-
-                  const clientName = selectedClientForCardView;
-
-                  // Create HTML content for PDF
-                  const htmlContent = `
+                      // Create HTML content for PDF
+                      const htmlContent = `
                     <!DOCTYPE html>
                     <html>
                     <head>
@@ -2104,11 +2355,11 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                         <h1>All Tasks Report - ${clientName}</h1>
                         <p>Social Media Employee: ${employeeName}</p>
                         <p>Generated on ${new Date().toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}</p>
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}</p>
                       </div>
 
                       <table>
@@ -2144,623 +2395,623 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     </html>
                   `;
 
-                  // Create a new window and print as PDF
-                  const printWindow = window.open('', '_blank');
-                  printWindow.document.write(htmlContent);
-                  printWindow.document.close();
+                      // Create a new window and print as PDF
+                      const printWindow = window.open('', '_blank');
+                      printWindow.document.write(htmlContent);
+                      printWindow.document.close();
 
-                  setTimeout(() => {
-                    printWindow.focus();
-                    printWindow.print();
-                    setTimeout(() => {
-                      printWindow.close();
-                    }, 1000);
-                  }, 500);
+                      setTimeout(() => {
+                        printWindow.focus();
+                        printWindow.print();
+                        setTimeout(() => {
+                          printWindow.close();
+                        }, 1000);
+                      }, 500);
 
-                  showToast(`PDF report generated for all ${clientGroup.length} task(s)`, 'success');
-                }}
-                style={{
-                  padding: '12px 24px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 2px 8px rgba(102,126,234,0.3)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 4px 12px rgba(102,126,234,0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(102,126,234,0.3)';
-                }}
-              >
-                <Download size={16} /> Download All
-              </button>
-            </div>
+                      showToast(`PDF report generated for all ${clientGroup.length} task(s)`, 'success');
+                    }}
+                    style={{
+                      padding: '12px 24px',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: '0 2px 8px rgba(102,126,234,0.3)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(102,126,234,0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 2px 8px rgba(102,126,234,0.3)';
+                    }}
+                  >
+                    <Download size={16} /> Download All
+                  </button>
+                </div>
 
-            {/* Task Cards Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-              gap: '20px',
-              padding: '0'
-            }}>
-              {(() => {
-                const clientGroup = groupTasksByClient(getSearchFilteredTasks())
-                  .find(group => group[0].clientName === selectedClientForCardView);
+                {/* Task Cards Grid */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+                  gap: '20px',
+                  padding: '0'
+                }}>
+                  {(() => {
+                    const clientGroup = groupTasksByClient(getSearchFilteredTasks())
+                      .find(group => group[0].clientName === selectedClientForCardView);
 
-                if (!clientGroup) return null;
+                    if (!clientGroup) return null;
 
-                return clientGroup.map(task => {
-                  const isOverdue = task.deadline && new Date(task.deadline) < new Date() &&
-                    task.status !== 'completed' && task.status !== 'posted' && task.status !== 'approved';
+                    return clientGroup.map(task => {
+                      const isOverdue = task.deadline && new Date(task.deadline) < new Date() &&
+                        task.status !== 'completed' && task.status !== 'posted' && task.status !== 'approved';
 
-                  return (
-                    <div
-                      key={task.id}
-                      style={{
-                        background: 'linear-gradient(135deg, #5dade2 0%, #3498db 100%)',
-                        borderRadius: '16px',
-                        overflow: 'hidden',
-                        boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
-                        transition: 'all 0.3s ease',
-                        position: 'relative'
-                      }}
-                    >
-                      {/* Card Header */}
-                      <div style={{
-                        padding: '20px',
-                        paddingTop: isOverdue ? '48px' : '20px',
-                        borderBottom: '1px solid rgba(255,255,255,0.2)',
-                        position: 'relative'
-                      }}>
-                        {/* Overdue Badge */}
-                        {isOverdue && (
+                      return (
+                        <div
+                          key={task.id}
+                          style={{
+                            background: 'linear-gradient(135deg, #5dade2 0%, #3498db 100%)',
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
+                            transition: 'all 0.3s ease',
+                            position: 'relative'
+                          }}
+                        >
+                          {/* Card Header */}
                           <div style={{
-                            position: 'absolute',
-                            top: '12px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            background: '#ef4444',
-                            color: 'white',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '11px',
-                            fontWeight: '700',
-                            textTransform: 'uppercase',
-                            zIndex: 10,
-                            boxShadow: '0 2px 8px rgba(239,68,68,0.4)'
+                            padding: '20px',
+                            paddingTop: isOverdue ? '48px' : '20px',
+                            borderBottom: '1px solid rgba(255,255,255,0.2)',
+                            position: 'relative'
                           }}>
-                            OVERDUE
-                          </div>
-                        )}
-
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          justifyContent: 'space-between',
-                          gap: '12px'
-                        }}>
-                          <div style={{
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.25)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '20px',
-                            fontWeight: '700',
-                            color: 'white',
-                            flexShrink: 0
-                          }}>
-                            {task.clientName?.charAt(0).toUpperCase() || 'T'}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <h3 style={{
-                              margin: 0,
-                              fontSize: '16px',
-                              fontWeight: '700',
-                              color: 'white',
-                              marginBottom: '4px'
-                            }}>
-                              {task.taskName || 'Untitled Task'}
-                            </h3>
-                            <p style={{
-                              margin: 0,
-                              fontSize: '13px',
-                              color: 'rgba(255,255,255,0.9)',
-                              fontWeight: '500'
-                            }}>
-                              {task.projectName || 'No Project'}
-                            </p>
-                          </div>
-                          <input
-                            type="checkbox"
-                            checked={isTaskSelected(selectedClientForCardView, task.id)}
-                            onChange={(e) => {
-                              e.stopPropagation();
-                              toggleTaskSelection(selectedClientForCardView, task.id);
-                            }}
-                            style={{
-                              width: '20px',
-                              height: '20px',
-                              cursor: 'pointer',
-                              flexShrink: 0
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Card Body */}
-                      <div style={{
-                        padding: '20px',
-                        background: 'white'
-                      }}>
-                        {/* Task Details */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '12px'
-                          }}>
-                            <div style={{ flex: 1 }}>
+                            {/* Overdue Badge */}
+                            {isOverdue && (
                               <div style={{
-                                fontSize: '11px',
-                                color: '#6b7280',
-                                fontWeight: '600',
-                                textTransform: 'uppercase',
-                                marginBottom: '4px'
-                              }}>
-                                Project
-                              </div>
-                              <div style={{
-                                fontSize: '14px',
-                                color: '#374151',
-                                fontWeight: '600'
-                              }}>
-                                {task.projectName || 'N/A'}
-                              </div>
-                            </div>
-                            <div style={{
-                              textAlign: 'right',
-                              flex: 1
-                            }}>
-                              <div style={{
-                                fontSize: '11px',
-                                color: '#6b7280',
-                                fontWeight: '600',
-                                textTransform: 'uppercase',
-                                marginBottom: '4px'
-                              }}>
-                                {task.deadline ? 'Due Date' : 'No Deadline'}
-                              </div>
-                              <div style={{
-                                fontSize: '14px',
-                                color: isOverdue ? '#ef4444' : '#374151',
-                                fontWeight: '600'
-                              }}>
-                                {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric'
-                                }) : '-'}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            gap: '12px',
-                            marginBottom: '12px'
-                          }}>
-                            <div style={{ flex: 1 }}>
-                              <div style={{
-                                fontSize: '11px',
-                                color: '#6b7280',
-                                fontWeight: '600',
-                                textTransform: 'uppercase',
-                                marginBottom: '4px'
-                              }}>
-                                Department:
-                              </div>
-                              <div style={{
-                                display: 'inline-block',
-                                padding: '4px 10px',
-                                background: getDepartmentColor(task.originalDepartment || task.department),
+                                position: 'absolute',
+                                top: '12px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                background: '#ef4444',
                                 color: 'white',
+                                padding: '4px 12px',
                                 borderRadius: '12px',
                                 fontSize: '11px',
                                 fontWeight: '700',
-                                textTransform: 'uppercase'
-                              }}>
-                                {task.originalDepartment || task.department || 'N/A'}
-                              </div>
-                            </div>
-                            <div style={{ flex: 1, textAlign: 'right' }}>
-                              <div style={{
-                                fontSize: '11px',
-                                color: '#6b7280',
-                                fontWeight: '600',
                                 textTransform: 'uppercase',
-                                marginBottom: '4px'
+                                zIndex: 10,
+                                boxShadow: '0 2px 8px rgba(239,68,68,0.4)'
                               }}>
-                                Revisions
+                                OVERDUE
                               </div>
+                            )}
+
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              justifyContent: 'space-between',
+                              gap: '12px'
+                            }}>
                               <div style={{
-                                display: 'inline-block',
-                                minWidth: '32px',
-                                height: '32px',
-                                lineHeight: '32px',
+                                width: '48px',
+                                height: '48px',
                                 borderRadius: '50%',
-                                fontSize: '16px',
+                                background: 'rgba(255,255,255,0.25)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '20px',
                                 fontWeight: '700',
-                                backgroundColor: (task.revisionCount || 0) > 0 ? '#ef4444' : '#10b981',
                                 color: 'white',
-                                textAlign: 'center'
+                                flexShrink: 0
                               }}>
-                                {task.revisionCount || 0}
+                                {task.clientName?.charAt(0).toUpperCase() || 'T'}
                               </div>
-                            </div>
-                          </div>
-
-                          <div style={{ marginBottom: '12px' }}>
-                            <div style={{
-                              fontSize: '11px',
-                              color: '#6b7280',
-                              fontWeight: '600',
-                              textTransform: 'uppercase',
-                              marginBottom: '4px'
-                            }}>
-                              Assigned To:
-                            </div>
-                            <div style={{
-                              fontSize: '14px',
-                              color: '#374151',
-                              fontWeight: '600'
-                            }}>
-                              {task.assignedTo || task.socialMediaAssignedTo || 'Unassigned'}
-                            </div>
-                          </div>
-
-                          <div>
-                            <div style={{
-                              fontSize: '11px',
-                              color: '#6b7280',
-                              fontWeight: '600',
-                              textTransform: 'uppercase',
-                              marginBottom: '4px'
-                            }}>
-                              Status:
-                            </div>
-                            <select
-                              value={task.status}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                handleStatusUpdate(task.id, e.target.value);
-                              }}
-                              style={{
-                                width: '100%',
-                                padding: '8px 12px',
-                                borderRadius: '8px',
-                                border: '1px solid #d1d5db',
-                                fontSize: '13px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                backgroundColor: getStatusColor(task.status),
-                                color: 'white'
-                              }}
-                            >
-                              <option value="assigned-to-department">Assigned</option>
-                              <option value="in-progress">In Progress</option>
-                              <option value="completed">Completed</option>
-                              <option value="pending-client-approval">Pending Client Approval</option>
-                              <option value="approved">Approved</option>
-                              <option value="posted">Posted</option>
-                              <option value="revision-required">Revision Required</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Revision Message */}
-                        {task.revisionMessage && (
-                          <div style={{
-                            marginTop: '12px',
-                            padding: '12px',
-                            backgroundColor: '#fff3cd',
-                            border: '1px solid #ffc107',
-                            borderRadius: '8px',
-                            fontSize: '12px',
-                            color: '#856404'
-                          }}>
-                            <strong>⚠️ Revision Required:</strong> {task.revisionMessage}
-                          </div>
-                        )}
-
-                        {/* Action Buttons */}
-                        <div style={{
-                          marginTop: '16px',
-                          display: 'flex',
-                          gap: '8px',
-                          flexWrap: 'wrap'
-                        }}>
-                          {task.status === 'pending-client-approval' && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const taskRef = ref(database, `tasks/${task.id}`);
-                                update(taskRef, {
-                                  status: 'approved',
-                                  approvedAt: new Date().toISOString(),
-                                  approvedBy: employeeName,
-                                  lastUpdated: new Date().toISOString()
-                                });
-                                showToast('✅ Task approved and sent to client!', 'success');
-                              }}
-                              style={{
-                                flex: 1,
-                                padding: '12px',
-                                background: '#10b981',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                transition: 'all 0.2s'
-                              }}
-                              onMouseEnter={(e) => e.target.style.background = '#059669'}
-                              onMouseLeave={(e) => e.target.style.background = '#10b981'}
-                            >
-                              ✓ Approve & Send
-                            </button>
-                          )}
-
-                          {task.status === 'approved' && (
-                            <>
-                              <div style={{
-                                flex: 1,
-                                padding: '12px',
-                                backgroundColor: '#d1fae5',
-                                borderRadius: '8px',
-                                fontSize: '14px',
-                                color: '#065f46',
-                                textAlign: 'center',
-                                fontWeight: '600'
-                              }}>
-                                ✓ Approved
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <h3 style={{
+                                  margin: 0,
+                                  fontSize: '16px',
+                                  fontWeight: '700',
+                                  color: 'white',
+                                  marginBottom: '4px'
+                                }}>
+                                  {task.taskName || 'Untitled Task'}
+                                </h3>
+                                <p style={{
+                                  margin: 0,
+                                  fontSize: '13px',
+                                  color: 'rgba(255,255,255,0.9)',
+                                  fontWeight: '500'
+                                }}>
+                                  {task.projectName || 'No Project'}
+                                </p>
                               </div>
-                              <button
-                                onClick={(e) => {
+                              <input
+                                type="checkbox"
+                                checked={isTaskSelected(selectedClientForCardView, task.id)}
+                                onChange={(e) => {
                                   e.stopPropagation();
-                                  handleMarkAsPosted(task);
+                                  toggleTaskSelection(selectedClientForCardView, task.id);
                                 }}
                                 style={{
+                                  width: '20px',
+                                  height: '20px',
+                                  cursor: 'pointer',
+                                  flexShrink: 0
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Card Body */}
+                          <div style={{
+                            padding: '20px',
+                            background: 'white'
+                          }}>
+                            {/* Task Details */}
+                            <div style={{ marginBottom: '16px' }}>
+                              <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '12px'
+                              }}>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{
+                                    fontSize: '11px',
+                                    color: '#6b7280',
+                                    fontWeight: '600',
+                                    textTransform: 'uppercase',
+                                    marginBottom: '4px'
+                                  }}>
+                                    Project
+                                  </div>
+                                  <div style={{
+                                    fontSize: '14px',
+                                    color: '#374151',
+                                    fontWeight: '600'
+                                  }}>
+                                    {task.projectName || 'N/A'}
+                                  </div>
+                                </div>
+                                <div style={{
+                                  textAlign: 'right',
+                                  flex: 1
+                                }}>
+                                  <div style={{
+                                    fontSize: '11px',
+                                    color: '#6b7280',
+                                    fontWeight: '600',
+                                    textTransform: 'uppercase',
+                                    marginBottom: '4px'
+                                  }}>
+                                    {task.deadline ? 'Due Date' : 'No Deadline'}
+                                  </div>
+                                  <div style={{
+                                    fontSize: '14px',
+                                    color: isOverdue ? '#ef4444' : '#374151',
+                                    fontWeight: '600'
+                                  }}>
+                                    {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric'
+                                    }) : '-'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                gap: '12px',
+                                marginBottom: '12px'
+                              }}>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{
+                                    fontSize: '11px',
+                                    color: '#6b7280',
+                                    fontWeight: '600',
+                                    textTransform: 'uppercase',
+                                    marginBottom: '4px'
+                                  }}>
+                                    Department:
+                                  </div>
+                                  <div style={{
+                                    display: 'inline-block',
+                                    padding: '4px 10px',
+                                    background: getDepartmentColor(task.originalDepartment || task.department),
+                                    color: 'white',
+                                    borderRadius: '12px',
+                                    fontSize: '11px',
+                                    fontWeight: '700',
+                                    textTransform: 'uppercase'
+                                  }}>
+                                    {task.originalDepartment || task.department || 'N/A'}
+                                  </div>
+                                </div>
+                                <div style={{ flex: 1, textAlign: 'right' }}>
+                                  <div style={{
+                                    fontSize: '11px',
+                                    color: '#6b7280',
+                                    fontWeight: '600',
+                                    textTransform: 'uppercase',
+                                    marginBottom: '4px'
+                                  }}>
+                                    Revisions
+                                  </div>
+                                  <div style={{
+                                    display: 'inline-block',
+                                    minWidth: '32px',
+                                    height: '32px',
+                                    lineHeight: '32px',
+                                    borderRadius: '50%',
+                                    fontSize: '16px',
+                                    fontWeight: '700',
+                                    backgroundColor: (task.revisionCount || 0) > 0 ? '#ef4444' : '#10b981',
+                                    color: 'white',
+                                    textAlign: 'center'
+                                  }}>
+                                    {task.revisionCount || 0}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div style={{ marginBottom: '12px' }}>
+                                <div style={{
+                                  fontSize: '11px',
+                                  color: '#6b7280',
+                                  fontWeight: '600',
+                                  textTransform: 'uppercase',
+                                  marginBottom: '4px'
+                                }}>
+                                  Assigned To:
+                                </div>
+                                <div style={{
+                                  fontSize: '14px',
+                                  color: '#374151',
+                                  fontWeight: '600'
+                                }}>
+                                  {task.assignedTo || task.socialMediaAssignedTo || 'Unassigned'}
+                                </div>
+                              </div>
+
+                              <div>
+                                <div style={{
+                                  fontSize: '11px',
+                                  color: '#6b7280',
+                                  fontWeight: '600',
+                                  textTransform: 'uppercase',
+                                  marginBottom: '4px'
+                                }}>
+                                  Status:
+                                </div>
+                                <select
+                                  value={task.status}
+                                  onChange={(e) => {
+                                    e.stopPropagation();
+                                    handleStatusUpdate(task.id, e.target.value);
+                                  }}
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px 12px',
+                                    borderRadius: '8px',
+                                    border: '1px solid #d1d5db',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    backgroundColor: getStatusColor(task.status),
+                                    color: 'white'
+                                  }}
+                                >
+                                  <option value="assigned-to-department">Assigned</option>
+                                  <option value="in-progress">In Progress</option>
+                                  <option value="completed">Completed</option>
+                                  <option value="pending-client-approval">Pending Client Approval</option>
+                                  <option value="approved">Approved</option>
+                                  <option value="posted">Posted</option>
+                                  <option value="revision-required">Revision Required</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Revision Message */}
+                            {task.revisionMessage && (
+                              <div style={{
+                                marginTop: '12px',
+                                padding: '12px',
+                                backgroundColor: '#fff3cd',
+                                border: '1px solid #ffc107',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                color: '#856404'
+                              }}>
+                                <strong>⚠️ Revision Required:</strong> {task.revisionMessage}
+                              </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div style={{
+                              marginTop: '16px',
+                              display: 'flex',
+                              gap: '8px',
+                              flexWrap: 'wrap'
+                            }}>
+                              {task.status === 'pending-client-approval' && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const taskRef = ref(database, `tasks/${task.id}`);
+                                    update(taskRef, {
+                                      status: 'approved',
+                                      approvedAt: new Date().toISOString(),
+                                      approvedBy: employeeName,
+                                      lastUpdated: new Date().toISOString()
+                                    });
+                                    showToast('✅ Task approved and sent to client!', 'success');
+                                  }}
+                                  style={{
+                                    flex: 1,
+                                    padding: '12px',
+                                    background: '#10b981',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    transition: 'all 0.2s'
+                                  }}
+                                  onMouseEnter={(e) => e.target.style.background = '#059669'}
+                                  onMouseLeave={(e) => e.target.style.background = '#10b981'}
+                                >
+                                  ✓ Approve & Send
+                                </button>
+                              )}
+
+                              {task.status === 'approved' && (
+                                <>
+                                  <div style={{
+                                    flex: 1,
+                                    padding: '12px',
+                                    backgroundColor: '#d1fae5',
+                                    borderRadius: '8px',
+                                    fontSize: '14px',
+                                    color: '#065f46',
+                                    textAlign: 'center',
+                                    fontWeight: '600'
+                                  }}>
+                                    ✓ Approved
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleMarkAsPosted(task);
+                                    }}
+                                    style={{
+                                      flex: 1,
+                                      padding: '12px',
+                                      background: '#3b82f6',
+                                      color: 'white',
+                                      border: 'none',
+                                      borderRadius: '8px',
+                                      cursor: 'pointer',
+                                      fontSize: '14px',
+                                      fontWeight: '600',
+                                      transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.background = '#2563eb'}
+                                    onMouseLeave={(e) => e.target.style.background = '#3b82f6'}
+                                  >
+                                    📤 Post
+                                  </button>
+                                </>
+                              )}
+
+                              {task.status === 'posted' && (
+                                <div style={{
                                   flex: 1,
                                   padding: '12px',
-                                  background: '#3b82f6',
-                                  color: 'white',
-                                  border: 'none',
+                                  backgroundColor: '#e0f2fe',
                                   borderRadius: '8px',
-                                  cursor: 'pointer',
                                   fontSize: '14px',
-                                  fontWeight: '600',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={(e) => e.target.style.background = '#2563eb'}
-                                onMouseLeave={(e) => e.target.style.background = '#3b82f6'}
-                              >
-                                📤 Post
-                              </button>
-                            </>
-                          )}
+                                  color: '#0c4a6e',
+                                  textAlign: 'center',
+                                  fontWeight: '600'
+                                }}>
+                                  ✓ Posted
+                                </div>
+                              )}
 
-                          {task.status === 'posted' && (
-                            <div style={{
-                              flex: 1,
-                              padding: '12px',
-                              backgroundColor: '#e0f2fe',
-                              borderRadius: '8px',
-                              fontSize: '14px',
-                              color: '#0c4a6e',
-                              textAlign: 'center',
-                              fontWeight: '600'
-                            }}>
-                              ✓ Posted
+                              {task.status !== 'pending-client-approval' && task.status !== 'approved' && task.status !== 'posted' && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    showToast(`Viewing details for: ${task.taskName}`, 'info');
+                                  }}
+                                  style={{
+                                    flex: 1,
+                                    padding: '12px',
+                                    background: '#6b7280',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    transition: 'all 0.2s'
+                                  }}
+                                  onMouseEnter={(e) => e.target.style.background = '#4b5563'}
+                                  onMouseLeave={(e) => e.target.style.background = '#6b7280'}
+                                >
+                                  View Details
+                                </button>
+                              )}
                             </div>
-                          )}
-
-                          {task.status !== 'pending-client-approval' && task.status !== 'approved' && task.status !== 'posted' && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                showToast(`Viewing details for: ${task.taskName}`, 'info');
-                              }}
-                              style={{
-                                flex: 1,
-                                padding: '12px',
-                                background: '#6b7280',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                transition: 'all 0.2s'
-                              }}
-                              onMouseEnter={(e) => e.target.style.background = '#4b5563'}
-                              onMouseLeave={(e) => e.target.style.background = '#6b7280'}
-                            >
-                              View Details
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                });
-              })()}
-            </div>
-          </div>
-        )}
-
-        {/* Tasks by Client - List View - Hidden when Dashboard is active */}
-        {!showDashboard && viewMode === 'list' && (
-          <div className="card full-width">
-            <div className="card-header">
-              <h2> My Tasks ({getSearchFilteredTasks().length})</h2>
-              <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-                All tasks assigned to you
-              </p>
-            </div>
-
-            {getSearchFilteredTasks().length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
-                <Share2 size={64} color="#cbd5e1" />
-                <h3 style={{ margin: '16px 0 8px 0', fontSize: '18px', color: '#6b7280' }}>No tasks found</h3>
-                <p style={{ margin: 0, fontSize: '14px' }}>You don't have any tasks assigned yet.</p>
-              </div>
-            ) : (
-              <div style={{ padding: '20px', overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #e9ecef' }}>
-                      <th style={{ padding: '12px 2px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '16%' }}>Task Name</th>
-                      <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '12%' }}>Client</th>
-                      <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '10%' }}>Dept</th>
-                      <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '11%' }}>Deadline</th>
-                      <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '12%' }}>Status</th>
-                      <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '39%' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                {getSearchFilteredTasks().map((task, index) => (
-                  <tr key={task.id} style={{ borderBottom: '1px solid #f1f3f4', backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9fafb' }}>
-                    <td style={{ padding: '12px 2px', textAlign: 'left', color: '#495057', fontSize: '14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        {getStatusIcon(task.status)}
-                        <div style={{ flex: 1, overflow: 'hidden' }}>
-                          <div style={{ fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={task.taskName}>
-                            {task.taskName}
                           </div>
-                          {task.revisionMessage && (
-                            <div style={{ marginTop: '6px', padding: '6px 8px', backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '6px', fontSize: '12px', color: '#856404' }}>
-                              <strong>Revision:</strong> {task.revisionMessage.length > 50 ? task.revisionMessage.substring(0, 50) + '...' : task.revisionMessage}
-                            </div>
-                          )}
                         </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px 2px', textAlign: 'center', fontSize: '13px', color: '#6b7280' }}>
-                      <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={task.clientName}>
-                        {task.clientName || 'N/A'}
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px 2px', textAlign: 'center' }}>
-                      <span style={{ padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: '600', backgroundColor: getDepartmentColor(task.originalDepartment || task.department), color: 'white', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'inline-block' }}>
-                        {(task.originalDepartment || task.department || 'N/A').substring(0, 8)}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 2px', textAlign: 'center', fontSize: '13px', color: isTaskOverdue(task.deadline) ? '#dc2626' : '#6b7280', fontWeight: isTaskOverdue(task.deadline) ? '600' : 'normal' }}>
-                      <div style={{ whiteSpace: 'nowrap' }}>
-                        {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'}
-                      </div>
-                      {isTaskOverdue(task.deadline) && <div style={{ fontSize: '11px', color: '#dc2626', marginTop: '2px' }}>OVERDUE</div>}
-                    </td>
-                    <td style={{ padding: '12px 2px', textAlign: 'center' }}>
-                      <span style={{ 
-                        padding: '6px 12px', 
-                        borderRadius: '8px', 
-                        fontSize: '12px', 
-                        fontWeight: '600', 
-                        backgroundColor: getStatusColor(task.status), 
-                        color: 'white', 
-                        display: 'inline-block',
-                        textTransform: 'capitalize',
-                        whiteSpace: 'nowrap'
-                      }}>
-                        {task.status?.replace(/-/g, ' ') || 'N/A'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 2px', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                        {/* Approve and Reject buttons for pending-client-approval status */}
-                        {task.status === 'pending-client-approval' && (
-                          <>
-                            <button 
-                              onClick={() => handleApproveTask(task.id)} 
-                              style={{ 
-                                padding: '6px 12px', 
-                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
-                                color: 'white', 
-                                border: 'none', 
-                                borderRadius: '6px', 
-                                cursor: 'pointer', 
-                                fontSize: '12px', 
-                                fontWeight: '600', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '4px', 
-                                transition: 'all 0.2s', 
-                                boxShadow: '0 2px 6px rgba(16,185,129,0.3)',
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              <CheckCircle size={14} /> Approve
-                            </button>
-                            <button 
-                              onClick={() => handleRejectTask(task.id)} 
-                              style={{ 
-                                padding: '6px 12px', 
-                                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', 
-                                color: 'white', 
-                                border: 'none', 
-                                borderRadius: '6px', 
-                                cursor: 'pointer', 
-                                fontSize: '12px', 
-                                fontWeight: '600', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '4px', 
-                                transition: 'all 0.2s', 
-                                boxShadow: '0 2px 6px rgba(239,68,68,0.3)',
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              <XCircle size={14} /> Reject
-                            </button>
-                          </>
-                        )}
-                        {task.status === 'approved' && (
-                          <button onClick={() => handleMarkAsPosted(task)} style={{ padding: '6px 12px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.2s', boxShadow: '0 2px 6px rgba(16,185,129,0.3)', whiteSpace: 'nowrap' }}>
-                            <CheckCircle size={14} /> Mark as Posted
-                          </button>
-                        )}
-                        {task.status === 'posted' && (
-                          <span style={{ padding: '6px 12px', background: '#d1fae5', color: '#065f46', borderRadius: '6px', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
-                            <CheckCircle size={13} /> Posted
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                  </tbody>
-                </table>
+                      );
+                    });
+                  })()}
+                </div>
               </div>
             )}
-          </div>
-        )}
+
+            {/* Tasks by Client - List View - Hidden when Dashboard is active */}
+            {!showDashboard && viewMode === 'list' && (
+              <div className="card full-width">
+                <div className="card-header">
+                  <h2> My Tasks ({getSearchFilteredTasks().length})</h2>
+                  <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
+                    All tasks assigned to you
+                  </p>
+                </div>
+
+                {getSearchFilteredTasks().length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
+                    <Share2 size={64} color="#cbd5e1" />
+                    <h3 style={{ margin: '16px 0 8px 0', fontSize: '18px', color: '#6b7280' }}>No tasks found</h3>
+                    <p style={{ margin: 0, fontSize: '14px' }}>You don't have any tasks assigned yet.</p>
+                  </div>
+                ) : (
+                  <div style={{ padding: '20px', overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #e9ecef' }}>
+                          <th style={{ padding: '12px 2px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '16%' }}>Task Name</th>
+                          <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '12%' }}>Client</th>
+                          <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '10%' }}>Dept</th>
+                          <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '11%' }}>Deadline</th>
+                          <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '12%' }}>Status</th>
+                          <th style={{ padding: '12px 2px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '39%' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {getSearchFilteredTasks().map((task, index) => (
+                          <tr key={task.id} style={{ borderBottom: '1px solid #f1f3f4', backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9fafb' }}>
+                            <td style={{ padding: '12px 2px', textAlign: 'left', color: '#495057', fontSize: '14px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                {getStatusIcon(task.status)}
+                                <div style={{ flex: 1, overflow: 'hidden' }}>
+                                  <div style={{ fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={task.taskName}>
+                                    {task.taskName}
+                                  </div>
+                                  {task.revisionMessage && (
+                                    <div style={{ marginTop: '6px', padding: '6px 8px', backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '6px', fontSize: '12px', color: '#856404' }}>
+                                      <strong>Revision:</strong> {task.revisionMessage.length > 50 ? task.revisionMessage.substring(0, 50) + '...' : task.revisionMessage}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px 2px', textAlign: 'center', fontSize: '13px', color: '#6b7280' }}>
+                              <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={task.clientName}>
+                                {task.clientName || 'N/A'}
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px 2px', textAlign: 'center' }}>
+                              <span style={{ padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: '600', backgroundColor: getDepartmentColor(task.originalDepartment || task.department), color: 'white', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'inline-block' }}>
+                                {(task.originalDepartment || task.department || 'N/A').substring(0, 8)}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px 2px', textAlign: 'center', fontSize: '13px', color: isTaskOverdue(task.deadline) ? '#dc2626' : '#6b7280', fontWeight: isTaskOverdue(task.deadline) ? '600' : 'normal' }}>
+                              <div style={{ whiteSpace: 'nowrap' }}>
+                                {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'}
+                              </div>
+                              {isTaskOverdue(task.deadline) && <div style={{ fontSize: '11px', color: '#dc2626', marginTop: '2px' }}>OVERDUE</div>}
+                            </td>
+                            <td style={{ padding: '12px 2px', textAlign: 'center' }}>
+                              <span style={{
+                                padding: '6px 12px',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                backgroundColor: getStatusColor(task.status),
+                                color: 'white',
+                                display: 'inline-block',
+                                textTransform: 'capitalize',
+                                whiteSpace: 'nowrap'
+                              }}>
+                                {task.status?.replace(/-/g, ' ') || 'N/A'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px 2px', textAlign: 'center' }}>
+                              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                {/* Approve and Reject buttons for pending-client-approval status */}
+                                {task.status === 'pending-client-approval' && (
+                                  <>
+                                    <button
+                                      onClick={() => handleApproveTask(task.id)}
+                                      style={{
+                                        padding: '6px 12px',
+                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        transition: 'all 0.2s',
+                                        boxShadow: '0 2px 6px rgba(16,185,129,0.3)',
+                                        whiteSpace: 'nowrap'
+                                      }}
+                                    >
+                                      <CheckCircle size={14} /> Approve
+                                    </button>
+                                    <button
+                                      onClick={() => handleRejectTask(task.id)}
+                                      style={{
+                                        padding: '6px 12px',
+                                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        transition: 'all 0.2s',
+                                        boxShadow: '0 2px 6px rgba(239,68,68,0.3)',
+                                        whiteSpace: 'nowrap'
+                                      }}
+                                    >
+                                      <XCircle size={14} /> Reject
+                                    </button>
+                                  </>
+                                )}
+                                {task.status === 'approved' && (
+                                  <button onClick={() => handleMarkAsPosted(task)} style={{ padding: '6px 12px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.2s', boxShadow: '0 2px 6px rgba(16,185,129,0.3)', whiteSpace: 'nowrap' }}>
+                                    <CheckCircle size={14} /> Mark as Posted
+                                  </button>
+                                )}
+                                {task.status === 'posted' && (
+                                  <span style={{ padding: '6px 12px', background: '#d1fae5', color: '#065f46', borderRadius: '6px', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
+                                    <CheckCircle size={13} /> Posted
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
           </>
         )}
 
@@ -2805,201 +3056,201 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     </p>
                   </div>
                   <div style={{ position: 'relative' }} className="download-dropdown">
-                  <button
-                    onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                    style={{
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '10px 20px',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      boxShadow: '0 2px 8px rgba(16,185,129,0.25)',
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-1px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(16,185,129,0.35)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(16,185,129,0.25)';
-                    }}
-                  >
-                    <Download size={16} />
-                    Download Report
-                  </button>
-                  
-                  {showDownloadOptions && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      right: 0,
-                      marginTop: '8px',
-                      background: 'white',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                      border: '1px solid #e5e7eb',
-                      minWidth: '180px',
-                      zIndex: 1000,
-                      overflow: 'hidden'
-                    }}>
-                      <button
-                        onClick={() => {
-                          // Download PDF
-                          const doc = new jsPDF('p', 'mm', 'a4');
-                          const pageWidth = doc.internal.pageSize.getWidth();
-                          
-                          doc.setFontSize(20);
-                          doc.setFont('helvetica', 'bold');
-                          doc.setTextColor(102, 126, 234);
-                          doc.text('Social Media Employee Report', pageWidth / 2, 20, { align: 'center' });
-                          
-                          doc.setFontSize(12);
-                          doc.setFont('helvetica', 'normal');
-                          doc.setTextColor(100, 100, 100);
-                          doc.text(`Employee: ${employeeName}`, 20, 35);
-                          doc.text(`Period: ${selectedMonth}`, 20, 42);
-                          doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 49);
-                          
-                          doc.setFontSize(14);
-                          doc.setFont('helvetica', 'bold');
-                          doc.setTextColor(50, 50, 50);
-                          doc.text('Performance Summary', 20, 62);
-                          
-                          doc.setFontSize(11);
-                          doc.setFont('helvetica', 'normal');
-                          doc.text(`Total Tasks: ${allMonthTasks.length}`, 20, 72);
-                          doc.text(`Completed: ${completedTasks}`, 20, 79);
-                          doc.text(`In Progress: ${allMonthTasks.filter(t => t.status === 'in-progress').length}`, 20, 86);
-                          doc.text(`Completion Rate: ${completionRate}%`, 20, 93);
-                          
-                          const tableData = allMonthTasks.map(task => [
-                            (task.clientName || 'N/A').substring(0, 30),
-                            (task.taskName || 'N/A').substring(0, 40),
-                            (task.status || '').replace(/-/g, ' ').toUpperCase(),
-                            task.deadline ? new Date(task.deadline).toLocaleDateString() : 'N/A'
-                          ]);
-                          
-                          autoTable(doc, {
-                            startY: 105,
-                            head: [['Client', 'Task', 'Status', 'Deadline']],
-                            body: tableData,
-                            theme: 'striped',
-                            headStyles: {
-                              fillColor: [0, 184, 148],
-                              textColor: 255,
-                              fontSize: 10,
-                              fontStyle: 'bold',
-                              halign: 'left'
-                            },
-                            bodyStyles: {
-                              fontSize: 9,
-                              textColor: 50
-                            },
-                            alternateRowStyles: {
-                              fillColor: [248, 250, 252]
-                            },
-                            columnStyles: {
-                              0: { cellWidth: 45 },
-                              1: { cellWidth: 70 },
-                              2: { cellWidth: 35 },
-                              3: { cellWidth: 30 }
-                            },
-                            margin: { left: 15, right: 15 }
-                          });
-                          
-                          doc.save(`social-media-employee-report-${selectedMonth}.pdf`);
-                          showToast('✅ PDF report downloaded successfully', 'success');
-                          setShowDownloadOptions(false);
-                        }}
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          border: 'none',
-                          background: 'white',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          fontWeight: '500',
-                          color: '#1f2937',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          transition: 'background 0.2s'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'white'}
-                      >
-                        📄 Download as PDF
-                      </button>
-                      <button
-                        onClick={() => {
-                          // Download Excel
-                          const wb = XLSX.utils.book_new();
-                          
-                          const headerData = [
-                            ['Social Media Employee Report'],
-                            [],
-                            [`Employee: ${employeeName}`],
-                            [`Period: ${selectedMonth}`],
-                            [`Generated: ${new Date().toLocaleDateString()}`],
-                            [],
-                            ['Performance Summary'],
-                            [`Total Tasks: ${allMonthTasks.length}`],
-                            [`Completed: ${completedTasks}`],
-                            [`In Progress: ${allMonthTasks.filter(t => t.status === 'in-progress').length}`],
-                            [`Completion Rate: ${completionRate}%`],
-                            [],
-                            ['Client', 'Task', 'Status', 'Deadline']
-                          ];
-                          
-                          const taskData = allMonthTasks.map(task => [
-                            task.clientName || 'N/A',
-                            task.taskName || 'N/A',
-                            (task.status || '').replace(/-/g, ' ').toUpperCase(),
-                            task.deadline ? new Date(task.deadline).toLocaleDateString() : 'N/A'
-                          ]);
-                          
-                          const allData = [...headerData, ...taskData];
-                          const ws = XLSX.utils.aoa_to_sheet(allData);
-                          
-                          ws['!cols'] = [{ wch: 25 }, { wch: 35 }, { wch: 20 }, { wch: 15 }];
-                          
-                          XLSX.utils.book_append_sheet(wb, ws, 'Employee Report');
-                          XLSX.writeFile(wb, `social-media-employee-report-${selectedMonth}.xlsx`);
-                          
-                          showToast('✅ Excel report downloaded successfully', 'success');
-                          setShowDownloadOptions(false);
-                        }}
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          border: 'none',
-                          background: 'white',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          fontWeight: '500',
-                          color: '#1f2937',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          transition: 'background 0.2s',
-                          borderTop: '1px solid #f3f4f6'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'white'}
-                      >
-                        📊 Download as Excel
-                      </button>
-                    </div>
-                  )}
+                    <button
+                      onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 2px 8px rgba(16,185,129,0.25)',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(16,185,129,0.35)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(16,185,129,0.25)';
+                      }}
+                    >
+                      <Download size={16} />
+                      Download Report
+                    </button>
+
+                    {showDownloadOptions && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        right: 0,
+                        marginTop: '8px',
+                        background: 'white',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        border: '1px solid #e5e7eb',
+                        minWidth: '180px',
+                        zIndex: 1000,
+                        overflow: 'hidden'
+                      }}>
+                        <button
+                          onClick={() => {
+                            // Download PDF
+                            const doc = new jsPDF('p', 'mm', 'a4');
+                            const pageWidth = doc.internal.pageSize.getWidth();
+
+                            doc.setFontSize(20);
+                            doc.setFont('helvetica', 'bold');
+                            doc.setTextColor(102, 126, 234);
+                            doc.text('Social Media Employee Report', pageWidth / 2, 20, { align: 'center' });
+
+                            doc.setFontSize(12);
+                            doc.setFont('helvetica', 'normal');
+                            doc.setTextColor(100, 100, 100);
+                            doc.text(`Employee: ${employeeName}`, 20, 35);
+                            doc.text(`Period: ${selectedMonth}`, 20, 42);
+                            doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 49);
+
+                            doc.setFontSize(14);
+                            doc.setFont('helvetica', 'bold');
+                            doc.setTextColor(50, 50, 50);
+                            doc.text('Performance Summary', 20, 62);
+
+                            doc.setFontSize(11);
+                            doc.setFont('helvetica', 'normal');
+                            doc.text(`Total Tasks: ${allMonthTasks.length}`, 20, 72);
+                            doc.text(`Completed: ${completedTasks}`, 20, 79);
+                            doc.text(`In Progress: ${allMonthTasks.filter(t => t.status === 'in-progress').length}`, 20, 86);
+                            doc.text(`Completion Rate: ${completionRate}%`, 20, 93);
+
+                            const tableData = allMonthTasks.map(task => [
+                              (task.clientName || 'N/A').substring(0, 30),
+                              (task.taskName || 'N/A').substring(0, 40),
+                              (task.status || '').replace(/-/g, ' ').toUpperCase(),
+                              task.deadline ? new Date(task.deadline).toLocaleDateString() : 'N/A'
+                            ]);
+
+                            autoTable(doc, {
+                              startY: 105,
+                              head: [['Client', 'Task', 'Status', 'Deadline']],
+                              body: tableData,
+                              theme: 'striped',
+                              headStyles: {
+                                fillColor: [0, 184, 148],
+                                textColor: 255,
+                                fontSize: 10,
+                                fontStyle: 'bold',
+                                halign: 'left'
+                              },
+                              bodyStyles: {
+                                fontSize: 9,
+                                textColor: 50
+                              },
+                              alternateRowStyles: {
+                                fillColor: [248, 250, 252]
+                              },
+                              columnStyles: {
+                                0: { cellWidth: 45 },
+                                1: { cellWidth: 70 },
+                                2: { cellWidth: 35 },
+                                3: { cellWidth: 30 }
+                              },
+                              margin: { left: 15, right: 15 }
+                            });
+
+                            doc.save(`social-media-employee-report-${selectedMonth}.pdf`);
+                            showToast('✅ PDF report downloaded successfully', 'success');
+                            setShowDownloadOptions(false);
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            border: 'none',
+                            background: 'white',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            color: '#1f2937',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseOver={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                          onMouseOut={(e) => e.currentTarget.style.background = 'white'}
+                        >
+                          📄 Download as PDF
+                        </button>
+                        <button
+                          onClick={() => {
+                            // Download Excel
+                            const wb = XLSX.utils.book_new();
+
+                            const headerData = [
+                              ['Social Media Employee Report'],
+                              [],
+                              [`Employee: ${employeeName}`],
+                              [`Period: ${selectedMonth}`],
+                              [`Generated: ${new Date().toLocaleDateString()}`],
+                              [],
+                              ['Performance Summary'],
+                              [`Total Tasks: ${allMonthTasks.length}`],
+                              [`Completed: ${completedTasks}`],
+                              [`In Progress: ${allMonthTasks.filter(t => t.status === 'in-progress').length}`],
+                              [`Completion Rate: ${completionRate}%`],
+                              [],
+                              ['Client', 'Task', 'Status', 'Deadline']
+                            ];
+
+                            const taskData = allMonthTasks.map(task => [
+                              task.clientName || 'N/A',
+                              task.taskName || 'N/A',
+                              (task.status || '').replace(/-/g, ' ').toUpperCase(),
+                              task.deadline ? new Date(task.deadline).toLocaleDateString() : 'N/A'
+                            ]);
+
+                            const allData = [...headerData, ...taskData];
+                            const ws = XLSX.utils.aoa_to_sheet(allData);
+
+                            ws['!cols'] = [{ wch: 25 }, { wch: 35 }, { wch: 20 }, { wch: 15 }];
+
+                            XLSX.utils.book_append_sheet(wb, ws, 'Employee Report');
+                            XLSX.writeFile(wb, `social-media-employee-report-${selectedMonth}.xlsx`);
+
+                            showToast('✅ Excel report downloaded successfully', 'success');
+                            setShowDownloadOptions(false);
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            border: 'none',
+                            background: 'white',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            color: '#1f2937',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            transition: 'background 0.2s',
+                            borderTop: '1px solid #f3f4f6'
+                          }}
+                          onMouseOver={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                          onMouseOut={(e) => e.currentTarget.style.background = 'white'}
+                        >
+                          📊 Download as Excel
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -3024,7 +3275,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     flex: '1',
                     minWidth: '250px'
                   }}>
-                    <Search size={18} style={{color: '#6b7280'}} />
+                    <Search size={18} style={{ color: '#6b7280' }} />
                     <input
                       type="text"
                       placeholder="Search by client, task, employee..."
@@ -3063,7 +3314,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     onChange={(e) => {
                       const newEmployee = e.target.value;
                       setReportsEmployeeFilter(newEmployee);
-                      
+
                       // Reset client filter if the currently selected client doesn't have tasks for this employee
                       if (reportsClientFilter !== 'all' && newEmployee !== 'all') {
                         const employeeTasks = filteredTasks.filter(t => t.assignedTo === newEmployee);
@@ -3285,7 +3536,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       { label: 'Posted', count: allMonthTasks.filter(t => t.status === 'posted' || t.status === 'approved').length, color: '#8b5cf6' }
                     ];
                     const total = statusData.reduce((sum, item) => sum + item.count, 0);
-                    
+
                     if (total === 0) {
                       return (
                         <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9ca3af' }}>
@@ -3294,7 +3545,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                         </div>
                       );
                     }
-                    
+
                     let currentAngle = 0;
                     const radius = 70;
                     const centerX = 100;
@@ -3308,20 +3559,20 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                             const angle = (item.count / total) * 360;
                             const startAngle = currentAngle;
                             const endAngle = currentAngle + angle;
-                            
+
                             const startRad = (startAngle - 90) * (Math.PI / 180);
                             const endRad = (endAngle - 90) * (Math.PI / 180);
-                            
+
                             const x1 = centerX + radius * Math.cos(startRad);
                             const y1 = centerY + radius * Math.sin(startRad);
                             const x2 = centerX + radius * Math.cos(endRad);
                             const y2 = centerY + radius * Math.sin(endRad);
-                            
+
                             const largeArc = angle > 180 ? 1 : 0;
                             const path = `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-                            
+
                             currentAngle += angle;
-                            
+
                             return (
                               <path
                                 key={index}
@@ -3483,7 +3734,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                           <Download size={16} />
                           Download Selected ({selectedReportClients.size > 0 ? `${selectedReportClients.size} clients` : `${selectedReportTaskIds.size} tasks`})
                         </button>
-                        
+
                         {showReportFormatDropdown && (
                           <div style={{
                             position: 'absolute',
@@ -3556,7 +3807,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                 doc.setFont('helvetica', 'bold');
                                 doc.setTextColor(102, 126, 234);
                                 doc.text('Social Media Employee Report', pageWidth / 2, yPosition, { align: 'center' });
-                                
+
                                 yPosition += 8;
                                 doc.setFontSize(11);
                                 doc.setFont('helvetica', 'normal');
@@ -3583,14 +3834,14 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                   doc.setFontSize(13);
                                   doc.setFont('helvetica', 'bold');
                                   doc.text(`${clientName} (ID: ${clientData.clientId})`, 18, yPosition + 2);
-                                  
+
                                   yPosition += 10;
 
                                   // Tasks table
                                   const tableData = clientData.tasks.map(task => {
                                     let postDate = 'N/A';
                                     let postTime = 'N/A';
-                                    
+
                                     if (task.postDate) {
                                       try {
                                         const date = new Date(task.postDate);
@@ -3658,7 +3909,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
 
                                 doc.save(`social-media-employee-report-${selectedMonth}.pdf`);
                                 showToast(`✅ PDF downloaded with ${tasksToDownload.length} task(s)`, 'success');
-                                
+
                                 // Clear selections
                                 setSelectedReportClients(new Set());
                                 setSelectedReportTaskIds(new Set());
@@ -3732,7 +3983,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
 
                                 // Create Excel
                                 const wb = XLSX.utils.book_new();
-                                
+
                                 const headerData = [
                                   ['Social Media Employee Report'],
                                   [],
@@ -3748,12 +3999,12 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                   // Client header
                                   allData.push([`${clientName} (ID: ${clientData.clientId})`, '', '', '', '', '', '']);
                                   allData.push(['Client ID', 'Client Name', 'Task Name (Ideas)', 'Department', 'Type', 'Post Date', 'Post Time']);
-                                  
+
                                   // Client tasks
                                   clientData.tasks.forEach(task => {
                                     let postDate = 'N/A';
                                     let postTime = 'N/A';
-                                    
+
                                     if (task.postDate) {
                                       try {
                                         const date = new Date(task.postDate);
@@ -3782,18 +4033,18 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                       postTime
                                     ]);
                                   });
-                                  
+
                                   allData.push([]); // Empty row between clients
                                 });
 
                                 const ws = XLSX.utils.aoa_to_sheet(allData);
                                 ws['!cols'] = [{ wch: 15 }, { wch: 25 }, { wch: 40 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 15 }];
-                                
+
                                 XLSX.utils.book_append_sheet(wb, ws, 'Employee Report');
                                 XLSX.writeFile(wb, `social-media-employee-report-${selectedMonth}.xlsx`);
-                                
+
                                 showToast(`✅ Excel downloaded with ${tasksToDownload.length} task(s)`, 'success');
-                                
+
                                 // Clear selections
                                 setSelectedReportClients(new Set());
                                 setSelectedReportTaskIds(new Set());
@@ -3911,7 +4162,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                   e.stopPropagation();
                                   const newSelectedClients = new Set(selectedReportClients);
                                   const newSelectedTasks = new Set(selectedReportTaskIds);
-                                  
+
                                   if (e.target.checked) {
                                     newSelectedClients.add(clientName);
                                     // Also select all tasks for this client
@@ -3921,7 +4172,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                     // Also deselect all tasks for this client
                                     clientData.tasks.forEach(task => newSelectedTasks.delete(task.id));
                                   }
-                                  
+
                                   setSelectedReportClients(newSelectedClients);
                                   setSelectedReportTaskIds(newSelectedTasks);
                                 }}
@@ -3985,7 +4236,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                         onChange={(e) => {
                                           const newSelectedTasks = new Set(selectedReportTaskIds);
                                           const newSelectedClients = new Set(selectedReportClients);
-                                          
+
                                           if (e.target.checked) {
                                             clientData.tasks.forEach(t => newSelectedTasks.add(t.id));
                                             newSelectedClients.add(clientName);
@@ -3993,7 +4244,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                             clientData.tasks.forEach(t => newSelectedTasks.delete(t.id));
                                             newSelectedClients.delete(clientName);
                                           }
-                                          
+
                                           setSelectedReportTaskIds(newSelectedTasks);
                                           setSelectedReportClients(newSelectedClients);
                                         }}
@@ -4016,7 +4267,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                   // Parse post date and time
                                   let postDate = 'N/A';
                                   let postTime = 'N/A';
-                                  
+
                                   if (task.postDate) {
                                     try {
                                       const date = new Date(task.postDate);
@@ -4048,11 +4299,11 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                             onChange={(e) => {
                                               const newSelectedTasks = new Set(selectedReportTaskIds);
                                               const newSelectedClients = new Set(selectedReportClients);
-                                              
+
                                               if (e.target.checked) {
                                                 newSelectedTasks.add(task.id);
                                                 // Check if all tasks for this client are now selected
-                                                const allTasksSelected = clientData.tasks.every(t => 
+                                                const allTasksSelected = clientData.tasks.every(t =>
                                                   t.id === task.id || newSelectedTasks.has(t.id)
                                                 );
                                                 if (allTasksSelected) {
@@ -4063,7 +4314,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                                                 // Deselect the client since not all tasks are selected
                                                 newSelectedClients.delete(clientName);
                                               }
-                                              
+
                                               setSelectedReportTaskIds(newSelectedTasks);
                                               setSelectedReportClients(newSelectedClients);
                                             }}
@@ -4279,21 +4530,21 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
           zIndex: 1000,
           padding: '20px'
         }}
-        onClick={() => {
-          setShowAssignTaskModal(false);
-          setNewTask({
-            clientName: '',
-            clientId: '',
-            ideas: '',
-            content: '',
-            referenceLink: '',
-            specialNotes: '',
-            department: '',
-            taskType: '',
-            postDate: ''
-          });
-          setManualClientEntry(false);
-        }}
+          onClick={() => {
+            setShowAssignTaskModal(false);
+            setNewTask({
+              clientName: '',
+              clientId: '',
+              ideas: '',
+              content: '',
+              referenceLink: '',
+              specialNotes: '',
+              department: '',
+              taskType: '',
+              postDate: ''
+            });
+            setManualClientEntry(false);
+          }}
         >
           <div style={{
             backgroundColor: 'white',
@@ -4304,7 +4555,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
             maxHeight: '90vh',
             overflow: 'auto'
           }}
-          onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div style={{
@@ -4315,18 +4566,18 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               top: 0,
               zIndex: 1
             }}>
-              <h3 style={{margin: 0, fontSize: '20px', fontWeight: '700'}}>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '700' }}>
                 📋 Assign Task to Department
               </h3>
-              <p style={{margin: '6px 0 0 0', fontSize: '14px', opacity: 0.9}}>
+              <p style={{ margin: '6px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
                 Create and assign a new task to Video or Graphics department
               </p>
             </div>
 
             {/* Modal Content */}
-            <div style={{padding: '24px'}}>
+            <div style={{ padding: '24px' }}>
               {/* Client Selection */}
-              <div style={{marginBottom: '20px'}}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
@@ -4334,10 +4585,10 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                   fontWeight: '600',
                   color: '#374151'
                 }}>
-                  Client Name <span style={{color: '#ef4444'}}>*</span>
+                  Client Name <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 {!manualClientEntry ? (
-                  <div style={{display: 'flex', gap: '8px'}}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
                     <select
                       value={newTask.clientName}
                       onChange={handleClientChange}
@@ -4377,11 +4628,11 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     </button>
                   </div>
                 ) : (
-                  <div style={{display: 'flex', gap: '8px'}}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
                     <input
                       type="text"
                       value={newTask.clientName}
-                      onChange={(e) => setNewTask({...newTask, clientName: e.target.value, clientId: e.target.value})}
+                      onChange={(e) => setNewTask({ ...newTask, clientName: e.target.value, clientId: e.target.value })}
                       placeholder="Enter client name"
                       style={{
                         flex: 1,
@@ -4398,7 +4649,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     <button
                       onClick={() => {
                         setManualClientEntry(false);
-                        setNewTask({...newTask, clientName: '', clientId: ''});
+                        setNewTask({ ...newTask, clientName: '', clientId: '' });
                       }}
                       style={{
                         padding: '12px 16px',
@@ -4418,7 +4669,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               </div>
 
               {/* Ideas/Task Name */}
-              <div style={{marginBottom: '20px'}}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
@@ -4426,12 +4677,12 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                   fontWeight: '600',
                   color: '#374151'
                 }}>
-                  Task Name / Ideas <span style={{color: '#ef4444'}}>*</span>
+                  Task Name / Ideas <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
                   type="text"
                   value={newTask.ideas}
-                  onChange={(e) => setNewTask({...newTask, ideas: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, ideas: e.target.value })}
                   placeholder="Enter task name or ideas"
                   style={{
                     width: '100%',
@@ -4449,7 +4700,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               </div>
 
               {/* Content */}
-              <div style={{marginBottom: '20px'}}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
@@ -4461,7 +4712,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                 </label>
                 <textarea
                   value={newTask.content}
-                  onChange={(e) => setNewTask({...newTask, content: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, content: e.target.value })}
                   placeholder="Enter task description or content details"
                   rows={4}
                   style={{
@@ -4482,7 +4733,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               </div>
 
               {/* Reference Link */}
-              <div style={{marginBottom: '20px'}}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
@@ -4495,7 +4746,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                 <input
                   type="url"
                   value={newTask.referenceLink}
-                  onChange={(e) => setNewTask({...newTask, referenceLink: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, referenceLink: e.target.value })}
                   placeholder="https://example.com"
                   style={{
                     width: '100%',
@@ -4513,7 +4764,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               </div>
 
               {/* Special Notes */}
-              <div style={{marginBottom: '20px'}}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
@@ -4525,7 +4776,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                 </label>
                 <textarea
                   value={newTask.specialNotes}
-                  onChange={(e) => setNewTask({...newTask, specialNotes: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, specialNotes: e.target.value })}
                   placeholder="Any special instructions or notes"
                   rows={3}
                   style={{
@@ -4546,7 +4797,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               </div>
 
               {/* Department Selection */}
-              <div style={{marginBottom: '20px'}}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
@@ -4554,11 +4805,11 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                   fontWeight: '600',
                   color: '#374151'
                 }}>
-                  Assign to Department <span style={{color: '#ef4444'}}>*</span>
+                  Assign to Department <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <select
                   value={newTask.department}
-                  onChange={(e) => setNewTask({...newTask, department: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, department: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -4579,7 +4830,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               </div>
 
               {/* Post Date */}
-              <div style={{marginBottom: '24px'}}>
+              <div style={{ marginBottom: '24px' }}>
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
@@ -4587,12 +4838,12 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                   fontWeight: '600',
                   color: '#374151'
                 }}>
-                  Post Date <span style={{color: '#ef4444'}}>*</span>
+                  Post Date <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
                   type="date"
                   value={newTask.postDate}
-                  onChange={(e) => setNewTask({...newTask, postDate: e.target.value})}
+                  onChange={(e) => setNewTask({ ...newTask, postDate: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -4704,10 +4955,10 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
           zIndex: 1000,
           padding: '20px'
         }}
-        onClick={() => {
-          setShowAdModal(false);
-          setSelectedTaskForPosting(null);
-        }}
+          onClick={() => {
+            setShowAdModal(false);
+            setSelectedTaskForPosting(null);
+          }}
         >
           <div style={{
             backgroundColor: 'white',
@@ -4717,7 +4968,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
             width: '100%',
             overflow: 'hidden'
           }}
-          onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div style={{
@@ -4725,16 +4976,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               padding: '20px',
               color: 'white'
             }}>
-              <h3 style={{margin: 0, fontSize: '18px', fontWeight: '600'}}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
                 📢 Post Content
               </h3>
-              <p style={{margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9}}>
+              <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
                 {selectedTaskForPosting.taskName}
               </p>
             </div>
 
             {/* Modal Content */}
-            <div style={{padding: '24px'}}>
+            <div style={{ padding: '24px' }}>
               <h4 style={{
                 margin: '0 0 16px 0',
                 fontSize: '16px',
@@ -4784,9 +5035,9 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                 margin: '20px 0',
                 gap: '12px'
               }}>
-                <div style={{flex: 1, height: '1px', backgroundColor: '#e5e7eb'}}></div>
-                <span style={{fontSize: '13px', color: '#6b7280', fontWeight: '500'}}>OR</span>
-                <div style={{flex: 1, height: '1px', backgroundColor: '#e5e7eb'}}></div>
+                <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+                <span style={{ fontSize: '13px', color: '#6b7280', fontWeight: '500' }}>OR</span>
+                <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
               </div>
 
               {/* Yes, with Ads Section */}
@@ -4806,7 +5057,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                 </h5>
 
                 {/* Ad Type Dropdown */}
-                <div style={{marginBottom: '12px'}}>
+                <div style={{ marginBottom: '12px' }}>
                   <label style={{
                     display: 'block',
                     marginBottom: '6px',
@@ -4850,7 +5101,7 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                 </div>
 
                 {/* Ad Cost Input */}
-                <div style={{marginBottom: '16px'}}>
+                <div style={{ marginBottom: '16px' }}>
                   <label style={{
                     display: 'block',
                     marginBottom: '6px',

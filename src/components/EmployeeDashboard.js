@@ -3,7 +3,7 @@ import { ref, onValue, update } from 'firebase/database';
 import { database } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
-import { CheckCircle, XCircle, Clock, LogOut, User, Calendar, AlertCircle, PlayCircle, Send, Filter, Video, Image, LayoutDashboard, Search, List, Grid, Download, BarChart3, PieChart, TrendingUp } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, LogOut, User, Calendar, AlertCircle, PlayCircle, Send, Filter, Video, Image, LayoutDashboard, Search, List, Grid, Download, BarChart3, PieChart, TrendingUp, Briefcase } from 'lucide-react';
 import { useToast, ToastContainer } from './Toast';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -43,20 +43,20 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
   const [selectedReportClients, setSelectedReportClients] = useState(new Set()); // Selected clients for download
   const [selectedReportTaskIds, setSelectedReportTaskIds] = useState(new Set()); // Selected task IDs for download
   const [showReportFormatDropdown, setShowReportFormatDropdown] = useState(false); // Format dropdown for reports
-  
+
   // Reports filter states
   const [reportsSearchQuery, setReportsSearchQuery] = useState('');
   const [reportsTimeFilter, setReportsTimeFilter] = useState('month'); // 'today', 'week', 'month'
   const [reportsClientFilter, setReportsClientFilter] = useState('all');
   const [reportsStatusFilter, setReportsStatusFilter] = useState('all');
   const [showDashboard, setShowDashboard] = useState(true); // Dashboard view state
-  
+
   // Modal states for viewing full content
   const [showContentModal, setShowContentModal] = useState(false);
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [modalTitle, setModalTitle] = useState('');
-  
+
   const navigate = useNavigate();
   const { toasts, showToast, removeToast } = useToast();
 
@@ -155,7 +155,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
           ...data[key]
         }));
         setEmployees(employeesList);
-        
+
         // Check if current logged-in employee is inactive
         if (!isEmbedded) {
           const storedEmail = sessionStorage.getItem('employeeData');
@@ -239,8 +239,8 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
         const clientsList = Object.keys(data).map(key => ({
           id: key,
           ...data[key]
-        })).filter(client => 
-          client.status !== 'inactive' && 
+        })).filter(client =>
+          client.status !== 'inactive' &&
           client.deleted !== true
         ); // Hide inactive and deleted clients
         setClients(clientsList);
@@ -356,10 +356,10 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
     const clientsRef = ref(database, 'clients');
     const strategyClientsRef = ref(database, 'strategyClients');
     const strategyHeadClientsRef = ref(database, 'strategyHeadClients');
-    
+
     let activeClientIds = new Set();
     let activeClientNames = new Set();
-    
+
     // Listen to all client sources
     const unsubscribeClients = onValue(clientsRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -371,7 +371,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
         });
       }
     });
-    
+
     const unsubscribeStrategyClients = onValue(strategyClientsRef, (snapshot) => {
       if (snapshot.exists()) {
         Object.values(snapshot.val()).forEach(client => {
@@ -382,7 +382,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
         });
       }
     });
-    
+
     const unsubscribeStrategyHeadClients = onValue(strategyHeadClientsRef, (snapshot) => {
       if (snapshot.exists()) {
         Object.values(snapshot.val()).forEach(client => {
@@ -408,7 +408,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
           if (!clientIsActive && (task.clientId || task.clientName)) {
             return false;
           }
-          
+
           // Show tasks assigned to this employee
           // Keep showing tasks even after they're sent for approval or department changes
           const isAssignedToMe = task.assignedTo &&
@@ -799,7 +799,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
 
   const getSimplifiedStatus = (status) => {
     if (!status) return 'Pending';
-    
+
     // Map all statuses to simplified versions
     if (status === 'completed' || status === 'approved' || status === 'pending-client-approval') {
       return 'Completed';
@@ -1383,7 +1383,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
 
         <nav className="employee-sidebar-nav">
           <div className="employee-sidebar-section">
-          
+
             <ul className="employee-sidebar-menu">
               <li className="employee-sidebar-menu-item">
                 <button
@@ -1500,1497 +1500,1010 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     <p>Welcome, {employeeName || 'Employee'}</p>
                   </div>
                 </div>
-            <div className="employee-header-right">
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '8px 16px',
-                background: 'white',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-              }}>
-                <Calendar size={18} style={{ color: '#6b7280' }} />
-                <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Month:</label>
-                <input
-                  type="month"
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(e.target.value)}
-                  style={{
-                    padding: '6px 8px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    cursor: 'pointer'
-                  }}
-                />
-                <span style={{
-                  fontSize: '13px',
-                  color: '#6b7280',
-                  fontWeight: '500',
-                  marginLeft: '8px'
-                }}>
-                  {new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </span>
+                <div className="employee-header-right">
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '8px 16px',
+                    background: 'white',
+                    borderRadius: '8px',
+                    border: '1px solid #e5e7eb',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                  }}>
+                    <Calendar size={18} style={{ color: '#6b7280' }} />
+                    <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Month:</label>
+                    <input
+                      type="month"
+                      value={selectedMonth}
+                      onChange={(e) => setSelectedMonth(e.target.value)}
+                      style={{
+                        padding: '6px 8px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <span style={{
+                      fontSize: '13px',
+                      color: '#6b7280',
+                      fontWeight: '500',
+                      marginLeft: '8px'
+                    }}>
+                      {new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Statistics Cards - Only show in dashboard view */}
-        {showDashboard && (
-        <>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '16px',
-          marginBottom: '24px',
-          padding: '0'
-        }}>
-          {/* Total Tasks */}
-          <div
-            onClick={() => handleStatCardClick('all')}
-            style={{
-              background: activeFilter === 'all'
-                ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
-                : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '12px',
-              padding: '32px 24px',
-              color: 'white',
-              boxShadow: activeFilter === 'all'
-                ? '0 8px 20px rgba(102,126,234,0.4)'
-                : '0 4px 12px rgba(102,126,234,0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              transform: activeFilter === 'all' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(102,126,234,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              if (activeFilter !== 'all') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(102,126,234,0.2)';
-              } else {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              }
-            }}>
-            {activeFilter === 'all' && (
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 'bold'
-              }}>
-                ✓
-              </div>
+            {/* Statistics Cards - Only show in dashboard view */}
+            {showDashboard && (
+              <>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '24px',
+                  padding: '0'
+                }}>
+                  {/* Total Tasks */}
+                  <div
+                    onClick={() => handleStatCardClick('all')}
+                    style={{
+                      background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      boxShadow: activeFilter === 'all'
+                        ? '0 8px 24px rgba(255, 94, 98, 0.4)'
+                        : '0 4px 15px rgba(255, 94, 98, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transform: activeFilter === 'all' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
+                      border: activeFilter === 'all' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilter !== 'all') {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      } else {
+                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      }
+                    }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Briefcase size={30} color="white" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
+                        {stats.total}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                        Total Tasks
+                      </div>
+                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        All assigned tasks
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* In Progress */}
+                  <div
+                    onClick={() => handleStatCardClick('in-progress')}
+                    style={{
+                      background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      boxShadow: activeFilter === 'in-progress'
+                        ? '0 8px 24px rgba(0, 242, 254, 0.4)'
+                        : '0 4px 15px rgba(0, 242, 254, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transform: activeFilter === 'in-progress' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
+                      border: activeFilter === 'in-progress' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilter !== 'in-progress') {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      } else {
+                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      }
+                    }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Clock size={30} color="white" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
+                        {stats.inProgress}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                        In Progress
+                      </div>
+                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        Currently active
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Completed */}
+                  <div
+                    onClick={() => handleStatCardClick('completed')}
+                    style={{
+                      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      boxShadow: activeFilter === 'completed'
+                        ? '0 8px 24px rgba(56, 239, 125, 0.4)'
+                        : '0 4px 15px rgba(56, 239, 125, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transform: activeFilter === 'completed' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
+                      border: activeFilter === 'completed' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilter !== 'completed') {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      } else {
+                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      }
+                    }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <CheckCircle size={30} color="white" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
+                        {stats.completed}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                        Completed
+                      </div>
+                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        Finished tasks
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pending Approval */}
+                  <div
+                    onClick={() => handleStatCardClick('pending-client-approval')}
+                    style={{
+                      background: 'linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      boxShadow: activeFilter === 'pending-client-approval'
+                        ? '0 8px 24px rgba(255, 75, 43, 0.4)'
+                        : '0 4px 15px rgba(255, 75, 43, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transform: activeFilter === 'pending-client-approval' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
+                      border: activeFilter === 'pending-client-approval' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilter !== 'pending-client-approval') {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      } else {
+                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      }
+                    }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <AlertCircle size={30} color="white" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
+                        {stats.pendingApproval}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                        Pending Approval
+                      </div>
+                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        Awaiting approval
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Approved */}
+                  <div
+                    onClick={() => handleStatCardClick('approved')}
+                    style={{
+                      background: 'linear-gradient(135deg, #0cebeb 0%, #20e3b2 100%, #29ffc6 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      boxShadow: activeFilter === 'approved'
+                        ? '0 8px 24px rgba(32, 227, 178, 0.4)'
+                        : '0 4px 15px rgba(32, 227, 178, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transform: activeFilter === 'approved' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
+                      border: activeFilter === 'approved' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilter !== 'approved') {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      } else {
+                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      }
+                    }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <CheckCircle size={30} color="white" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
+                        {stats.approved}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                        Approved
+                      </div>
+                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        Client approved
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Posted */}
+                  <div
+                    onClick={() => handleStatCardClick('posted')}
+                    style={{
+                      background: 'linear-gradient(135deg, #d81b60 0%, #f06292 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      boxShadow: activeFilter === 'posted'
+                        ? '0 8px 24px rgba(233, 30, 99, 0.4)'
+                        : '0 4px 15px rgba(233, 30, 99, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transform: activeFilter === 'posted' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
+                      border: activeFilter === 'posted' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilter !== 'posted') {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      } else {
+                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      }
+                    }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <CheckCircle size={30} color="white" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
+                        {stats.posted}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                        Posted
+                      </div>
+                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        Published
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Revision Required */}
+                  <div
+                    onClick={() => handleStatCardClick('revision-required')}
+                    style={{
+                      background: 'linear-gradient(135deg, #6a4190 0%, #5a6fd8 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      color: 'white',
+                      boxShadow: activeFilter === 'revision-required'
+                        ? '0 8px 24px rgba(118, 75, 162, 0.4)'
+                        : '0 4px 15px rgba(118, 75, 162, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      transform: activeFilter === 'revision-required' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
+                      border: activeFilter === 'revision-required' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilter !== 'revision-required') {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      } else {
+                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      }
+                    }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <XCircle size={30} color="white" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
+                        {stats.revisionRequired}
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                        Revision Required
+                      </div>
+                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        Needs changes
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Daily Report and Team Performance Cards */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px'
+                }}>
+                  {/* Daily Report Card */}
+                  <div className="employee-card daily-report-card" style={{
+                    background: 'linear-gradient(135deg, #37B46F 0%, #2d9159 100%)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    boxShadow: '0 4px 12px rgba(102,126,234,0.2)',
+                    border: 'none',
+                    color: 'white'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '20px',
+                      flexWrap: 'wrap',
+                      gap: '16px'
+                    }}>
+                      <div>
+                        <h2 style={{
+                          fontSize: '20px',
+                          fontWeight: '700',
+                          margin: '0 0 8px 0',
+                          color: 'white'
+                        }}>📊 Daily Report</h2>
+                        <p style={{
+                          fontSize: '14px',
+                          margin: 0,
+                          opacity: 0.9
+                        }}>
+                          {new Date().toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      <div style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        fontSize: '14px',
+                        fontWeight: '600'
+                      }}>
+                        {currentDepartment === 'video' ? '📹 Video' : currentDepartment === 'graphics' ? '🎨 Graphics' : '📱 Social Media'}
+                      </div>
+                    </div>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '16px',
+                      marginBottom: '20px'
+                    }}>
+                      {/* Today's Tasks */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {(() => {
+                            const today = new Date().toISOString().split('T')[0];
+                            return tasks.filter(task =>
+                              task.deadline === today || task.postDate === today
+                            ).length;
+                          })()}
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>Today's Tasks</div>
+                      </div>
+
+                      {/* Completed Today */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {(() => {
+                            const today = new Date().toISOString().split('T')[0];
+                            return tasks.filter(task =>
+                              task.completedAt && task.completedAt.startsWith(today)
+                            ).length;
+                          })()}
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>Completed</div>
+                      </div>
+
+                      {/* Overdue Tasks */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {(() => {
+                            const today = new Date();
+                            return tasks.filter(task => {
+                              if (!task.deadline) return false;
+                              const deadline = new Date(task.deadline);
+                              return deadline <= today && (task.status === 'assigned' || task.status === 'in-progress');
+                            }).length;
+                          })()}
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>Overdue</div>
+                      </div>
+
+                      {/* Success Rate */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {(() => {
+                            const totalTasks = tasks.length;
+                            const completedTasks = tasks.filter(t =>
+                              t.status === 'completed' || t.status === 'approved' || t.status === 'posted'
+                            ).length;
+                            return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                          })()}%
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>Success Rate</div>
+                      </div>
+                    </div>
+
+                    {/* Quick Action */}
+                    <button
+                      onClick={() => {
+                        const today = new Date().toISOString().split('T')[0];
+                        const todayTasks = tasks.filter(task =>
+                          task.deadline === today || task.postDate === today
+                        );
+                        if (todayTasks.length > 0) {
+                          // Scroll to tasks section
+                          const tasksSection = document.querySelector('.card.full-width');
+                          if (tasksSection) {
+                            tasksSection.scrollIntoView({
+                              behavior: 'smooth',
+                              block: 'start'
+                            });
+                          }
+                        } else {
+                          alert('No tasks scheduled for today!');
+                        }
+                      }}
+                      style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        color: 'white',
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        width: '100%'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(255,255,255,0.3)';
+                        e.target.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255,255,255,0.2)';
+                        e.target.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      🎯 View Today's Tasks
+                    </button>
+                  </div>
+
+                  {/* Team Performance Card */}
+                  <div className="employee-card team-performance-card" style={{
+                    background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    boxShadow: '0 4px 12px rgba(86,171,47,0.2)',
+                    border: 'none',
+                    color: 'white'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '20px',
+                      flexWrap: 'wrap',
+                      gap: '16px'
+                    }}>
+                      <div>
+                        <h2 style={{
+                          fontSize: '20px',
+                          fontWeight: '700',
+                          margin: '0 0 8px 0',
+                          color: 'white'
+                        }}>📈 Weekly Summary</h2>
+                        <p style={{
+                          fontSize: '14px',
+                          margin: 0,
+                          opacity: 0.9
+                        }}>
+                          {(() => {
+                            const today = new Date();
+                            const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+                            const weekEnd = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+                            return `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                          })()}
+                        </p>
+                      </div>
+                      <div style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        fontSize: '14px',
+                        fontWeight: '600'
+                      }}>
+                        This Week
+                      </div>
+                    </div>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '16px',
+                      marginBottom: '20px'
+                    }}>
+                      {/* Weekly Tasks */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {(() => {
+                            const today = new Date();
+                            const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+                            const weekEnd = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+                            return tasks.filter(task => {
+                              if (!task.deadline && !task.postDate) return false;
+                              const taskDate = new Date(task.deadline || task.postDate);
+                              return taskDate >= weekStart && taskDate <= weekEnd;
+                            }).length;
+                          })()}
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>Weekly Tasks</div>
+                      </div>
+
+                      {/* Completed This Week */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {tasks.filter(t =>
+                            t.status === 'completed' || t.status === 'approved' || t.status === 'posted'
+                          ).length}
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>Completed</div>
+                      </div>
+
+                      {/* In Progress */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {tasks.filter(t => t.status === 'in-progress').length}
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>In Progress</div>
+                      </div>
+
+                      {/* Personal Efficiency */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          {(() => {
+                            const inProgress = tasks.filter(t => t.status === 'in-progress').length;
+                            const completed = tasks.filter(t =>
+                              t.status === 'completed' || t.status === 'approved' || t.status === 'posted'
+                            ).length;
+                            const total = inProgress + completed;
+                            return total > 0 ? Math.round((completed / total) * 100) : 0;
+                          })()}%
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>My Efficiency</div>
+                      </div>
+                    </div>
+
+                    {/* Quick Action */}
+                    <button
+                      onClick={() => {
+                        // Scroll to tasks section
+                        const tasksSection = document.querySelector('.card.full-width');
+                        if (tasksSection) {
+                          tasksSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                          });
+                        }
+                      }}
+                      style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        color: 'white',
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        width: '100%'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(255,255,255,0.3)';
+                        e.target.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255,255,255,0.2)';
+                        e.target.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      📋 View All Tasks
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
-            <div style={{ fontSize: '48px', fontWeight: '700', lineHeight: 1, marginBottom: '12px' }}>
-              {stats.total}
-            </div>
-            <div style={{ fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.95 }}>
-              TOTAL TASKS
-            </div>
-          </div>
-
-          {/* In Progress */}
-          <div
-            onClick={() => handleStatCardClick('in-progress')}
-            style={{
-              background: activeFilter === 'in-progress'
-                ? 'linear-gradient(135deg, #5a9bd4 0%, #0770c1 100%)'
-                : 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
-              borderRadius: '16px',
-              padding: '28px 20px',
-              color: 'white',
-              boxShadow: activeFilter === 'in-progress'
-                ? '0 8px 20px rgba(116,185,255,0.4)'
-                : '0 4px 12px rgba(116,185,255,0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              transform: activeFilter === 'in-progress' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(116,185,255,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              if (activeFilter !== 'in-progress') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(116,185,255,0.2)';
-              } else {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              }
-            }}>
-            {activeFilter === 'in-progress' && (
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 'bold'
-              }}>
-                ✓
-              </div>
-            )}
-            <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-              {stats.inProgress}
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              IN PROGRESS
-            </div>
-          </div>
-
-          {/* Completed */}
-          <div
-            onClick={() => handleStatCardClick('completed')}
-            style={{
-              background: activeFilter === 'completed'
-                ? 'linear-gradient(135deg, #4a9625 0%, #96d9b8 100%)'
-                : 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
-              borderRadius: '16px',
-              padding: '28px 20px',
-              color: 'white',
-              boxShadow: activeFilter === 'completed'
-                ? '0 8px 20px rgba(86,171,47,0.4)'
-                : '0 4px 12px rgba(86,171,47,0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              transform: activeFilter === 'completed' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(86,171,47,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              if (activeFilter !== 'completed') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(86,171,47,0.2)';
-              } else {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              }
-            }}>
-            {activeFilter === 'completed' && (
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 'bold'
-              }}>
-                ✓
-              </div>
-            )}
-            <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-              {stats.completed}
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              COMPLETED
-            </div>
-          </div>
-
-          {/* Pending Approval */}
-          <div
-            onClick={() => handleStatCardClick('pending-client-approval')}
-            style={{
-              background: activeFilter === 'pending-client-approval'
-                ? 'linear-gradient(135deg, #e55555 0%, #d44812 100%)'
-                : 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
-              borderRadius: '16px',
-              padding: '28px 20px',
-              color: 'white',
-              boxShadow: activeFilter === 'pending-client-approval'
-                ? '0 8px 20px rgba(255,107,107,0.4)'
-                : '0 4px 12px rgba(255,107,107,0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              transform: activeFilter === 'pending-client-approval' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(255,107,107,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              if (activeFilter !== 'pending-client-approval') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,107,107,0.2)';
-              } else {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              }
-            }}>
-            {activeFilter === 'pending-client-approval' && (
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 'bold'
-              }}>
-                ✓
-              </div>
-            )}
-            <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-              {stats.pendingApproval}
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              PENDING APPROVAL
-            </div>
-          </div>
-
-          {/* Approved */}
-          <div
-            onClick={() => handleStatCardClick('approved')}
-            style={{
-              background: activeFilter === 'approved'
-                ? 'linear-gradient(135deg, #17b584 0%, #4dd9b2 100%)'
-                : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
-              borderRadius: '16px',
-              padding: '28px 20px',
-              color: 'white',
-              boxShadow: activeFilter === 'approved'
-                ? '0 8px 20px rgba(0,184,148,0.4)'
-                : '0 4px 12px rgba(0,184,148,0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              transform: activeFilter === 'approved' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,184,148,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              if (activeFilter !== 'approved') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,184,148,0.2)';
-              } else {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              }
-            }}>
-            {activeFilter === 'approved' && (
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 'bold'
-              }}>
-                ✓
-              </div>
-            )}
-            <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-              {stats.approved}
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              APPROVED
-            </div>
-          </div>
-
-          {/* Posted */}
-          <div
-            onClick={() => handleStatCardClick('posted')}
-            style={{
-              background: activeFilter === 'posted'
-                ? 'linear-gradient(135deg, #d81b60 0%, #f06292 100%)'
-                : 'linear-gradient(135deg, #e91e63 0%, #f48fb1 100%)',
-              borderRadius: '16px',
-              padding: '28px 20px',
-              color: 'white',
-              boxShadow: activeFilter === 'posted'
-                ? '0 8px 20px rgba(233,30,99,0.4)'
-                : '0 4px 12px rgba(233,30,99,0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              transform: activeFilter === 'posted' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(233,30,99,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              if (activeFilter !== 'posted') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(233,30,99,0.2)';
-              } else {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              }
-            }}>
-            {activeFilter === 'posted' && (
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 'bold'
-              }}>
-                ✓
-              </div>
-            )}
-            <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-              {stats.posted}
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              POSTED
-            </div>
-          </div>
-
-          {/* Revision Required */}
-          <div
-            onClick={() => handleStatCardClick('revision-required')}
-            style={{
-              background: activeFilter === 'revision-required'
-                ? 'linear-gradient(135deg, #6a4190 0%, #5a6fd8 100%)'
-                : 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-              borderRadius: '16px',
-              padding: '28px 20px',
-              color: 'white',
-              boxShadow: activeFilter === 'revision-required'
-                ? '0 8px 20px rgba(118,75,162,0.4)'
-                : '0 4px 12px rgba(118,75,162,0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              transform: activeFilter === 'revision-required' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(118,75,162,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              if (activeFilter !== 'revision-required') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(118,75,162,0.2)';
-              } else {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-              }
-            }}>
-            {activeFilter === 'revision-required' && (
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 'bold'
-              }}>
-                ✓
-              </div>
-            )}
-            <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-              {stats.revisionRequired}
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              REVISION REQUIRED
-            </div>
-          </div>
-        </div>
-
-        {/* Daily Report and Team Performance Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-          gap: '24px',
-          marginBottom: '32px'
-        }}>
-          {/* Daily Report Card */}
-          <div className="employee-card daily-report-card" style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '16px',
-            padding: '24px',
-            boxShadow: '0 4px 12px rgba(102,126,234,0.2)',
-            border: 'none',
-            color: 'white'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: '20px',
-              flexWrap: 'wrap',
-              gap: '16px'
-            }}>
-              <div>
-                <h2 style={{
-                  fontSize: '20px',
-                  fontWeight: '700',
-                  margin: '0 0 8px 0',
-                  color: 'white'
-                }}>📊 Daily Report</h2>
-                <p style={{
-                  fontSize: '14px',
-                  margin: 0,
-                  opacity: 0.9
-                }}>
-                  {new Date().toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-              </div>
-              <div style={{
-                background: 'rgba(255,255,255,0.2)',
-                padding: '8px 16px',
-                borderRadius: '20px',
-                fontSize: '14px',
-                fontWeight: '600'
-              }}>
-                {currentDepartment === 'video' ? '📹 Video' : currentDepartment === 'graphics' ? '🎨 Graphics' : '📱 Social Media'}
-              </div>
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '16px',
-              marginBottom: '20px'
-            }}>
-              {/* Today's Tasks */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {(() => {
-                    const today = new Date().toISOString().split('T')[0];
-                    return tasks.filter(task =>
-                      task.deadline === today || task.postDate === today
-                    ).length;
-                  })()}
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>Today's Tasks</div>
-              </div>
-
-              {/* Completed Today */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {(() => {
-                    const today = new Date().toISOString().split('T')[0];
-                    return tasks.filter(task =>
-                      task.completedAt && task.completedAt.startsWith(today)
-                    ).length;
-                  })()}
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>Completed</div>
-              </div>
-
-              {/* Overdue Tasks */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {(() => {
-                    const today = new Date();
-                    return tasks.filter(task => {
-                      if (!task.deadline) return false;
-                      const deadline = new Date(task.deadline);
-                      return deadline <= today && (task.status === 'assigned' || task.status === 'in-progress');
-                    }).length;
-                  })()}
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>Overdue</div>
-              </div>
-
-              {/* Success Rate */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {(() => {
-                    const totalTasks = tasks.length;
-                    const completedTasks = tasks.filter(t =>
-                      t.status === 'completed' || t.status === 'approved' || t.status === 'posted'
-                    ).length;
-                    return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-                  })()}%
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>Success Rate</div>
-              </div>
-            </div>
-
-            {/* Quick Action */}
-            <button
-              onClick={() => {
-                const today = new Date().toISOString().split('T')[0];
-                const todayTasks = tasks.filter(task =>
-                  task.deadline === today || task.postDate === today
-                );
-                if (todayTasks.length > 0) {
-                  // Scroll to tasks section
-                  const tasksSection = document.querySelector('.card.full-width');
-                  if (tasksSection) {
-                    tasksSection.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'start'
-                    });
-                  }
-                } else {
-                  alert('No tasks scheduled for today!');
-                }
-              }}
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                width: '100%'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = 'rgba(255,255,255,0.3)';
-                e.target.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'rgba(255,255,255,0.2)';
-                e.target.style.transform = 'translateY(0)';
-              }}
-            >
-              🎯 View Today's Tasks
-            </button>
-          </div>
-
-          {/* Team Performance Card */}
-          <div className="employee-card team-performance-card" style={{
-            background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
-            borderRadius: '16px',
-            padding: '24px',
-            boxShadow: '0 4px 12px rgba(86,171,47,0.2)',
-            border: 'none',
-            color: 'white'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: '20px',
-              flexWrap: 'wrap',
-              gap: '16px'
-            }}>
-              <div>
-                <h2 style={{
-                  fontSize: '20px',
-                  fontWeight: '700',
-                  margin: '0 0 8px 0',
-                  color: 'white'
-                }}>📈 Weekly Summary</h2>
-                <p style={{
-                  fontSize: '14px',
-                  margin: 0,
-                  opacity: 0.9
-                }}>
-                  {(() => {
-                    const today = new Date();
-                    const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
-                    const weekEnd = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-                    return `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-                  })()}
-                </p>
-              </div>
-              <div style={{
-                background: 'rgba(255,255,255,0.2)',
-                padding: '8px 16px',
-                borderRadius: '20px',
-                fontSize: '14px',
-                fontWeight: '600'
-              }}>
-                This Week
-              </div>
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '16px',
-              marginBottom: '20px'
-            }}>
-              {/* Weekly Tasks */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {(() => {
-                    const today = new Date();
-                    const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
-                    const weekEnd = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-                    return tasks.filter(task => {
-                      if (!task.deadline && !task.postDate) return false;
-                      const taskDate = new Date(task.deadline || task.postDate);
-                      return taskDate >= weekStart && taskDate <= weekEnd;
-                    }).length;
-                  })()}
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>Weekly Tasks</div>
-              </div>
-
-              {/* Completed This Week */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {tasks.filter(t =>
-                    t.status === 'completed' || t.status === 'approved' || t.status === 'posted'
-                  ).length}
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>Completed</div>
-              </div>
-
-              {/* In Progress */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {tasks.filter(t => t.status === 'in-progress').length}
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>In Progress</div>
-              </div>
-
-              {/* Personal Efficiency */}
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {(() => {
-                    const inProgress = tasks.filter(t => t.status === 'in-progress').length;
-                    const completed = tasks.filter(t =>
-                      t.status === 'completed' || t.status === 'approved' || t.status === 'posted'
-                    ).length;
-                    const total = inProgress + completed;
-                    return total > 0 ? Math.round((completed / total) * 100) : 0;
-                  })()}%
-                </div>
-                <div style={{ fontSize: '14px', opacity: 0.9 }}>My Efficiency</div>
-              </div>
-            </div>
-
-            {/* Quick Action */}
-            <button
-              onClick={() => {
-                // Scroll to tasks section
-                const tasksSection = document.querySelector('.card.full-width');
-                if (tasksSection) {
-                  tasksSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                  });
-                }
-              }}
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                width: '100%'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = 'rgba(255,255,255,0.3)';
-                e.target.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'rgba(255,255,255,0.2)';
-                e.target.style.transform = 'translateY(0)';
-              }}
-            >
-              📋 View All Tasks
-            </button>
-          </div>
-        </div>
-        </>
-        )}
           </>
         )}
 
         {/* Tasks Table - Only show when not in dashboard view and not in reports view */}
         {!showDashboard && !showReports && (
-        <div className="card full-width" style={{ marginBottom: '30px' }}>
-          <div className="card-header" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', marginBottom: '16px' }}>
-              <div>
-                <h2>My Tasks ({getSearchFilteredTasks().length})</h2>
-                <p style={{ fontSize: '14px', color: '#666', margin: '5px 0 0 0' }}>Tasks assigned to you, organized by client. Select tasks to download report.</p>
+          <div className="card full-width" style={{ marginBottom: '30px' }}>
+            <div className="card-header" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', marginBottom: '16px' }}>
+                <div>
+                  <h2>My Tasks ({getSearchFilteredTasks().length})</h2>
+                  <p style={{ fontSize: '14px', color: '#666', margin: '5px 0 0 0' }}>Tasks assigned to you, organized by client. Select tasks to download report.</p>
+                </div>
               </div>
-            </div>
 
-            {/* Search Bar, View Toggle, and Download All Button */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              width: '100%',
-              flexWrap: 'wrap'
-            }}>
-              {/* Search Bar */}
+              {/* Search Bar, View Toggle, and Download All Button */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '8px 16px',
-                background: '#f8f9fa',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb',
-                flex: '1',
-                minWidth: '250px'
+                gap: '12px',
+                width: '100%',
+                flexWrap: 'wrap'
               }}>
-                <Search size={18} style={{ color: '#6b7280' }} />
-                <input
-                  type="text"
-                  placeholder="Search clients, tasks..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{
-                    padding: '6px 8px',
-                    border: 'none',
-                    background: 'transparent',
-                    fontSize: '14px',
-                    flex: 1,
-                    outline: 'none'
-                  }}
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
+                {/* Search Bar */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 16px',
+                  background: '#f8f9fa',
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb',
+                  flex: '1',
+                  minWidth: '250px'
+                }}>
+                  <Search size={18} style={{ color: '#6b7280' }} />
+                  <input
+                    type="text"
+                    placeholder="Search clients, tasks..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     style={{
-                      background: 'none',
+                      padding: '6px 8px',
                       border: 'none',
-                      color: '#6b7280',
+                      background: 'transparent',
+                      fontSize: '14px',
+                      flex: 1,
+                      outline: 'none'
+                    }}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#6b7280',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        padding: '0 4px',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+
+                {/* View Toggle Buttons */}
+                <div style={{
+                  display: 'flex',
+                  gap: '4px',
+                  padding: '4px',
+                  background: '#f8f9fa',
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb'
+                }}>
+                  <button
+                    onClick={() => {
+                      setViewMode('list');
+                      setSelectedClientForCardView(null);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 16px',
+                      backgroundColor: viewMode === 'list' ? '#3b82f6' : 'transparent',
+                      color: viewMode === 'list' ? 'white' : '#6b7280',
+                      border: 'none',
+                      borderRadius: '6px',
                       cursor: 'pointer',
-                      fontSize: '18px',
-                      padding: '0 4px',
-                      fontWeight: 'bold'
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s ease'
                     }}
                   >
-                    ×
+                    <List size={16} />
+                    List View
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode('card');
+                      setSelectedClientForCardView(null);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 16px',
+                      backgroundColor: viewMode === 'card' ? '#3b82f6' : 'transparent',
+                      color: viewMode === 'card' ? 'white' : '#6b7280',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <Grid size={16} />
+                    Card View
+                  </button>
+                </div>
+
+                {/* Download All Reports Button - Hide when viewing specific client tasks in card view */}
+                {!(viewMode === 'card' && selectedClientForCardView) && (
+                  <button
+                    onClick={() => downloadAllClientsReport()}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 20px',
+                      backgroundColor: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#3b82f6'}
+                  >
+                    <Download size={18} />
+                    Download All Reports (PDF)
                   </button>
                 )}
               </div>
 
-              {/* View Toggle Buttons */}
-              <div style={{
-                display: 'flex',
-                gap: '4px',
-                padding: '4px',
-                background: '#f8f9fa',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb'
-              }}>
-                <button
-                  onClick={() => {
-                    setViewMode('list');
-                    setSelectedClientForCardView(null);
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 16px',
-                    backgroundColor: viewMode === 'list' ? '#3b82f6' : 'transparent',
-                    color: viewMode === 'list' ? 'white' : '#6b7280',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <List size={16} />
-                  List View
-                </button>
-                <button
-                  onClick={() => {
-                    setViewMode('card');
-                    setSelectedClientForCardView(null);
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 16px',
-                    backgroundColor: viewMode === 'card' ? '#3b82f6' : 'transparent',
-                    color: viewMode === 'card' ? 'white' : '#6b7280',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <Grid size={16} />
-                  Card View
-                </button>
-              </div>
-
-              {/* Download All Reports Button - Hide when viewing specific client tasks in card view */}
-              {!(viewMode === 'card' && selectedClientForCardView) && (
-                <button
-                  onClick={() => downloadAllClientsReport()}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '10px 20px',
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    whiteSpace: 'nowrap',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = '#3b82f6'}
-                >
-                  <Download size={18} />
-                  Download All Reports (PDF)
-                </button>
+              {/* Search Results Info */}
+              {searchQuery && (
+                <div style={{
+                  padding: '12px 16px',
+                  backgroundColor: '#e3f2fd',
+                  borderRadius: '8px',
+                  marginTop: '16px',
+                  fontSize: '14px',
+                  color: '#1976d2'
+                }}>
+                  Found {getSearchFilteredTasks().length} task(s) matching "{searchQuery}"
+                  {getSearchFilteredTasks().length !== filteredTasks.length && (
+                    <span style={{ marginLeft: '8px', opacity: 0.8 }}>
+                      (filtered from {filteredTasks.length} total)
+                    </span>
+                  )}
+                </div>
               )}
             </div>
-
-            {/* Search Results Info */}
-            {searchQuery && (
-              <div style={{
-                padding: '12px 16px',
-                backgroundColor: '#e3f2fd',
-                borderRadius: '8px',
-                marginTop: '16px',
-                fontSize: '14px',
-                color: '#1976d2'
-              }}>
-                Found {getSearchFilteredTasks().length} task(s) matching "{searchQuery}"
-                {getSearchFilteredTasks().length !== filteredTasks.length && (
-                  <span style={{ marginLeft: '8px', opacity: 0.8 }}>
-                    (filtered from {filteredTasks.length} total)
-                  </span>
-                )}
+            {getSearchFilteredTasks().length === 0 ? (
+              <div className="empty-state">
+                <p>{searchQuery ? `No tasks found matching "${searchQuery}"` : 'No tasks assigned to you yet.'}</p>
               </div>
-            )}
-          </div>
-          {getSearchFilteredTasks().length === 0 ? (
-            <div className="empty-state">
-              <p>{searchQuery ? `No tasks found matching "${searchQuery}"` : 'No tasks assigned to you yet.'}</p>
-            </div>
-          ) : viewMode === 'card' ? (
-            /* Card View - Client Cards */
-            selectedClientForCardView ? (
-              /* Show tasks for selected client */
-              <div style={{ padding: '20px' }}>
-                {/* Back Button */}
-                <button
-                  onClick={() => setSelectedClientForCardView(null)}
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    marginBottom: '20px'
-                  }}
-                >
-                  ← Back to All Clients
-                </button>
-
-                {/* Client Header */}
-                <div style={{
-                  backgroundColor: 'white',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  overflow: 'hidden',
-                  marginBottom: '20px'
-                }}>
-                  <div style={{
-                    padding: '20px',
-                    background: currentDepartment === 'video'
-                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                      : currentDepartment === 'graphics'
-                        ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
-                        : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
-                    color: 'white',
-                    textAlign: 'center'
-                  }}>
-                    <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '600' }}>
-                      {selectedClientForCardView}
-                    </h3>
-                    <p style={{ margin: '8px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
-                      {groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView]?.length || 0} task(s)
-                    </p>
-                  </div>
-                </div>
-
-                {/* Task Cards Grid */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                  gap: '20px'
-                }}>
-                  {(groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView] || []).map(task => {
-                    const gradientColors = currentDepartment === 'video'
-                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                      : currentDepartment === 'graphics'
-                        ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
-                        : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
-
-                    const clientInitial = (task.clientName || 'U').charAt(0).toUpperCase();
-                    const isOverdue = isTaskOverdue(task.deadline);
-
-                    return (
-                      <div
-                        key={task.id}
-                        style={{
-                          backgroundColor: 'white',
-                          borderRadius: '12px',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                          overflow: 'hidden',
-                          transition: 'all 0.3s ease',
-                          border: '1px solid #e9ecef',
-                          position: 'relative',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          height: '100%'
-                        }}
-                      >
-                        {/* Overdue Badge - Top Right */}
-                        {isOverdue && task.status !== 'completed' && task.status !== 'posted' && (
-                          <div style={{
-                            position: 'absolute',
-                            top: '12px',
-                            right: '12px',
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '11px',
-                            fontWeight: 'bold',
-                            zIndex: 10
-                          }}>
-                            OVERDUE
-                          </div>
-                        )}
-
-                        {/* Notification Bell Icon for Revision - Below Overdue Badge */}
-                        {task.revisionMessage && (
-                          <button
-                            onClick={() => {
-                              setSelectedRevisionNote(task.revisionMessage);
-                              setShowRevisionNoteModal(true);
-                            }}
-                            style={{
-                              position: 'absolute',
-                              top: isOverdue && task.status !== 'completed' && task.status !== 'posted' ? '48px' : '12px',
-                              right: '12px',
-                              backgroundColor: '#ffc107',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '50%',
-                              width: '32px',
-                              height: '32px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              cursor: 'pointer',
-                              zIndex: 10,
-                              boxShadow: '0 2px 8px rgba(255, 193, 7, 0.4)',
-                              transition: 'all 0.2s'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.transform = 'scale(1.1)';
-                              e.target.style.boxShadow = '0 4px 12px rgba(255, 193, 7, 0.6)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.transform = 'scale(1)';
-                              e.target.style.boxShadow = '0 2px 8px rgba(255, 193, 7, 0.4)';
-                            }}
-                          >
-                            <AlertCircle size={18} />
-                          </button>
-                        )}
-
-                        {/* Checkbox - Top Left Corner */}
-                        <input
-                          type="checkbox"
-                          checked={isTaskSelected(task.clientName, task.id)}
-                          onChange={() => toggleTaskSelection(task.clientName, task.id)}
-                          style={{
-                            position: 'absolute',
-                            top: '8px',
-                            left: '8px',
-                            width: '18px',
-                            height: '18px',
-                            cursor: 'pointer',
-                            zIndex: 10,
-                            accentColor: '#3b82f6'
-                          }}
-                        />
-
-                        {/* Card Header with Gradient */}
-                        <div style={{
-                          background: gradientColors,
-                          padding: '20px',
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexShrink: 0,
-                          gap: '12px'
-                        }}>
-                          <div style={{
-                            width: '50px',
-                            height: '50px',
-                            borderRadius: '50%',
-                            backgroundColor: 'rgba(255,255,255,0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '20px',
-                            fontWeight: '700',
-                            flexShrink: 0
-                          }}>
-                            {clientInitial}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {task.taskName}
-                            </div>
-                            <div style={{ fontSize: '13px', opacity: 0.9 }}>
-                              {task.clientName}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Card Body - Info Grid */}
-                        <div style={{ padding: '16px', backgroundColor: '#f8f9fa', flex: 1 }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                            {/* Project Name */}
-                            <div>
-                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Project</div>
-                              <div style={{
-                                padding: '6px 10px',
-                                borderRadius: '6px',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                backgroundColor: '#e3f2fd',
-                                color: '#1976d2',
-                                textAlign: 'center'
-                              }}>
-                                {task.projectName || 'N/A'}
-                              </div>
-                            </div>
-
-                            {/* Deadline */}
-                            <div>
-                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Due Date</div>
-                              <div style={{
-                                padding: '6px 10px',
-                                borderRadius: '6px',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                backgroundColor: isOverdue ? '#fee2e2' : '#f3f4f6',
-                                color: isOverdue ? '#dc2626' : '#374151',
-                                textAlign: 'center'
-                              }}>
-                                {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Not set'}
-                              </div>
-                            </div>
-
-                            {/* Revisions */}
-                            <div>
-                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Revisions</div>
-                              <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: '6px',
-                                borderRadius: '6px',
-                                backgroundColor: 'white'
-                              }}>
-                                <span style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  minWidth: '28px',
-                                  height: '28px',
-                                  borderRadius: '50%',
-                                  fontSize: '14px',
-                                  fontWeight: '700',
-                                  backgroundColor: (task.revisionCount || 0) > 0 ? '#dc3545' : '#10b981',
-                                  color: 'white'
-                                }}>
-                                  {task.revisionCount || 0}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Department */}
-                            <div>
-                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Department</div>
-                              <div style={{
-                                padding: '6px 10px',
-                                borderRadius: '6px',
-                                fontSize: '11px',
-                                fontWeight: '600',
-                                backgroundColor: getDepartmentColor(task.department),
-                                color: 'white',
-                                textAlign: 'center',
-                                textTransform: 'uppercase'
-                              }}>
-                                {task.department}
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Assigned To */}
-                          <div style={{ marginBottom: '12px' }}>
-                            <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Assigned To:</div>
-                            <div style={{ fontSize: '13px', fontWeight: '600', color: '#374151' }}>
-                              {task.assignedTo || 'Unassigned'}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Card Footer - Status & Actions */}
-                        <div style={{ padding: '16px', backgroundColor: 'white', flexShrink: 0 }}>
-                          {/* Status Dropdown */}
-                          <div style={{ marginBottom: '12px' }}>
-                            <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '6px', textAlign: 'center' }}>Status:</div>
-                            <select
-                              value={task.status}
-                              onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                              style={{
-                                width: '100%',
-                                padding: '8px 12px',
-                                borderRadius: '8px',
-                                border: '2px solid #e5e7eb',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                backgroundColor: getStatusColor(task.status),
-                                color: 'white',
-                                textAlign: 'center'
-                              }}
-                            >
-                              <option value="assigned" style={{ backgroundColor: '#fff', color: '#333' }}>Assigned</option>
-                              <option value="in-progress" style={{ backgroundColor: '#fff', color: '#333' }}>In Progress</option>
-                              <option value="completed" style={{ backgroundColor: '#fff', color: '#333' }}>Completed</option>
-                              <option value="pending-client-approval" style={{ backgroundColor: '#fff', color: '#333' }}>Pending Approval</option>
-                              <option value="approved" style={{ backgroundColor: '#fff', color: '#333' }}>Approved</option>
-                              <option value="posted" style={{ backgroundColor: '#fff', color: '#333' }}>Posted</option>
-                              <option value="revision-required" style={{ backgroundColor: '#fff', color: '#333' }}>Revision Required</option>
-                            </select>
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {task.status === 'assigned' && (
-                              <button
-                                onClick={() => handleStartWork(task.id)}
-                                style={{
-                                  width: '100%',
-                                  backgroundColor: '#3b82f6',
-                                  color: 'white',
-                                  border: 'none',
-                                  padding: '10px 16px',
-                                  borderRadius: '8px',
-                                  cursor: 'pointer',
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '6px'
-                                }}
-                              >
-                                <PlayCircle size={14} /> Start Work
-                              </button>
-                            )}
-
-                            {task.status === 'revision-required' && (
-                              <button
-                                onClick={() => handleStartRevision(task.id)}
-                                style={{
-                                  width: '100%',
-                                  backgroundColor: '#f59e0b',
-                                  color: 'white',
-                                  border: 'none',
-                                  padding: '10px 16px',
-                                  borderRadius: '8px',
-                                  cursor: 'pointer',
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '6px'
-                                }}
-                              >
-                                <PlayCircle size={14} /> Start Revision
-                              </button>
-                            )}
-
-                            {/* Start Button - Shows when task is assigned or pending */}
-                            {(task.status === 'assigned' || task.status === 'assigned-to-department' || task.status === 'pending' || task.status === 'approved') && (
-                              <button
-                                onClick={() => handleStartTask(task.id)}
-                                style={{
-                                  width: '100%',
-                                  backgroundColor: '#3b82f6',
-                                  color: 'white',
-                                  border: 'none',
-                                  padding: '10px 16px',
-                                  borderRadius: '8px',
-                                  cursor: 'pointer',
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '6px',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.target.style.backgroundColor = '#2563eb';
-                                  e.target.style.transform = 'translateY(-2px)';
-                                  e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.target.style.backgroundColor = '#3b82f6';
-                                  e.target.style.transform = 'translateY(0)';
-                                  e.target.style.boxShadow = 'none';
-                                }}
-                              >
-                                <PlayCircle size={14} /> Start Task
-                              </button>
-                            )}
-
-                            {/* Complete Button - Shows when task is in progress */}
-                            {task.status === 'in-progress' && (
-                              <button
-                                onClick={() => handleMarkComplete(task.id)}
-                                style={{
-                                  width: '100%',
-                                  backgroundColor: '#10b981',
-                                  color: 'white',
-                                  border: 'none',
-                                  padding: '10px 16px',
-                                  borderRadius: '8px',
-                                  cursor: 'pointer',
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '6px',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.target.style.backgroundColor = '#059669';
-                                  e.target.style.transform = 'translateY(-2px)';
-                                  e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.target.style.backgroundColor = '#10b981';
-                                  e.target.style.transform = 'translateY(0)';
-                                  e.target.style.boxShadow = 'none';
-                                }}
-                              >
-                                <CheckCircle size={14} /> Mark Complete
-                              </button>
-                            )}
-
-                            {/* Send for Approval Button - Shows when task is completed */}
-                            {task.status === 'completed' && (
-                              <button
-                                onClick={() => handleSendForApproval(task.id, task)}
-                                style={{
-                                  width: '100%',
-                                  backgroundColor: '#8b5cf6',
-                                  color: 'white',
-                                  border: 'none',
-                                  padding: '10px 16px',
-                                  borderRadius: '8px',
-                                  cursor: 'pointer',
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '6px'
-                                }}
-                              >
-                                <Send size={14} /> Send for Approval
-                              </button>
-                            )}
-
-                            {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
-                              <div style={{
-                                width: '100%',
-                                padding: '10px 16px',
-                                backgroundColor: '#e7f3ff',
-                                borderRadius: '8px',
-                                fontSize: '13px',
-                                color: '#0066cc',
-                                fontWeight: '600',
-                                textAlign: 'center',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '6px'
-                              }}>
-                                <CheckCircle size={14} /> {task.status === 'pending-client-approval' ? '✓ Awaiting Approval' : task.status === 'approved' ? '✓ Approved' : '✓ Posted'}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              /* Show client cards */
-              <div style={{ padding: '20px' }}>
-                {/* Action Buttons Row */}
-                <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                  {/* Download All Button */}
+            ) : viewMode === 'card' ? (
+              /* Card View - Client Cards */
+              selectedClientForCardView ? (
+                /* Show tasks for selected client */
+                <div style={{ padding: '20px' }}>
+                  {/* Back Button */}
                   <button
-                    onClick={() => downloadAllClientsReport()}
+                    onClick={() => setSelectedClientForCardView(null)}
                     style={{
                       padding: '10px 20px',
                       backgroundColor: '#3b82f6',
@@ -3002,656 +2515,1136 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                       fontWeight: '600',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px'
+                      gap: '8px',
+                      marginBottom: '20px'
                     }}
                   >
-                    📥 Download All
+                    ← Back to All Clients
                   </button>
-                </div>
 
-                {/* Client Cards Grid */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                  gap: '20px'
-                }}>
-                  {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientTasks]) => {
-                    // Determine gradient color based on employee department
-                    let gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-
-                    if (currentDepartment === 'video') {
-                      gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    } else if (currentDepartment === 'graphics') {
-                      gradientColors = 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)';
-                    } else if (currentDepartment === 'social-media') {
-                      gradientColors = 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
-                    }
-
-                    const clientInitial = (clientName || 'U').charAt(0).toUpperCase();
-                    const totalTasks = clientTasks.length;
-                    const completedTasks = clientTasks.filter(t => t.status === 'completed' || t.status === 'posted').length;
-                    const inProgressTasks = clientTasks.filter(t => t.status === 'in-progress').length;
-
-                    return (
-                      <div
-                        key={clientName}
-                        onClick={() => setSelectedClientForCardView(clientName)}
-                        style={{
-                          backgroundColor: 'white',
-                          borderRadius: '16px',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                          overflow: 'hidden',
-                          transition: 'all 0.3s ease',
-                          cursor: 'pointer',
-                          border: '1px solid #e9ecef'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-4px)';
-                          e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                        }}
-                      >
-                        {/* Client Header */}
-                        <div style={{
-                          background: gradientColors,
-                          padding: '24px 20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '16px'
-                        }}>
-                          {/* Client Avatar */}
-                          <div style={{
-                            width: '60px',
-                            height: '60px',
-                            borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '24px',
-                            fontWeight: '700',
-                            color: 'white',
-                            flexShrink: 0
-                          }}>
-                            {clientInitial}
-                          </div>
-
-                          {/* Client Info */}
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <h3 style={{
-                              margin: 0,
-                              fontSize: '18px',
-                              fontWeight: '600',
-                              color: 'white',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}>
-                              {clientName}
-                            </h3>
-                            <p style={{
-                              margin: '4px 0 0 0',
-                              fontSize: '13px',
-                              color: 'rgba(255,255,255,0.9)'
-                            }}>
-                              {totalTasks} task{totalTasks !== 1 ? 's' : ''}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Task Stats */}
-                        <div style={{
-                          padding: '20px',
-                          display: 'flex',
-                          justifyContent: 'space-around',
-                          gap: '12px'
-                        }}>
-                          {/* Total Tasks */}
-                          <div style={{ textAlign: 'center', flex: 1 }}>
-                            <div style={{
-                              fontSize: '28px',
-                              fontWeight: '700',
-                              color: '#667eea',
-                              marginBottom: '4px'
-                            }}>
-                              {totalTasks}
-                            </div>
-                            <div style={{
-                              fontSize: '12px',
-                              color: '#6b7280',
-                              fontWeight: '500'
-                            }}>
-                              Total Tasks
-                            </div>
-                          </div>
-
-                          {/* Completed */}
-                          <div style={{ textAlign: 'center', flex: 1 }}>
-                            <div style={{
-                              fontSize: '28px',
-                              fontWeight: '700',
-                              color: '#10b981',
-                              marginBottom: '4px'
-                            }}>
-                              {completedTasks}
-                            </div>
-                            <div style={{
-                              fontSize: '12px',
-                              color: '#6b7280',
-                              fontWeight: '500'
-                            }}>
-                              Completed
-                            </div>
-                          </div>
-
-                          {/* In Progress */}
-                          <div style={{ textAlign: 'center', flex: 1 }}>
-                            <div style={{
-                              fontSize: '28px',
-                              fontWeight: '700',
-                              color: '#f59e0b',
-                              marginBottom: '4px'
-                            }}>
-                              {inProgressTasks}
-                            </div>
-                            <div style={{
-                              fontSize: '12px',
-                              color: '#6b7280',
-                              fontWeight: '500'
-                            }}>
-                              In Progress
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* View Details Button */}
-                        <div style={{
-                          padding: '0 20px 20px 20px'
-                        }}>
-                          <div style={{
-                            background: '#f3f4f6',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            textAlign: 'center',
-                            fontSize: '13px',
-                            color: '#6b7280',
-                            fontWeight: '500'
-                          }}>
-                            Click to view all tasks
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )
-          ) : (
-            /* List View - Grouped by Client */
-            <div style={{ padding: '0' }}>
-              {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientGroup]) => {
-                const isExpanded = expandedClients[clientName];
-                const totalTasks = clientGroup.length;
-                const completedTasks = clientGroup.filter(t => t.status === 'completed' || t.status === 'posted').length;
-                const inProgressTasks = clientGroup.filter(t => t.status === 'in-progress').length;
-
-                return (
-                  <div key={clientName} style={{
+                  {/* Client Header */}
+                  <div style={{
                     backgroundColor: 'white',
                     borderRadius: '12px',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                     overflow: 'hidden',
-                    border: '1px solid #e9ecef',
-                    marginBottom: '16px'
+                    marginBottom: '20px'
                   }}>
-                    <div
-                      onClick={() => toggleClientExpansion(clientName)}
-                      style={{
-                        padding: '20px',
-                        background: currentDepartment === 'video'
-                          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                          : currentDepartment === 'graphics'
-                            ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
-                            : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
-                        color: 'white',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{
-                          backgroundColor: 'rgba(255,255,255,0.2)',
-                          padding: '8px 12px',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '600'
-                        }}>
-                          {totalTasks}
-                        </div>
-                        <div>
-                          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
-                            {clientName}
-                          </h3>
-                          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>
-                            {totalTasks} task{totalTasks !== 1 ? 's' : ''} • {completedTasks} completed • {inProgressTasks} in progress
-                          </div>
-                        </div>
-                      </div>
-                      <div style={{
-                        fontSize: '24px',
-                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.3s ease'
-                      }}>
-                        ▼
-                      </div>
+                    <div style={{
+                      padding: '20px',
+                      background: currentDepartment === 'video'
+                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                        : currentDepartment === 'graphics'
+                          ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
+                          : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
+                      color: 'white',
+                      textAlign: 'center'
+                    }}>
+                      <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '600' }}>
+                        {selectedClientForCardView}
+                      </h3>
+                      <p style={{ margin: '8px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
+                        {groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView]?.length || 0} task(s)
+                      </p>
                     </div>
+                  </div>
 
-                    {isExpanded && (
-                      <div style={{ padding: '0', overflowX: 'auto', width: '100%' }}>
-                        <table style={{
-                          width: '100%',
-                          minWidth: '1400px',
-                          borderCollapse: 'collapse'
-                        }}>
-                          <thead>
-                            <tr style={{
-                              backgroundColor: '#f8f9fa',
-                              borderBottom: '2px solid #e9ecef'
+                  {/* Task Cards Grid */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                    gap: '20px'
+                  }}>
+                    {(groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView] || []).map(task => {
+                      const gradientColors = currentDepartment === 'video'
+                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                        : currentDepartment === 'graphics'
+                          ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
+                          : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
+
+                      const clientInitial = (task.clientName || 'U').charAt(0).toUpperCase();
+                      const isOverdue = isTaskOverdue(task.deadline);
+
+                      return (
+                        <div
+                          key={task.id}
+                          style={{
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            overflow: 'hidden',
+                            transition: 'all 0.3s ease',
+                            border: '1px solid #e9ecef',
+                            position: 'relative',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: '100%'
+                          }}
+                        >
+                          {/* Overdue Badge - Top Right */}
+                          {isOverdue && task.status !== 'completed' && task.status !== 'posted' && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '12px',
+                              right: '12px',
+                              backgroundColor: '#dc3545',
+                              color: 'white',
+                              padding: '4px 12px',
+                              borderRadius: '12px',
+                              fontSize: '11px',
+                              fontWeight: 'bold',
+                              zIndex: 10
                             }}>
-                              <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '150px' }}>Task Name</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Content</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Reference Link</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Special Notes</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Deadline</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Start</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Done</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Revision Timeline</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Status</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '80px' }}>Revisions</th>
-                              <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {clientGroup.map(task => (
-                              <tr key={task.id} style={{
-                                borderBottom: '1px solid #f1f3f4'
-                              }}>
-                                <td style={{ padding: '12px 16px', textAlign: 'left', color: '#495057', fontSize: '14px' }}>
-                                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                    {getStatusIcon(task.status)}
-                                    <div style={{ flex: 1 }}>
-                                      <div style={{ fontWeight: '600', marginBottom: '4px' }}>{task.taskName}</div>
-                                      {isTaskOverdue(task.deadline) && task.status !== 'posted' && task.status !== 'completed' && (
-                                        <span style={{
-                                          backgroundColor: '#dc3545',
-                                          color: 'white',
-                                          padding: '2px 6px',
-                                          borderRadius: '4px',
-                                          fontSize: '10px',
-                                          fontWeight: 'bold',
-                                          marginRight: '6px'
-                                        }}>
-                                          OVERDUE
-                                        </span>
-                                      )}
-                                      {task.revisionMessage && (
-                                        <div style={{
-                                          marginTop: '8px',
-                                          padding: '8px 12px',
-                                          backgroundColor: '#fff3cd',
-                                          border: '1px solid #ffc107',
-                                          borderRadius: '6px',
-                                          fontSize: '12px',
-                                          color: '#856404'
-                                        }}>
-                                          <strong>⚠️ Revision Required:</strong> {task.revisionMessage}
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
-                                  {(task.content || task.taskDescription || task.description) ? (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                      <div style={{ 
-                                        overflow: 'hidden', 
-                                        textOverflow: 'ellipsis', 
-                                        whiteSpace: 'nowrap',
-                                        lineHeight: '1.4',
-                                        flex: 1
-                                      }}>
-                                        {task.content || task.taskDescription || task.description}
-                                      </div>
-                                      <button
-                                        onClick={() => {
-                                          setModalTitle('Content');
-                                          setModalContent(task.content || task.taskDescription || task.description);
-                                          setShowContentModal(true);
-                                        }}
-                                        style={{
-                                          padding: '4px 8px',
-                                          background: '#667eea',
-                                          color: 'white',
-                                          border: 'none',
-                                          borderRadius: '4px',
-                                          fontSize: '11px',
-                                          fontWeight: '600',
-                                          cursor: 'pointer',
-                                          whiteSpace: 'nowrap'
-                                        }}
-                                      >
-                                        View More
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <span style={{ color: '#adb5bd' }}>-</span>
-                                  )}
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                                  {task.referenceLink ? (
-                                    <a 
-                                      href={task.referenceLink} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      style={{
-                                        color: '#667eea',
-                                        textDecoration: 'none',
-                                        fontWeight: '500',
-                                        fontSize: '13px',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '4px'
-                                      }}
-                                      onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
-                                      onMouseOut={(e) => e.target.style.textDecoration = 'none'}
-                                    >
-                                      🔗 View
-                                    </a>
-                                  ) : (
-                                    <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
-                                  )}
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
-                                  {task.specialNotes ? (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                      <div style={{ 
-                                        overflow: 'hidden', 
-                                        textOverflow: 'ellipsis', 
-                                        whiteSpace: 'nowrap',
-                                        lineHeight: '1.4',
-                                        flex: 1
-                                      }}>
-                                        {task.specialNotes}
-                                      </div>
-                                      <button
-                                        onClick={() => {
-                                          setModalTitle('Special Notes');
-                                          setModalContent(task.specialNotes);
-                                          setShowNotesModal(true);
-                                        }}
-                                        style={{
-                                          padding: '4px 8px',
-                                          background: '#667eea',
-                                          color: 'white',
-                                          border: 'none',
-                                          borderRadius: '4px',
-                                          fontSize: '11px',
-                                          fontWeight: '600',
-                                          cursor: 'pointer',
-                                          whiteSpace: 'nowrap'
-                                        }}
-                                      >
-                                        View More
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <span style={{ color: '#adb5bd' }}>-</span>
-                                  )}
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '13px' }}>
-                                  {task.deadline ? (
-                                    <span style={{
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      gap: '4px',
-                                      color: isTaskOverdue(task.deadline) ? '#dc3545' : '#495057'
-                                    }}>
-                                      <Calendar size={14} />
-                                      {new Date(task.deadline).toLocaleDateString()}
-                                    </span>
-                                  ) : '-'}
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
-                                  {task.startedAt ? (
-                                    <div>
-                                      <div style={{ fontWeight: '600', color: '#10b981' }}>
-                                        {new Date(task.startedAt).toLocaleDateString()}
-                                      </div>
-                                      <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                                        {new Date(task.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
-                                  )}
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
-                                  {task.completedAt ? (
-                                    <div>
-                                      <div style={{ fontWeight: '600', color: '#8b5cf6' }}>
-                                        {new Date(task.completedAt).toLocaleDateString()}
-                                      </div>
-                                      <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                                        {new Date(task.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                      </div>
-                                    </div>
-                                  ) : '-'}
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '11px' }}>
-                                  {task.lastRevisionAt || task.submittedAt ? (
-                                    <div style={{
-                                      display: 'flex',
-                                      flexDirection: 'column',
-                                      gap: '8px',
-                                      alignItems: 'center'
-                                    }}>
-                                      {task.lastRevisionAt && (
-                                        <div style={{
-                                          padding: '6px 10px',
-                                          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                                          borderRadius: '6px',
-                                          border: '1px solid #fbbf24',
-                                          width: '100%'
-                                        }}>
-                                          <div style={{ fontWeight: '700', color: '#92400e', fontSize: '10px', marginBottom: '2px' }}>
-                                            ⚠️ REVISION
-                                          </div>
-                                          <div style={{ fontWeight: '600', color: '#78350f' }}>
-                                            {new Date(task.lastRevisionAt).toLocaleDateString()}
-                                          </div>
-                                          <div style={{ fontSize: '10px', color: '#92400e' }}>
-                                            {new Date(task.lastRevisionAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                          </div>
-                                        </div>
-                                      )}
-                                      {task.submittedAt && (
-                                        <div style={{
-                                          padding: '6px 10px',
-                                          background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-                                          borderRadius: '6px',
-                                          border: '1px solid #60a5fa',
-                                          width: '100%'
-                                        }}>
-                                          <div style={{ fontWeight: '700', color: '#1e40af', fontSize: '10px', marginBottom: '2px' }}>
-                                            ✓ SUBMITTED
-                                          </div>
-                                          <div style={{ fontWeight: '600', color: '#1e3a8a' }}>
-                                            {new Date(task.submittedAt).toLocaleDateString()}
-                                          </div>
-                                          <div style={{ fontSize: '10px', color: '#1e40af' }}>
-                                            {new Date(task.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>No timeline</span>
-                                  )}
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                              OVERDUE
+                            </div>
+                          )}
+
+                          {/* Notification Bell Icon for Revision - Below Overdue Badge */}
+                          {task.revisionMessage && (
+                            <button
+                              onClick={() => {
+                                setSelectedRevisionNote(task.revisionMessage);
+                                setShowRevisionNoteModal(true);
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: isOverdue && task.status !== 'completed' && task.status !== 'posted' ? '48px' : '12px',
+                                right: '12px',
+                                backgroundColor: '#ffc107',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                zIndex: 10,
+                                boxShadow: '0 2px 8px rgba(255, 193, 7, 0.4)',
+                                transition: 'all 0.2s'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.transform = 'scale(1.1)';
+                                e.target.style.boxShadow = '0 4px 12px rgba(255, 193, 7, 0.6)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.transform = 'scale(1)';
+                                e.target.style.boxShadow = '0 2px 8px rgba(255, 193, 7, 0.4)';
+                              }}
+                            >
+                              <AlertCircle size={18} />
+                            </button>
+                          )}
+
+                          {/* Checkbox - Top Left Corner */}
+                          <input
+                            type="checkbox"
+                            checked={isTaskSelected(task.clientName, task.id)}
+                            onChange={() => toggleTaskSelection(task.clientName, task.id)}
+                            style={{
+                              position: 'absolute',
+                              top: '8px',
+                              left: '8px',
+                              width: '18px',
+                              height: '18px',
+                              cursor: 'pointer',
+                              zIndex: 10,
+                              accentColor: '#3b82f6'
+                            }}
+                          />
+
+                          {/* Card Header with Gradient */}
+                          <div style={{
+                            background: gradientColors,
+                            padding: '20px',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexShrink: 0,
+                            gap: '12px'
+                          }}>
+                            <div style={{
+                              width: '50px',
+                              height: '50px',
+                              borderRadius: '50%',
+                              backgroundColor: 'rgba(255,255,255,0.3)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '20px',
+                              fontWeight: '700',
+                              flexShrink: 0
+                            }}>
+                              {clientInitial}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {task.taskName}
+                              </div>
+                              <div style={{ fontSize: '13px', opacity: 0.9 }}>
+                                {task.clientName}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Card Body - Info Grid */}
+                          <div style={{ padding: '16px', backgroundColor: '#f8f9fa', flex: 1 }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                              {/* Project Name */}
+                              <div>
+                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Project</div>
+                                <div style={{
+                                  padding: '6px 10px',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  backgroundColor: '#e3f2fd',
+                                  color: '#1976d2',
+                                  textAlign: 'center'
+                                }}>
+                                  {task.projectName || 'N/A'}
+                                </div>
+                              </div>
+
+                              {/* Deadline */}
+                              <div>
+                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Due Date</div>
+                                <div style={{
+                                  padding: '6px 10px',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  backgroundColor: isOverdue ? '#fee2e2' : '#f3f4f6',
+                                  color: isOverdue ? '#dc2626' : '#374151',
+                                  textAlign: 'center'
+                                }}>
+                                  {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Not set'}
+                                </div>
+                              </div>
+
+                              {/* Revisions */}
+                              <div>
+                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Revisions</div>
+                                <div style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  padding: '6px',
+                                  borderRadius: '6px',
+                                  backgroundColor: 'white'
+                                }}>
                                   <span style={{
-                                    display: 'inline-block',
-                                    padding: '10px 20px',
-                                    borderRadius: '8px',
-                                    fontSize: '13px',
-                                    fontWeight: '700',
-                                    backgroundColor: getStatusColor(task.status),
-                                    color: 'white',
-                                    textTransform: 'capitalize',
-                                    whiteSpace: 'nowrap',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                                    letterSpacing: '0.3px'
-                                  }}>
-                                    {getSimplifiedStatus(task.status)}
-                                  </span>
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                                  <span style={{
-                                    display: 'inline-block',
-                                    minWidth: '24px',
-                                    height: '24px',
-                                    lineHeight: '24px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    minWidth: '28px',
+                                    height: '28px',
                                     borderRadius: '50%',
-                                    fontSize: '12px',
+                                    fontSize: '14px',
                                     fontWeight: '700',
-                                    backgroundColor: (task.revisionCount || 0) > 0 ? '#ff4757' : '#2ed573',
-                                    color: 'white',
-                                    textAlign: 'center'
+                                    backgroundColor: (task.revisionCount || 0) > 0 ? '#dc3545' : '#10b981',
+                                    color: 'white'
                                   }}>
                                     {task.revisionCount || 0}
                                   </span>
-                                </td>
-                                <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                    {task.status === 'assigned' && (
-                                      <button
-                                        onClick={() => handleStartWork(task.id)}
-                                        style={{
-                                          backgroundColor: '#3b82f6',
-                                          color: 'white',
-                                          border: 'none',
-                                          padding: '6px 12px',
-                                          borderRadius: '6px',
-                                          cursor: 'pointer',
-                                          fontSize: '12px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          gap: '4px',
-                                          fontWeight: '500'
-                                        }}
-                                      >
-                                        <PlayCircle size={12} /> Start
-                                      </button>
-                                    )}
+                                </div>
+                              </div>
 
-                                    {task.status === 'revision-required' && (
-                                      <button
-                                        onClick={() => handleStartRevision(task.id)}
-                                        style={{
-                                          backgroundColor: '#f59e0b',
-                                          color: 'white',
-                                          border: 'none',
-                                          padding: '6px 12px',
-                                          borderRadius: '6px',
-                                          cursor: 'pointer',
-                                          fontSize: '12px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          gap: '4px',
-                                          fontWeight: '500'
-                                        }}
-                                      >
-                                        <PlayCircle size={12} /> Start Revision
-                                      </button>
-                                    )}
+                              {/* Department */}
+                              <div>
+                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Department</div>
+                                <div style={{
+                                  padding: '6px 10px',
+                                  borderRadius: '6px',
+                                  fontSize: '11px',
+                                  fontWeight: '600',
+                                  backgroundColor: getDepartmentColor(task.department),
+                                  color: 'white',
+                                  textAlign: 'center',
+                                  textTransform: 'uppercase'
+                                }}>
+                                  {task.department}
+                                </div>
+                              </div>
+                            </div>
 
-                                    {task.status === 'in-progress' && (
-                                      <button
-                                        onClick={() => handleMarkComplete(task.id)}
-                                        style={{
-                                          backgroundColor: '#10b981',
-                                          color: 'white',
-                                          border: 'none',
-                                          padding: '6px 12px',
-                                          borderRadius: '6px',
-                                          cursor: 'pointer',
-                                          fontSize: '12px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          gap: '4px',
-                                          fontWeight: '500'
-                                        }}
-                                      >
-                                        <CheckCircle size={12} /> Complete
-                                      </button>
-                                    )}
+                            {/* Assigned To */}
+                            <div style={{ marginBottom: '12px' }}>
+                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Assigned To:</div>
+                              <div style={{ fontSize: '13px', fontWeight: '600', color: '#374151' }}>
+                                {task.assignedTo || 'Unassigned'}
+                              </div>
+                            </div>
+                          </div>
 
-                                    {task.status === 'completed' && (
-                                      <button
-                                        onClick={() => handleSendForApproval(task.id, task)}
-                                        style={{
-                                          backgroundColor: '#8b5cf6',
-                                          color: 'white',
-                                          border: 'none',
-                                          padding: '6px 12px',
-                                          borderRadius: '6px',
-                                          cursor: 'pointer',
-                                          fontSize: '12px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          gap: '4px',
-                                          fontWeight: '500'
-                                        }}
-                                      >
-                                        <Send size={12} /> Send for Approval
-                                      </button>
-                                    )}
+                          {/* Card Footer - Status & Actions */}
+                          <div style={{ padding: '16px', backgroundColor: 'white', flexShrink: 0 }}>
+                            {/* Status Dropdown */}
+                            <div style={{ marginBottom: '12px' }}>
+                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '6px', textAlign: 'center' }}>Status:</div>
+                              <select
+                                value={task.status}
+                                onChange={(e) => handleStatusChange(task.id, e.target.value)}
+                                style={{
+                                  width: '100%',
+                                  padding: '8px 12px',
+                                  borderRadius: '8px',
+                                  border: '2px solid #e5e7eb',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  backgroundColor: getStatusColor(task.status),
+                                  color: 'white',
+                                  textAlign: 'center'
+                                }}
+                              >
+                                <option value="assigned" style={{ backgroundColor: '#fff', color: '#333' }}>Assigned</option>
+                                <option value="in-progress" style={{ backgroundColor: '#fff', color: '#333' }}>In Progress</option>
+                                <option value="completed" style={{ backgroundColor: '#fff', color: '#333' }}>Completed</option>
+                                <option value="pending-client-approval" style={{ backgroundColor: '#fff', color: '#333' }}>Pending Approval</option>
+                                <option value="approved" style={{ backgroundColor: '#fff', color: '#333' }}>Approved</option>
+                                <option value="posted" style={{ backgroundColor: '#fff', color: '#333' }}>Posted</option>
+                                <option value="revision-required" style={{ backgroundColor: '#fff', color: '#333' }}>Revision Required</option>
+                              </select>
+                            </div>
 
-                                    {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
+                            {/* Action Buttons */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              {task.status === 'assigned' && (
+                                <button
+                                  onClick={() => handleStartWork(task.id)}
+                                  style={{
+                                    width: '100%',
+                                    backgroundColor: '#3b82f6',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px'
+                                  }}
+                                >
+                                  <PlayCircle size={14} /> Start Work
+                                </button>
+                              )}
+
+                              {task.status === 'revision-required' && (
+                                <button
+                                  onClick={() => handleStartRevision(task.id)}
+                                  style={{
+                                    width: '100%',
+                                    backgroundColor: '#f59e0b',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px'
+                                  }}
+                                >
+                                  <PlayCircle size={14} /> Start Revision
+                                </button>
+                              )}
+
+                              {/* Start Button - Shows when task is assigned or pending */}
+                              {(task.status === 'assigned' || task.status === 'assigned-to-department' || task.status === 'pending' || task.status === 'approved') && (
+                                <button
+                                  onClick={() => handleStartTask(task.id)}
+                                  style={{
+                                    width: '100%',
+                                    backgroundColor: '#3b82f6',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px',
+                                    transition: 'all 0.2s'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = '#2563eb';
+                                    e.target.style.transform = 'translateY(-2px)';
+                                    e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = '#3b82f6';
+                                    e.target.style.transform = 'translateY(0)';
+                                    e.target.style.boxShadow = 'none';
+                                  }}
+                                >
+                                  <PlayCircle size={14} /> Start Task
+                                </button>
+                              )}
+
+                              {/* Complete Button - Shows when task is in progress */}
+                              {task.status === 'in-progress' && (
+                                <button
+                                  onClick={() => handleMarkComplete(task.id)}
+                                  style={{
+                                    width: '100%',
+                                    backgroundColor: '#10b981',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px',
+                                    transition: 'all 0.2s'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = '#059669';
+                                    e.target.style.transform = 'translateY(-2px)';
+                                    e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = '#10b981';
+                                    e.target.style.transform = 'translateY(0)';
+                                    e.target.style.boxShadow = 'none';
+                                  }}
+                                >
+                                  <CheckCircle size={14} /> Mark Complete
+                                </button>
+                              )}
+
+                              {/* Send for Approval Button - Shows when task is completed */}
+                              {task.status === 'completed' && (
+                                <button
+                                  onClick={() => handleSendForApproval(task.id, task)}
+                                  style={{
+                                    width: '100%',
+                                    backgroundColor: '#8b5cf6',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px'
+                                  }}
+                                >
+                                  <Send size={14} /> Send for Approval
+                                </button>
+                              )}
+
+                              {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
+                                <div style={{
+                                  width: '100%',
+                                  padding: '10px 16px',
+                                  backgroundColor: '#e7f3ff',
+                                  borderRadius: '8px',
+                                  fontSize: '13px',
+                                  color: '#0066cc',
+                                  fontWeight: '600',
+                                  textAlign: 'center',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: '6px'
+                                }}>
+                                  <CheckCircle size={14} /> {task.status === 'pending-client-approval' ? '✓ Awaiting Approval' : task.status === 'approved' ? '✓ Approved' : '✓ Posted'}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* Show client cards */
+                <div style={{ padding: '20px' }}>
+                  {/* Action Buttons Row */}
+                  <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    {/* Download All Button */}
+                    <button
+                      onClick={() => downloadAllClientsReport()}
+                      style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      📥 Download All
+                    </button>
+                  </div>
+
+                  {/* Client Cards Grid */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                    gap: '20px'
+                  }}>
+                    {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientTasks]) => {
+                      // Determine gradient color based on employee department
+                      let gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+                      if (currentDepartment === 'video') {
+                        gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                      } else if (currentDepartment === 'graphics') {
+                        gradientColors = 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)';
+                      } else if (currentDepartment === 'social-media') {
+                        gradientColors = 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
+                      }
+
+                      const clientInitial = (clientName || 'U').charAt(0).toUpperCase();
+                      const totalTasks = clientTasks.length;
+                      const completedTasks = clientTasks.filter(t => t.status === 'completed' || t.status === 'posted').length;
+                      const inProgressTasks = clientTasks.filter(t => t.status === 'in-progress').length;
+
+                      return (
+                        <div
+                          key={clientName}
+                          onClick={() => setSelectedClientForCardView(clientName)}
+                          style={{
+                            backgroundColor: 'white',
+                            borderRadius: '16px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            overflow: 'hidden',
+                            transition: 'all 0.3s ease',
+                            cursor: 'pointer',
+                            border: '1px solid #e9ecef'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-4px)';
+                            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                          }}
+                        >
+                          {/* Client Header */}
+                          <div style={{
+                            background: gradientColors,
+                            padding: '24px 20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px'
+                          }}>
+                            {/* Client Avatar */}
+                            <div style={{
+                              width: '60px',
+                              height: '60px',
+                              borderRadius: '50%',
+                              background: 'rgba(255,255,255,0.3)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '24px',
+                              fontWeight: '700',
+                              color: 'white',
+                              flexShrink: 0
+                            }}>
+                              {clientInitial}
+                            </div>
+
+                            {/* Client Info */}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <h3 style={{
+                                margin: 0,
+                                fontSize: '18px',
+                                fontWeight: '600',
+                                color: 'white',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}>
+                                {clientName}
+                              </h3>
+                              <p style={{
+                                margin: '4px 0 0 0',
+                                fontSize: '13px',
+                                color: 'rgba(255,255,255,0.9)'
+                              }}>
+                                {totalTasks} task{totalTasks !== 1 ? 's' : ''}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Task Stats */}
+                          <div style={{
+                            padding: '20px',
+                            display: 'flex',
+                            justifyContent: 'space-around',
+                            gap: '12px'
+                          }}>
+                            {/* Total Tasks */}
+                            <div style={{ textAlign: 'center', flex: 1 }}>
+                              <div style={{
+                                fontSize: '28px',
+                                fontWeight: '700',
+                                color: '#667eea',
+                                marginBottom: '4px'
+                              }}>
+                                {totalTasks}
+                              </div>
+                              <div style={{
+                                fontSize: '12px',
+                                color: '#6b7280',
+                                fontWeight: '500'
+                              }}>
+                                Total Tasks
+                              </div>
+                            </div>
+
+                            {/* Completed */}
+                            <div style={{ textAlign: 'center', flex: 1 }}>
+                              <div style={{
+                                fontSize: '28px',
+                                fontWeight: '700',
+                                color: '#10b981',
+                                marginBottom: '4px'
+                              }}>
+                                {completedTasks}
+                              </div>
+                              <div style={{
+                                fontSize: '12px',
+                                color: '#6b7280',
+                                fontWeight: '500'
+                              }}>
+                                Completed
+                              </div>
+                            </div>
+
+                            {/* In Progress */}
+                            <div style={{ textAlign: 'center', flex: 1 }}>
+                              <div style={{
+                                fontSize: '28px',
+                                fontWeight: '700',
+                                color: '#f59e0b',
+                                marginBottom: '4px'
+                              }}>
+                                {inProgressTasks}
+                              </div>
+                              <div style={{
+                                fontSize: '12px',
+                                color: '#6b7280',
+                                fontWeight: '500'
+                              }}>
+                                In Progress
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* View Details Button */}
+                          <div style={{
+                            padding: '0 20px 20px 20px'
+                          }}>
+                            <div style={{
+                              background: '#f3f4f6',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              textAlign: 'center',
+                              fontSize: '13px',
+                              color: '#6b7280',
+                              fontWeight: '500'
+                            }}>
+                              Click to view all tasks
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )
+            ) : (
+              /* List View - Grouped by Client */
+              <div style={{ padding: '0' }}>
+                {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientGroup]) => {
+                  const isExpanded = expandedClients[clientName];
+                  const totalTasks = clientGroup.length;
+                  const completedTasks = clientGroup.filter(t => t.status === 'completed' || t.status === 'posted').length;
+                  const inProgressTasks = clientGroup.filter(t => t.status === 'in-progress').length;
+
+                  return (
+                    <div key={clientName} style={{
+                      backgroundColor: 'white',
+                      borderRadius: '12px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      overflow: 'hidden',
+                      border: '1px solid #e9ecef',
+                      marginBottom: '16px'
+                    }}>
+                      <div
+                        onClick={() => toggleClientExpansion(clientName)}
+                        style={{
+                          padding: '20px',
+                          background: currentDepartment === 'video'
+                            ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                            : currentDepartment === 'graphics'
+                              ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
+                              : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
+                          color: 'white',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600'
+                          }}>
+                            {totalTasks}
+                          </div>
+                          <div>
+                            <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
+                              {clientName}
+                            </h3>
+                            <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>
+                              {totalTasks} task{totalTasks !== 1 ? 's' : ''} • {completedTasks} completed • {inProgressTasks} in progress
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{
+                          fontSize: '24px',
+                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.3s ease'
+                        }}>
+                          ▼
+                        </div>
+                      </div>
+
+                      {isExpanded && (
+                        <div style={{ padding: '0', overflowX: 'auto', width: '100%' }}>
+                          <table style={{
+                            width: '100%',
+                            minWidth: '1400px',
+                            borderCollapse: 'collapse'
+                          }}>
+                            <thead>
+                              <tr style={{
+                                backgroundColor: '#f8f9fa',
+                                borderBottom: '2px solid #e9ecef'
+                              }}>
+                                <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '150px' }}>Task Name</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Content</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Reference Link</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Special Notes</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Deadline</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Start</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Done</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Revision Timeline</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Status</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '80px' }}>Revisions</th>
+                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {clientGroup.map(task => (
+                                <tr key={task.id} style={{
+                                  borderBottom: '1px solid #f1f3f4'
+                                }}>
+                                  <td style={{ padding: '12px 16px', textAlign: 'left', color: '#495057', fontSize: '14px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                      {getStatusIcon(task.status)}
+                                      <div style={{ flex: 1 }}>
+                                        <div style={{ fontWeight: '600', marginBottom: '4px' }}>{task.taskName}</div>
+                                        {isTaskOverdue(task.deadline) && task.status !== 'posted' && task.status !== 'completed' && (
+                                          <span style={{
+                                            backgroundColor: '#dc3545',
+                                            color: 'white',
+                                            padding: '2px 6px',
+                                            borderRadius: '4px',
+                                            fontSize: '10px',
+                                            fontWeight: 'bold',
+                                            marginRight: '6px'
+                                          }}>
+                                            OVERDUE
+                                          </span>
+                                        )}
+                                        {task.revisionMessage && (
+                                          <div style={{
+                                            marginTop: '8px',
+                                            padding: '8px 12px',
+                                            backgroundColor: '#fff3cd',
+                                            border: '1px solid #ffc107',
+                                            borderRadius: '6px',
+                                            fontSize: '12px',
+                                            color: '#856404'
+                                          }}>
+                                            <strong>⚠️ Revision Required:</strong> {task.revisionMessage}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
+                                    {(task.content || task.taskDescription || task.description) ? (
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: '1.4',
+                                          flex: 1
+                                        }}>
+                                          {task.content || task.taskDescription || task.description}
+                                        </div>
+                                        <button
+                                          onClick={() => {
+                                            setModalTitle('Content');
+                                            setModalContent(task.content || task.taskDescription || task.description);
+                                            setShowContentModal(true);
+                                          }}
+                                          style={{
+                                            padding: '4px 8px',
+                                            background: '#667eea',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            fontSize: '11px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            whiteSpace: 'nowrap'
+                                          }}
+                                        >
+                                          View More
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <span style={{ color: '#adb5bd' }}>-</span>
+                                    )}
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                    {task.referenceLink ? (
+                                      <a
+                                        href={task.referenceLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                          color: '#667eea',
+                                          textDecoration: 'none',
+                                          fontWeight: '500',
+                                          fontSize: '13px',
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '4px'
+                                        }}
+                                        onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
+                                        onMouseOut={(e) => e.target.style.textDecoration = 'none'}
+                                      >
+                                        🔗 View
+                                      </a>
+                                    ) : (
+                                      <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
+                                    )}
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
+                                    {task.specialNotes ? (
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: '1.4',
+                                          flex: 1
+                                        }}>
+                                          {task.specialNotes}
+                                        </div>
+                                        <button
+                                          onClick={() => {
+                                            setModalTitle('Special Notes');
+                                            setModalContent(task.specialNotes);
+                                            setShowNotesModal(true);
+                                          }}
+                                          style={{
+                                            padding: '4px 8px',
+                                            background: '#667eea',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            fontSize: '11px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            whiteSpace: 'nowrap'
+                                          }}
+                                        >
+                                          View More
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <span style={{ color: '#adb5bd' }}>-</span>
+                                    )}
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '13px' }}>
+                                    {task.deadline ? (
                                       <span style={{
-                                        padding: '6px 12px',
-                                        backgroundColor: '#e7f3ff',
-                                        borderRadius: '6px',
-                                        fontSize: '11px',
-                                        color: '#0066cc',
-                                        display: 'flex',
+                                        display: 'inline-flex',
                                         alignItems: 'center',
                                         gap: '4px',
-                                        fontWeight: '500'
+                                        color: isTaskOverdue(task.deadline) ? '#dc3545' : '#495057'
                                       }}>
-                                        <CheckCircle size={12} /> {task.status === 'pending-client-approval' ? 'Awaiting Approval' : task.status === 'approved' ? 'Approved' : 'Posted'}
+                                        <Calendar size={14} />
+                                        {new Date(task.deadline).toLocaleDateString()}
                                       </span>
+                                    ) : '-'}
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
+                                    {task.startedAt ? (
+                                      <div>
+                                        <div style={{ fontWeight: '600', color: '#10b981' }}>
+                                          {new Date(task.startedAt).toLocaleDateString()}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                                          {new Date(task.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
                                     )}
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
+                                    {task.completedAt ? (
+                                      <div>
+                                        <div style={{ fontWeight: '600', color: '#8b5cf6' }}>
+                                          {new Date(task.completedAt).toLocaleDateString()}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                                          {new Date(task.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                      </div>
+                                    ) : '-'}
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '11px' }}>
+                                    {task.lastRevisionAt || task.submittedAt ? (
+                                      <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '8px',
+                                        alignItems: 'center'
+                                      }}>
+                                        {task.lastRevisionAt && (
+                                          <div style={{
+                                            padding: '6px 10px',
+                                            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                            borderRadius: '6px',
+                                            border: '1px solid #fbbf24',
+                                            width: '100%'
+                                          }}>
+                                            <div style={{ fontWeight: '700', color: '#92400e', fontSize: '10px', marginBottom: '2px' }}>
+                                              ⚠️ REVISION
+                                            </div>
+                                            <div style={{ fontWeight: '600', color: '#78350f' }}>
+                                              {new Date(task.lastRevisionAt).toLocaleDateString()}
+                                            </div>
+                                            <div style={{ fontSize: '10px', color: '#92400e' }}>
+                                              {new Date(task.lastRevisionAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                          </div>
+                                        )}
+                                        {task.submittedAt && (
+                                          <div style={{
+                                            padding: '6px 10px',
+                                            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+                                            borderRadius: '6px',
+                                            border: '1px solid #60a5fa',
+                                            width: '100%'
+                                          }}>
+                                            <div style={{ fontWeight: '700', color: '#1e40af', fontSize: '10px', marginBottom: '2px' }}>
+                                              ✓ SUBMITTED
+                                            </div>
+                                            <div style={{ fontWeight: '600', color: '#1e3a8a' }}>
+                                              {new Date(task.submittedAt).toLocaleDateString()}
+                                            </div>
+                                            <div style={{ fontSize: '10px', color: '#1e40af' }}>
+                                              {new Date(task.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>No timeline</span>
+                                    )}
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                    <span style={{
+                                      display: 'inline-block',
+                                      padding: '10px 20px',
+                                      borderRadius: '8px',
+                                      fontSize: '13px',
+                                      fontWeight: '700',
+                                      backgroundColor: getStatusColor(task.status),
+                                      color: 'white',
+                                      textTransform: 'capitalize',
+                                      whiteSpace: 'nowrap',
+                                      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                      letterSpacing: '0.3px'
+                                    }}>
+                                      {getSimplifiedStatus(task.status)}
+                                    </span>
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                    <span style={{
+                                      display: 'inline-block',
+                                      minWidth: '24px',
+                                      height: '24px',
+                                      lineHeight: '24px',
+                                      borderRadius: '50%',
+                                      fontSize: '12px',
+                                      fontWeight: '700',
+                                      backgroundColor: (task.revisionCount || 0) > 0 ? '#ff4757' : '#2ed573',
+                                      color: 'white',
+                                      textAlign: 'center'
+                                    }}>
+                                      {task.revisionCount || 0}
+                                    </span>
+                                  </td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                      {task.status === 'assigned' && (
+                                        <button
+                                          onClick={() => handleStartWork(task.id)}
+                                          style={{
+                                            backgroundColor: '#3b82f6',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 12px',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            fontWeight: '500'
+                                          }}
+                                        >
+                                          <PlayCircle size={12} /> Start
+                                        </button>
+                                      )}
+
+                                      {task.status === 'revision-required' && (
+                                        <button
+                                          onClick={() => handleStartRevision(task.id)}
+                                          style={{
+                                            backgroundColor: '#f59e0b',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 12px',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            fontWeight: '500'
+                                          }}
+                                        >
+                                          <PlayCircle size={12} /> Start Revision
+                                        </button>
+                                      )}
+
+                                      {task.status === 'in-progress' && (
+                                        <button
+                                          onClick={() => handleMarkComplete(task.id)}
+                                          style={{
+                                            backgroundColor: '#10b981',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 12px',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            fontWeight: '500'
+                                          }}
+                                        >
+                                          <CheckCircle size={12} /> Complete
+                                        </button>
+                                      )}
+
+                                      {task.status === 'completed' && (
+                                        <button
+                                          onClick={() => handleSendForApproval(task.id, task)}
+                                          style={{
+                                            backgroundColor: '#8b5cf6',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 12px',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            fontWeight: '500'
+                                          }}
+                                        >
+                                          <Send size={12} /> Send for Approval
+                                        </button>
+                                      )}
+
+                                      {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
+                                        <span style={{
+                                          padding: '6px 12px',
+                                          backgroundColor: '#e7f3ff',
+                                          borderRadius: '6px',
+                                          fontSize: '11px',
+                                          color: '#0066cc',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          gap: '4px',
+                                          fontWeight: '500'
+                                        }}>
+                                          <CheckCircle size={12} /> {task.status === 'pending-client-approval' ? 'Awaiting Approval' : task.status === 'approved' ? 'Approved' : 'Posted'}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
 
         {/* Reports Section */}
@@ -3766,7 +3759,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     flex: '1',
                     minWidth: '250px'
                   }}>
-                    <Search size={18} style={{color: '#6b7280'}} />
+                    <Search size={18} style={{ color: '#6b7280' }} />
                     <input
                       type="text"
                       placeholder="Search tasks, clients..."
@@ -3991,7 +3984,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     ];
                     const total = statusData.reduce((sum, item) => sum + item.count, 0);
                     const nonZeroStatuses = statusData.filter(item => item.count > 0);
-                    
+
                     if (total === 0) {
                       return (
                         <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9ca3af' }}>
@@ -4000,7 +3993,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                         </div>
                       );
                     }
-                    
+
                     const radius = 70;
                     const centerX = 100;
                     const centerY = 100;
@@ -4027,20 +4020,20 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                 const angle = (item.count / total) * 360;
                                 const startAngle = currentAngle;
                                 const endAngle = currentAngle + angle;
-                                
+
                                 const startRad = (startAngle - 90) * (Math.PI / 180);
                                 const endRad = (endAngle - 90) * (Math.PI / 180);
-                                
+
                                 const x1 = centerX + radius * Math.cos(startRad);
                                 const y1 = centerY + radius * Math.sin(startRad);
                                 const x2 = centerX + radius * Math.cos(endRad);
                                 const y2 = centerY + radius * Math.sin(endRad);
-                                
+
                                 const largeArc = angle > 180 ? 1 : 0;
                                 const path = `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-                                
+
                                 currentAngle += angle;
-                                
+
                                 return (
                                   <path
                                     key={index}
@@ -4204,7 +4197,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                           <Download size={16} />
                           Download Selected ({selectedReportClients.size > 0 ? `${selectedReportClients.size} clients` : `${selectedReportTaskIds.size} tasks`})
                         </button>
-                        
+
                         {showReportFormatDropdown && (
                           <div style={{
                             position: 'absolute',
@@ -4292,7 +4285,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                 doc.setFont('helvetica', 'bold');
                                 doc.setTextColor(102, 126, 234);
                                 doc.text(`${currentDepartment === 'video' ? 'Video' : currentDepartment === 'graphics' ? 'Graphics' : 'Employee'} Report`, pageWidth / 2, yPosition, { align: 'center' });
-                                
+
                                 yPosition += 8;
                                 doc.setFontSize(11);
                                 doc.setFont('helvetica', 'normal');
@@ -4317,14 +4310,14 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                   doc.setFontSize(13);
                                   doc.setFont('helvetica', 'bold');
                                   doc.text(`${clientName} (ID: ${clientData.clientId})`, 18, yPosition + 2);
-                                  
+
                                   yPosition += 10;
 
                                   // Tasks table
                                   const tableData = clientData.tasks.map(task => {
                                     let postDate = 'N/A';
                                     let postTime = 'N/A';
-                                    
+
                                     // Only show post date/time if task is actually posted or approved
                                     if (task.status === 'posted' || task.status === 'approved') {
                                       if (task.postDate) {
@@ -4351,7 +4344,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
 
                                     // Get status text
                                     const getStatusText = (status) => {
-                                      switch(status) {
+                                      switch (status) {
                                         case 'completed':
                                         case 'posted':
                                         case 'approved':
@@ -4413,7 +4406,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
 
                                 doc.save(`${currentDepartment || 'employee'}-report-${selectedMonth}.pdf`);
                                 showToast(`✅ PDF downloaded with ${tasksToDownload.length} task(s)`, 'success');
-                                
+
                                 // Clear selections
                                 setSelectedReportClients(new Set());
                                 setSelectedReportTaskIds(new Set());
@@ -4487,7 +4480,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
 
                                 // Create Excel
                                 const wb = XLSX.utils.book_new();
-                                
+
                                 const headerData = [
                                   [`${currentDepartment === 'video' ? 'Video' : currentDepartment === 'graphics' ? 'Graphics' : 'Employee'} Report`],
                                   [],
@@ -4503,12 +4496,12 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                   // Client header
                                   allData.push([`${clientName} (ID: ${clientData.clientId})`, '', '', '', '', '']);
                                   allData.push(['Client ID', 'Client Name', 'Task Name (Ideas)', 'Status', 'Post Date', 'Post Time']);
-                                  
+
                                   // Client tasks
                                   clientData.tasks.forEach(task => {
                                     let postDate = 'N/A';
                                     let postTime = 'N/A';
-                                    
+
                                     // Only show post date/time if task is actually posted or approved
                                     if (task.status === 'posted' || task.status === 'approved') {
                                       if (task.postDate) {
@@ -4535,7 +4528,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
 
                                     // Get status text
                                     const getStatusText = (status) => {
-                                      switch(status) {
+                                      switch (status) {
                                         case 'completed':
                                         case 'posted':
                                         case 'approved':
@@ -4562,18 +4555,18 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                       postTime
                                     ]);
                                   });
-                                  
+
                                   allData.push([]); // Empty row between clients
                                 });
 
                                 const ws = XLSX.utils.aoa_to_sheet(allData);
                                 ws['!cols'] = [{ wch: 15 }, { wch: 25 }, { wch: 35 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
-                                
+
                                 XLSX.utils.book_append_sheet(wb, ws, 'Employee Report');
                                 XLSX.writeFile(wb, `${currentDepartment || 'employee'}-report-${selectedMonth}.xlsx`);
-                                
+
                                 showToast(`✅ Excel downloaded with ${tasksToDownload.length} task(s)`, 'success');
-                                
+
                                 // Clear selections
                                 setSelectedReportClients(new Set());
                                 setSelectedReportTaskIds(new Set());
@@ -4635,485 +4628,485 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   </div>
                 </div>
                 <div style={{ overflowX: 'auto', width: '100%' }}>
-                <table style={{
-                  width: '100%',
-                  minWidth: '1200px',
-                  borderCollapse: 'collapse'
-                }}>
-                  <thead>
-                    <tr style={{
-                      backgroundColor: '#f9fafb',
-                      borderBottom: '2px solid #e5e7eb'
-                    }}>
-                      {showReportCheckboxes && (
+                  <table style={{
+                    width: '100%',
+                    minWidth: '1200px',
+                    borderCollapse: 'collapse'
+                  }}>
+                    <thead>
+                      <tr style={{
+                        backgroundColor: '#f9fafb',
+                        borderBottom: '2px solid #e5e7eb'
+                      }}>
+                        {showReportCheckboxes && (
+                          <th style={{
+                            padding: '12px 16px',
+                            textAlign: 'center',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            color: '#6b7280',
+                            textTransform: 'uppercase',
+                            width: '60px'
+                          }}>
+                            <input
+                              type="checkbox"
+                              checked={(() => {
+                                const clientGroups = {};
+                                allMonthTasks.forEach(task => {
+                                  const clientName = task.clientName || 'Unknown Client';
+                                  if (!clientGroups[clientName]) {
+                                    clientGroups[clientName] = { tasks: [] };
+                                  }
+                                  clientGroups[clientName].tasks.push(task);
+                                });
+                                const allClientNames = Object.keys(clientGroups);
+                                return allClientNames.length > 0 && allClientNames.every(name => selectedReportClients.has(name));
+                              })()}
+                              onChange={(e) => {
+                                const clientGroups = {};
+                                allMonthTasks.forEach(task => {
+                                  const clientName = task.clientName || 'Unknown Client';
+                                  if (!clientGroups[clientName]) {
+                                    clientGroups[clientName] = { tasks: [] };
+                                  }
+                                  clientGroups[clientName].tasks.push(task);
+                                });
+                                const allClientNames = Object.keys(clientGroups);
+                                const newSelectedClients = new Set(selectedReportClients);
+                                const newSelectedTasks = new Set(selectedReportTaskIds);
+
+                                if (e.target.checked) {
+                                  allClientNames.forEach(name => newSelectedClients.add(name));
+                                  allMonthTasks.forEach(task => newSelectedTasks.add(task.id));
+                                } else {
+                                  newSelectedClients.clear();
+                                  newSelectedTasks.clear();
+                                }
+
+                                setSelectedReportClients(newSelectedClients);
+                                setSelectedReportTaskIds(newSelectedTasks);
+                              }}
+                              style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                            />
+                          </th>
+                        )}
+                        <th style={{
+                          padding: '12px 16px',
+                          textAlign: 'left',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: '#6b7280',
+                          textTransform: 'uppercase'
+                        }}>Client Name</th>
                         <th style={{
                           padding: '12px 16px',
                           textAlign: 'center',
                           fontSize: '12px',
                           fontWeight: '600',
                           color: '#6b7280',
-                          textTransform: 'uppercase',
-                          width: '60px'
-                        }}>
-                          <input
-                            type="checkbox"
-                            checked={(() => {
-                              const clientGroups = {};
-                              allMonthTasks.forEach(task => {
-                                const clientName = task.clientName || 'Unknown Client';
-                                if (!clientGroups[clientName]) {
-                                  clientGroups[clientName] = { tasks: [] };
-                                }
-                                clientGroups[clientName].tasks.push(task);
-                              });
-                              const allClientNames = Object.keys(clientGroups);
-                              return allClientNames.length > 0 && allClientNames.every(name => selectedReportClients.has(name));
-                            })()}
-                            onChange={(e) => {
-                              const clientGroups = {};
-                              allMonthTasks.forEach(task => {
-                                const clientName = task.clientName || 'Unknown Client';
-                                if (!clientGroups[clientName]) {
-                                  clientGroups[clientName] = { tasks: [] };
-                                }
-                                clientGroups[clientName].tasks.push(task);
-                              });
-                              const allClientNames = Object.keys(clientGroups);
-                              const newSelectedClients = new Set(selectedReportClients);
-                              const newSelectedTasks = new Set(selectedReportTaskIds);
-                              
-                              if (e.target.checked) {
-                                allClientNames.forEach(name => newSelectedClients.add(name));
-                                allMonthTasks.forEach(task => newSelectedTasks.add(task.id));
-                              } else {
-                                newSelectedClients.clear();
-                                newSelectedTasks.clear();
-                              }
-                              
-                              setSelectedReportClients(newSelectedClients);
-                              setSelectedReportTaskIds(newSelectedTasks);
-                            }}
-                            style={{ cursor: 'pointer', width: '18px', height: '18px' }}
-                          />
-                        </th>
-                      )}
-                      <th style={{
-                        padding: '12px 16px',
-                        textAlign: 'left',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: '#6b7280',
-                        textTransform: 'uppercase'
-                      }}>Client Name</th>
-                      <th style={{
-                        padding: '12px 16px',
-                        textAlign: 'center',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: '#6b7280',
-                        textTransform: 'uppercase'
-                      }}>Total Tasks</th>
-                      <th style={{
-                        padding: '12px 16px',
-                        textAlign: 'center',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: '#6b7280',
-                        textTransform: 'uppercase'
-                      }}>In Progress</th>
-                      <th style={{
-                        padding: '12px 16px',
-                        textAlign: 'center',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: '#6b7280',
-                        textTransform: 'uppercase'
-                      }}>Completed</th>
-                      <th style={{
-                        padding: '12px 16px',
-                        textAlign: 'center',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: '#6b7280',
-                        textTransform: 'uppercase'
-                      }}>Completion Rate</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(() => {
-                      // Group tasks by client
-                      const clientGroups = {};
-                      allMonthTasks.forEach(task => {
-                        const clientName = task.clientName || 'Unknown Client';
-                        if (!clientGroups[clientName]) {
-                          clientGroups[clientName] = {
-                            clientId: task.clientId || 'N/A',
-                            tasks: []
-                          };
-                        }
-                        clientGroups[clientName].tasks.push(task);
-                      });
+                          textTransform: 'uppercase'
+                        }}>Total Tasks</th>
+                        <th style={{
+                          padding: '12px 16px',
+                          textAlign: 'center',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: '#6b7280',
+                          textTransform: 'uppercase'
+                        }}>In Progress</th>
+                        <th style={{
+                          padding: '12px 16px',
+                          textAlign: 'center',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: '#6b7280',
+                          textTransform: 'uppercase'
+                        }}>Completed</th>
+                        <th style={{
+                          padding: '12px 16px',
+                          textAlign: 'center',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: '#6b7280',
+                          textTransform: 'uppercase'
+                        }}>Completion Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        // Group tasks by client
+                        const clientGroups = {};
+                        allMonthTasks.forEach(task => {
+                          const clientName = task.clientName || 'Unknown Client';
+                          if (!clientGroups[clientName]) {
+                            clientGroups[clientName] = {
+                              clientId: task.clientId || 'N/A',
+                              tasks: []
+                            };
+                          }
+                          clientGroups[clientName].tasks.push(task);
+                        });
 
-                      return Object.entries(clientGroups).map(([clientName, clientData], index) => {
-                        const totalTasks = clientData.tasks.length;
-                        const inProgressTasks = clientData.tasks.filter(t => t.status === 'in-progress').length;
-                        const completedTasks = clientData.tasks.filter(t => t.status === 'completed' || t.status === 'posted' || t.status === 'approved').length;
-                        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-                        const isExpanded = expandedClients[clientName];
-                        
-                        // Determine avatar color based on department
-                        const avatarGradient = currentDepartment === 'video' 
-                          ? 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)'
-                          : currentDepartment === 'graphics'
-                          ? 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)'
-                          : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                        
-                        const arrowColor = currentDepartment === 'video' 
-                          ? '#e74c3c'
-                          : currentDepartment === 'graphics'
-                          ? '#3498db'
-                          : '#667eea';
+                        return Object.entries(clientGroups).map(([clientName, clientData], index) => {
+                          const totalTasks = clientData.tasks.length;
+                          const inProgressTasks = clientData.tasks.filter(t => t.status === 'in-progress').length;
+                          const completedTasks = clientData.tasks.filter(t => t.status === 'completed' || t.status === 'posted' || t.status === 'approved').length;
+                          const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                          const isExpanded = expandedClients[clientName];
 
-                        return (
-                          <React.Fragment key={clientName}>
-                            <tr style={{
-                              borderBottom: '1px solid #f1f3f4',
-                              backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9fafb',
-                              cursor: 'pointer'
-                            }}
-                            onClick={() => {
-                              setExpandedClients(prev => ({
-                                ...prev,
-                                [clientName]: !prev[clientName]
-                              }));
-                            }}
-                            >
-                              {showReportCheckboxes && (
+                          // Determine avatar color based on department
+                          const avatarGradient = currentDepartment === 'video'
+                            ? 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)'
+                            : currentDepartment === 'graphics'
+                              ? 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)'
+                              : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+                          const arrowColor = currentDepartment === 'video'
+                            ? '#e74c3c'
+                            : currentDepartment === 'graphics'
+                              ? '#3498db'
+                              : '#667eea';
+
+                          return (
+                            <React.Fragment key={clientName}>
+                              <tr style={{
+                                borderBottom: '1px solid #f1f3f4',
+                                backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9fafb',
+                                cursor: 'pointer'
+                              }}
+                                onClick={() => {
+                                  setExpandedClients(prev => ({
+                                    ...prev,
+                                    [clientName]: !prev[clientName]
+                                  }));
+                                }}
+                              >
+                                {showReportCheckboxes && (
+                                  <td style={{
+                                    padding: '14px 16px',
+                                    textAlign: 'center'
+                                  }}
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedReportClients.has(clientName)}
+                                      onChange={(e) => {
+                                        const newSelectedClients = new Set(selectedReportClients);
+                                        const newSelectedTasks = new Set(selectedReportTaskIds);
+
+                                        if (e.target.checked) {
+                                          newSelectedClients.add(clientName);
+                                          clientData.tasks.forEach(task => newSelectedTasks.add(task.id));
+                                        } else {
+                                          newSelectedClients.delete(clientName);
+                                          clientData.tasks.forEach(task => newSelectedTasks.delete(task.id));
+                                        }
+
+                                        setSelectedReportClients(newSelectedClients);
+                                        setSelectedReportTaskIds(newSelectedTasks);
+                                      }}
+                                      style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                                    />
+                                  </td>
+                                )}
+                                <td style={{
+                                  padding: '14px 16px',
+                                  textAlign: 'left'
+                                }}>
+                                  <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px'
+                                  }}>
+                                    <div style={{
+                                      fontSize: '18px',
+                                      color: arrowColor,
+                                      transition: 'transform 0.2s',
+                                      transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'
+                                    }}>
+                                      ▶
+                                    </div>
+                                    <div style={{
+                                      width: '36px',
+                                      height: '36px',
+                                      borderRadius: '50%',
+                                      background: avatarGradient,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      color: 'white',
+                                      fontSize: '14px',
+                                      fontWeight: '700',
+                                      flexShrink: 0
+                                    }}>
+                                      {clientName.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span style={{
+                                      fontSize: '14px',
+                                      fontWeight: '600',
+                                      color: '#1f2937'
+                                    }}>
+                                      {clientName}
+                                    </span>
+                                  </div>
+                                </td>
                                 <td style={{
                                   padding: '14px 16px',
                                   textAlign: 'center'
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={selectedReportClients.has(clientName)}
-                                    onChange={(e) => {
-                                      const newSelectedClients = new Set(selectedReportClients);
-                                      const newSelectedTasks = new Set(selectedReportTaskIds);
-                                      
-                                      if (e.target.checked) {
-                                        newSelectedClients.add(clientName);
-                                        clientData.tasks.forEach(task => newSelectedTasks.add(task.id));
-                                      } else {
-                                        newSelectedClients.delete(clientName);
-                                        clientData.tasks.forEach(task => newSelectedTasks.delete(task.id));
-                                      }
-                                      
-                                      setSelectedReportClients(newSelectedClients);
-                                      setSelectedReportTaskIds(newSelectedTasks);
-                                    }}
-                                    style={{ cursor: 'pointer', width: '18px', height: '18px' }}
-                                  />
+                                }}>
+                                  <span style={{
+                                    fontSize: '16px',
+                                    fontWeight: '700',
+                                    color: '#1f2937'
+                                  }}>
+                                    {totalTasks}
+                                  </span>
                                 </td>
-                              )}
-                              <td style={{
-                                padding: '14px 16px',
-                                textAlign: 'left'
-                              }}>
-                                <div style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '10px'
+                                <td style={{
+                                  padding: '14px 16px',
+                                  textAlign: 'center'
+                                }}>
+                                  <span style={{
+                                    display: 'inline-block',
+                                    padding: '4px 12px',
+                                    borderRadius: '12px',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    backgroundColor: '#dbeafe',
+                                    color: '#1e40af'
+                                  }}>
+                                    {inProgressTasks}
+                                  </span>
+                                </td>
+                                <td style={{
+                                  padding: '14px 16px',
+                                  textAlign: 'center'
+                                }}>
+                                  <span style={{
+                                    display: 'inline-block',
+                                    padding: '4px 12px',
+                                    borderRadius: '12px',
+                                    fontSize: '13px',
+                                    fontWeight: '600',
+                                    backgroundColor: '#d1fae5',
+                                    color: '#065f46'
+                                  }}>
+                                    {completedTasks}
+                                  </span>
+                                </td>
+                                <td style={{
+                                  padding: '14px 16px',
+                                  textAlign: 'center'
                                 }}>
                                   <div style={{
-                                    fontSize: '18px',
-                                    color: arrowColor,
-                                    transition: 'transform 0.2s',
-                                    transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'
-                                  }}>
-                                    ▶
-                                  </div>
-                                  <div style={{
-                                    width: '36px',
-                                    height: '36px',
-                                    borderRadius: '50%',
-                                    background: avatarGradient,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    color: 'white',
-                                    fontSize: '14px',
-                                    fontWeight: '700',
-                                    flexShrink: 0
-                                  }}>
-                                    {clientName.charAt(0).toUpperCase()}
-                                  </div>
-                                  <span style={{
-                                    fontSize: '14px',
-                                    fontWeight: '600',
-                                    color: '#1f2937'
-                                  }}>
-                                    {clientName}
-                                  </span>
-                                </div>
-                              </td>
-                              <td style={{
-                                padding: '14px 16px',
-                                textAlign: 'center'
-                              }}>
-                                <span style={{
-                                  fontSize: '16px',
-                                  fontWeight: '700',
-                                  color: '#1f2937'
-                                }}>
-                                  {totalTasks}
-                                </span>
-                              </td>
-                              <td style={{
-                                padding: '14px 16px',
-                                textAlign: 'center'
-                              }}>
-                                <span style={{
-                                  display: 'inline-block',
-                                  padding: '4px 12px',
-                                  borderRadius: '12px',
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  backgroundColor: '#dbeafe',
-                                  color: '#1e40af'
-                                }}>
-                                  {inProgressTasks}
-                                </span>
-                              </td>
-                              <td style={{
-                                padding: '14px 16px',
-                                textAlign: 'center'
-                              }}>
-                                <span style={{
-                                  display: 'inline-block',
-                                  padding: '4px 12px',
-                                  borderRadius: '12px',
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  backgroundColor: '#d1fae5',
-                                  color: '#065f46'
-                                }}>
-                                  {completedTasks}
-                                </span>
-                              </td>
-                              <td style={{
-                                padding: '14px 16px',
-                                textAlign: 'center'
-                              }}>
-                                <div style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '10px'
-                                }}>
-                                  <div style={{
-                                    flex: 1,
-                                    maxWidth: '120px',
-                                    height: '8px',
-                                    background: '#e5e7eb',
-                                    borderRadius: '4px',
-                                    overflow: 'hidden'
+                                    gap: '10px'
                                   }}>
                                     <div style={{
-                                      width: `${completionRate}%`,
-                                      height: '100%',
-                                      background: completionRate >= 75 ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)' : completionRate >= 50 ? 'linear-gradient(90deg, #f59e0b 0%, #d97706 100%)' : 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)',
-                                      transition: 'width 0.3s ease',
-                                      borderRadius: '4px'
-                                    }}></div>
-                                  </div>
-                                  <span style={{
-                                    fontSize: '13px',
-                                    fontWeight: '700',
-                                    color: completionRate >= 75 ? '#10b981' : completionRate >= 50 ? '#f59e0b' : '#ef4444',
-                                    minWidth: '40px'
-                                  }}>
-                                    {completionRate}%
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                            
-                            {/* Expanded Task Details */}
-                            {isExpanded && (
-                              <tr>
-                                <td colSpan={showReportCheckboxes ? 7 : 6} style={{ padding: 0, backgroundColor: '#f9fafb' }}>
-                                  <div style={{
-                                    padding: '20px',
-                                    borderTop: '1px solid #e5e7eb'
-                                  }}>
-                                    <div style={{
-                                      display: 'grid',
-                                      gridTemplateColumns: showReportCheckboxes ? '50px 100px 150px 1fr 130px 120px 120px' : '100px 150px 1fr 130px 120px 120px',
-                                      gap: '12px',
-                                      padding: '10px 16px',
-                                      backgroundColor: '#f3f4f6',
-                                      borderRadius: '6px',
-                                      marginBottom: '8px',
-                                      fontSize: '11px',
-                                      fontWeight: '600',
-                                      color: '#6b7280',
-                                      textTransform: 'uppercase'
+                                      flex: 1,
+                                      maxWidth: '120px',
+                                      height: '8px',
+                                      background: '#e5e7eb',
+                                      borderRadius: '4px',
+                                      overflow: 'hidden'
                                     }}>
-                                      {showReportCheckboxes && <div style={{ textAlign: 'center' }}>
-                                        <input
-                                          type="checkbox"
-                                          checked={clientData.tasks.every(t => selectedReportTaskIds.has(t.id))}
-                                          onChange={(e) => {
-                                            const newSelectedTasks = new Set(selectedReportTaskIds);
-                                            const newSelectedClients = new Set(selectedReportClients);
-                                            
-                                            if (e.target.checked) {
-                                              clientData.tasks.forEach(t => newSelectedTasks.add(t.id));
-                                              newSelectedClients.add(clientName);
-                                            } else {
-                                              clientData.tasks.forEach(t => newSelectedTasks.delete(t.id));
-                                              newSelectedClients.delete(clientName);
-                                            }
-                                            
-                                            setSelectedReportTaskIds(newSelectedTasks);
-                                            setSelectedReportClients(newSelectedClients);
-                                          }}
-                                          style={{ cursor: 'pointer', width: '16px', height: '16px' }}
-                                        />
-                                      </div>}
-                                      <div>Client ID</div>
-                                      <div>Client Name</div>
-                                      <div>Task Name (Ideas)</div>
-                                      <div style={{ textAlign: 'center' }}>Status</div>
-                                      <div style={{ textAlign: 'center' }}>Post Date</div>
-                                      <div style={{ textAlign: 'center' }}>Post Time</div>
+                                      <div style={{
+                                        width: `${completionRate}%`,
+                                        height: '100%',
+                                        background: completionRate >= 75 ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)' : completionRate >= 50 ? 'linear-gradient(90deg, #f59e0b 0%, #d97706 100%)' : 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)',
+                                        transition: 'width 0.3s ease',
+                                        borderRadius: '4px'
+                                      }}></div>
                                     </div>
-                                    {clientData.tasks.map((task, taskIndex) => {
-                                      let postDate = 'N/A';
-                                      let postTime = 'N/A';
-                                      
-                                      // Only show post date/time if task is actually posted or approved
-                                      if (task.status === 'posted' || task.status === 'approved') {
-                                        if (task.postDate) {
-                                          try {
-                                            const date = new Date(task.postDate);
-                                            postDate = date.toLocaleDateString('en-GB');
-                                            postTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                                          } catch (e) {
-                                            postDate = task.postDate;
-                                          }
-                                        } else if (task.postedAt) {
-                                          try {
-                                            const date = new Date(task.postedAt);
-                                            postDate = date.toLocaleDateString('en-GB');
-                                            postTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                                          } catch (e) {
-                                            postDate = 'Posted';
-                                          }
-                                        }
-                                      } else {
-                                        // For non-posted tasks, show deadline or "Not Posted"
-                                        postDate = 'Not Posted';
-                                        postTime = '-';
-                                      }
-
-                                      // Get status display info
-                                      const getStatusDisplay = (status) => {
-                                        switch(status) {
-                                          case 'completed':
-                                          case 'posted':
-                                          case 'approved':
-                                            return { text: 'Completed', color: '#10b981', bg: '#d1fae5' };
-                                          case 'in-progress':
-                                            return { text: 'In Progress', color: '#3b82f6', bg: '#dbeafe' };
-                                          case 'pending-client-approval':
-                                            return { text: 'Pending', color: '#f59e0b', bg: '#fef3c7' };
-                                          case 'revision-required':
-                                            return { text: 'Revision', color: '#ef4444', bg: '#fee2e2' };
-                                          case 'assigned':
-                                            return { text: 'Assigned', color: '#6b7280', bg: '#f3f4f6' };
-                                          default:
-                                            return { text: status || 'Unknown', color: '#6b7280', bg: '#f3f4f6' };
-                                        }
-                                      };
-                                      
-                                      const statusInfo = getStatusDisplay(task.status);
-
-                                      return (
-                                        <div key={task.id} style={{
-                                          display: 'grid',
-                                          gridTemplateColumns: showReportCheckboxes ? '50px 100px 150px 1fr 130px 120px 120px' : '100px 150px 1fr 130px 120px 120px',
-                                          gap: '12px',
-                                          padding: '12px 16px',
-                                          backgroundColor: taskIndex % 2 === 0 ? '#ffffff' : '#f9fafb',
-                                          borderRadius: '6px',
-                                          marginBottom: '4px',
-                                          alignItems: 'center',
-                                          fontSize: '12px',
-                                          color: '#1f2937'
-                                        }}>
-                                          {showReportCheckboxes && (
-                                            <div style={{ textAlign: 'center' }}>
-                                              <input
-                                                type="checkbox"
-                                                checked={selectedReportTaskIds.has(task.id)}
-                                                onChange={(e) => {
-                                                  const newSelectedTasks = new Set(selectedReportTaskIds);
-                                                  const newSelectedClients = new Set(selectedReportClients);
-                                                  
-                                                  if (e.target.checked) {
-                                                    newSelectedTasks.add(task.id);
-                                                    const allTasksSelected = clientData.tasks.every(t => 
-                                                      t.id === task.id || newSelectedTasks.has(t.id)
-                                                    );
-                                                    if (allTasksSelected) {
-                                                      newSelectedClients.add(clientName);
-                                                    }
-                                                  } else {
-                                                    newSelectedTasks.delete(task.id);
-                                                    newSelectedClients.delete(clientName);
-                                                  }
-                                                  
-                                                  setSelectedReportTaskIds(newSelectedTasks);
-                                                  setSelectedReportClients(newSelectedClients);
-                                                }}
-                                                style={{ cursor: 'pointer', width: '16px', height: '16px' }}
-                                              />
-                                            </div>
-                                          )}
-                                          <div>{clientData.clientId}</div>
-                                          <div style={{ fontWeight: '500' }}>{clientName}</div>
-                                          <div>{task.taskName || task.description || 'N/A'}</div>
-                                          <div style={{ textAlign: 'center' }}>
-                                            <span style={{
-                                              display: 'inline-block',
-                                              padding: '4px 10px',
-                                              borderRadius: '12px',
-                                              fontSize: '11px',
-                                              fontWeight: '600',
-                                              backgroundColor: statusInfo.bg,
-                                              color: statusInfo.color
-                                            }}>
-                                              {statusInfo.text}
-                                            </span>
-                                          </div>
-                                          <div style={{ textAlign: 'center', color: '#6b7280' }}>{postDate}</div>
-                                          <div style={{ textAlign: 'center', color: '#6b7280', fontWeight: '500' }}>{postTime}</div>
-                                        </div>
-                                      );
-                                    })}
+                                    <span style={{
+                                      fontSize: '13px',
+                                      fontWeight: '700',
+                                      color: completionRate >= 75 ? '#10b981' : completionRate >= 50 ? '#f59e0b' : '#ef4444',
+                                      minWidth: '40px'
+                                    }}>
+                                      {completionRate}%
+                                    </span>
                                   </div>
                                 </td>
                               </tr>
-                            )}
-                          </React.Fragment>
-                        );
-                      });
-                    })()}
-                  </tbody>
-                </table>
+
+                              {/* Expanded Task Details */}
+                              {isExpanded && (
+                                <tr>
+                                  <td colSpan={showReportCheckboxes ? 7 : 6} style={{ padding: 0, backgroundColor: '#f9fafb' }}>
+                                    <div style={{
+                                      padding: '20px',
+                                      borderTop: '1px solid #e5e7eb'
+                                    }}>
+                                      <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: showReportCheckboxes ? '50px 100px 150px 1fr 130px 120px 120px' : '100px 150px 1fr 130px 120px 120px',
+                                        gap: '12px',
+                                        padding: '10px 16px',
+                                        backgroundColor: '#f3f4f6',
+                                        borderRadius: '6px',
+                                        marginBottom: '8px',
+                                        fontSize: '11px',
+                                        fontWeight: '600',
+                                        color: '#6b7280',
+                                        textTransform: 'uppercase'
+                                      }}>
+                                        {showReportCheckboxes && <div style={{ textAlign: 'center' }}>
+                                          <input
+                                            type="checkbox"
+                                            checked={clientData.tasks.every(t => selectedReportTaskIds.has(t.id))}
+                                            onChange={(e) => {
+                                              const newSelectedTasks = new Set(selectedReportTaskIds);
+                                              const newSelectedClients = new Set(selectedReportClients);
+
+                                              if (e.target.checked) {
+                                                clientData.tasks.forEach(t => newSelectedTasks.add(t.id));
+                                                newSelectedClients.add(clientName);
+                                              } else {
+                                                clientData.tasks.forEach(t => newSelectedTasks.delete(t.id));
+                                                newSelectedClients.delete(clientName);
+                                              }
+
+                                              setSelectedReportTaskIds(newSelectedTasks);
+                                              setSelectedReportClients(newSelectedClients);
+                                            }}
+                                            style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                                          />
+                                        </div>}
+                                        <div>Client ID</div>
+                                        <div>Client Name</div>
+                                        <div>Task Name (Ideas)</div>
+                                        <div style={{ textAlign: 'center' }}>Status</div>
+                                        <div style={{ textAlign: 'center' }}>Post Date</div>
+                                        <div style={{ textAlign: 'center' }}>Post Time</div>
+                                      </div>
+                                      {clientData.tasks.map((task, taskIndex) => {
+                                        let postDate = 'N/A';
+                                        let postTime = 'N/A';
+
+                                        // Only show post date/time if task is actually posted or approved
+                                        if (task.status === 'posted' || task.status === 'approved') {
+                                          if (task.postDate) {
+                                            try {
+                                              const date = new Date(task.postDate);
+                                              postDate = date.toLocaleDateString('en-GB');
+                                              postTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                            } catch (e) {
+                                              postDate = task.postDate;
+                                            }
+                                          } else if (task.postedAt) {
+                                            try {
+                                              const date = new Date(task.postedAt);
+                                              postDate = date.toLocaleDateString('en-GB');
+                                              postTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                            } catch (e) {
+                                              postDate = 'Posted';
+                                            }
+                                          }
+                                        } else {
+                                          // For non-posted tasks, show deadline or "Not Posted"
+                                          postDate = 'Not Posted';
+                                          postTime = '-';
+                                        }
+
+                                        // Get status display info
+                                        const getStatusDisplay = (status) => {
+                                          switch (status) {
+                                            case 'completed':
+                                            case 'posted':
+                                            case 'approved':
+                                              return { text: 'Completed', color: '#10b981', bg: '#d1fae5' };
+                                            case 'in-progress':
+                                              return { text: 'In Progress', color: '#3b82f6', bg: '#dbeafe' };
+                                            case 'pending-client-approval':
+                                              return { text: 'Pending', color: '#f59e0b', bg: '#fef3c7' };
+                                            case 'revision-required':
+                                              return { text: 'Revision', color: '#ef4444', bg: '#fee2e2' };
+                                            case 'assigned':
+                                              return { text: 'Assigned', color: '#6b7280', bg: '#f3f4f6' };
+                                            default:
+                                              return { text: status || 'Unknown', color: '#6b7280', bg: '#f3f4f6' };
+                                          }
+                                        };
+
+                                        const statusInfo = getStatusDisplay(task.status);
+
+                                        return (
+                                          <div key={task.id} style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: showReportCheckboxes ? '50px 100px 150px 1fr 130px 120px 120px' : '100px 150px 1fr 130px 120px 120px',
+                                            gap: '12px',
+                                            padding: '12px 16px',
+                                            backgroundColor: taskIndex % 2 === 0 ? '#ffffff' : '#f9fafb',
+                                            borderRadius: '6px',
+                                            marginBottom: '4px',
+                                            alignItems: 'center',
+                                            fontSize: '12px',
+                                            color: '#1f2937'
+                                          }}>
+                                            {showReportCheckboxes && (
+                                              <div style={{ textAlign: 'center' }}>
+                                                <input
+                                                  type="checkbox"
+                                                  checked={selectedReportTaskIds.has(task.id)}
+                                                  onChange={(e) => {
+                                                    const newSelectedTasks = new Set(selectedReportTaskIds);
+                                                    const newSelectedClients = new Set(selectedReportClients);
+
+                                                    if (e.target.checked) {
+                                                      newSelectedTasks.add(task.id);
+                                                      const allTasksSelected = clientData.tasks.every(t =>
+                                                        t.id === task.id || newSelectedTasks.has(t.id)
+                                                      );
+                                                      if (allTasksSelected) {
+                                                        newSelectedClients.add(clientName);
+                                                      }
+                                                    } else {
+                                                      newSelectedTasks.delete(task.id);
+                                                      newSelectedClients.delete(clientName);
+                                                    }
+
+                                                    setSelectedReportTaskIds(newSelectedTasks);
+                                                    setSelectedReportClients(newSelectedClients);
+                                                  }}
+                                                  style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                                                />
+                                              </div>
+                                            )}
+                                            <div>{clientData.clientId}</div>
+                                            <div style={{ fontWeight: '500' }}>{clientName}</div>
+                                            <div>{task.taskName || task.description || 'N/A'}</div>
+                                            <div style={{ textAlign: 'center' }}>
+                                              <span style={{
+                                                display: 'inline-block',
+                                                padding: '4px 10px',
+                                                borderRadius: '12px',
+                                                fontSize: '11px',
+                                                fontWeight: '600',
+                                                backgroundColor: statusInfo.bg,
+                                                color: statusInfo.color
+                                              }}>
+                                                {statusInfo.text}
+                                              </span>
+                                            </div>
+                                            <div style={{ textAlign: 'center', color: '#6b7280' }}>{postDate}</div>
+                                            <div style={{ textAlign: 'center', color: '#6b7280', fontWeight: '500' }}>{postTime}</div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </React.Fragment>
+                          );
+                        });
+                      })()}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -5208,7 +5201,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
           </div>
         </div>
       )}
-        {/* )} */}
+      {/* )} */}
 
       {/* Social Media Employee Selection Modal */}
       {showSocialMediaEmployeeModal && (
@@ -5321,7 +5314,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
           alignItems: 'center',
           zIndex: 2000
         }}
-        onClick={() => setShowContentModal(false)}
+          onClick={() => setShowContentModal(false)}
         >
           <div style={{
             backgroundColor: 'white',
@@ -5333,7 +5326,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
             overflow: 'auto',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
           }}
-          onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <h3 style={{
               margin: '0 0 20px 0',
@@ -5384,7 +5377,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
           alignItems: 'center',
           zIndex: 2000
         }}
-        onClick={() => setShowNotesModal(false)}
+          onClick={() => setShowNotesModal(false)}
         >
           <div style={{
             backgroundColor: 'white',
@@ -5396,7 +5389,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
             overflow: 'auto',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
           }}
-          onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <h3 style={{
               margin: '0 0 20px 0',

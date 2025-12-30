@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ref, onValue, update, push, set } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { Share2, LogOut, CheckCircle, Clock, Calendar, ChevronLeft, ChevronRight, XCircle, LayoutDashboard, Download, CheckSquare, Square, Search, BarChart3, PieChart, TrendingUp, Users, Plus } from 'lucide-react';
+import { Share2, LogOut, CheckCircle, Clock, Calendar, ChevronLeft, ChevronRight, XCircle, LayoutDashboard, Download, CheckSquare, Square, Search, BarChart3, PieChart, TrendingUp, Users, Plus, Briefcase, AlertCircle, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import { jsPDF } from 'jspdf';
@@ -1881,7 +1881,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                     onClick={() => handleStatCardClick('all')}
                     style={{
                       borderRadius: '16px',
-                      padding: '32px 24px',
+                      padding: '24px',
                       background: activeFilter === 'all'
                         ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
                         : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -1893,7 +1893,12 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         : '0 4px 12px rgba(102,126,234,0.2)',
                       transform: activeFilter === 'all' ? 'translateY(-2px)' : 'translateY(0)',
                       border: activeFilter === 'all' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                      position: 'relative'
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px'
                     }}
                     onMouseEnter={(e) => {
                       if (activeFilter !== 'all') {
@@ -1907,15 +1912,29 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         e.currentTarget.style.boxShadow = '0 4px 12px rgba(102,126,234,0.2)';
                       }
                     }}>
-                    <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                      {allMonthTasks.length}
-                    </h3>
-                    <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                      Total Tasks
-                    </p>
-                    <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                      📊 Tasks for selected month
-                    </small>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Briefcase size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
+                        {allMonthTasks.length}
+                      </h3>
+                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
+                        Total Tasks
+                      </p>
+                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
+                        📊 Tasks for selected month
+                      </small>
+                    </div>
                     {activeFilter === 'all' && (
                       <div style={{
                         position: 'absolute',
@@ -1940,7 +1959,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                     onClick={() => handleStatCardClick('approved')}
                     style={{
                       borderRadius: '16px',
-                      padding: '32px 24px',
+                      padding: '24px',
                       background: activeFilter === 'approved'
                         ? 'linear-gradient(135deg, #4a9625 0%, #96d9b8 100%)'
                         : 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
@@ -1952,7 +1971,12 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         : '0 4px 12px rgba(86,171,47,0.2)',
                       transform: activeFilter === 'approved' ? 'translateY(-2px)' : 'translateY(0)',
                       border: activeFilter === 'approved' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                      position: 'relative'
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px'
                     }}
                     onMouseEnter={(e) => {
                       if (activeFilter !== 'approved') {
@@ -1966,15 +1990,29 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         e.currentTarget.style.boxShadow = '0 4px 12px rgba(86,171,47,0.2)';
                       }
                     }}>
-                    <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                      {allMonthTasks.filter(t => t.status === 'approved').length}
-                    </h3>
-                    <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                      Ready to Post
-                    </p>
-                    <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                      ✅ Approved and ready
-                    </small>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <CheckCircle size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
+                        {allMonthTasks.filter(t => t.status === 'approved').length}
+                      </h3>
+                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
+                        Ready to Post
+                      </p>
+                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
+                        ✅ Approved and ready
+                      </small>
+                    </div>
                     {activeFilter === 'approved' && (
                       <div style={{
                         position: 'absolute',
@@ -1999,7 +2037,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                     onClick={() => handleStatCardClick('posted')}
                     style={{
                       borderRadius: '16px',
-                      padding: '32px 24px',
+                      padding: '24px',
                       background: activeFilter === 'posted'
                         ? 'linear-gradient(135deg, #17b584 0%, #4dd9b2 100%)'
                         : 'linear-gradient(135deg, #37B46F 0%, #55efc4 100%)',
@@ -2011,7 +2049,12 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         : '0 4px 12px rgba(0,184,148,0.2)',
                       transform: activeFilter === 'posted' ? 'translateY(-2px)' : 'translateY(0)',
                       border: activeFilter === 'posted' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                      position: 'relative'
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px'
                     }}
                     onMouseEnter={(e) => {
                       if (activeFilter !== 'posted') {
@@ -2025,15 +2068,29 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,184,148,0.2)';
                       }
                     }}>
-                    <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                      {allMonthTasks.filter(t => t.status === 'posted').length}
-                    </h3>
-                    <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                      Posted
-                    </p>
-                    <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                      📤 Published on social media
-                    </small>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Send size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
+                        {allMonthTasks.filter(t => t.status === 'posted').length}
+                      </h3>
+                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
+                        Posted
+                      </p>
+                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
+                        📤 Published on social media
+                      </small>
+                    </div>
                     {activeFilter === 'posted' && (
                       <div style={{
                         position: 'absolute',
@@ -2057,12 +2114,17 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                   <div
                     style={{
                       borderRadius: '16px',
-                      padding: '32px 24px',
+                      padding: '24px',
                       background: 'linear-gradient(135deg, #e91e63 0%, #f48fb1 100%)',
                       color: 'white',
                       transition: 'all 0.2s ease',
                       boxShadow: '0 4px 12px rgba(233,30,99,0.2)',
-                      position: 'relative'
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
@@ -2072,16 +2134,30 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                       e.currentTarget.style.transform = 'translateY(0)';
                       e.currentTarget.style.boxShadow = '0 4px 12px rgba(233,30,99,0.2)';
                     }}>
-                    <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                      {allMonthTasks.filter(t => t.status === 'approved').length > 0 ?
-                        Math.round((allMonthTasks.filter(t => t.status === 'posted').length / allMonthTasks.filter(t => t.status === 'approved' || t.status === 'posted').length) * 100) : 0}%
-                    </h3>
-                    <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                      Completion Rate
-                    </p>
-                    <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                      📈 Posted vs approved ratio
-                    </small>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <TrendingUp size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
+                        {allMonthTasks.filter(t => t.status === 'approved').length > 0 ?
+                          Math.round((allMonthTasks.filter(t => t.status === 'posted').length / allMonthTasks.filter(t => t.status === 'approved' || t.status === 'posted').length) * 100) : 0}%
+                      </h3>
+                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
+                        Completion Rate
+                      </p>
+                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
+                        📈 Posted vs approved ratio
+                      </small>
+                    </div>
                   </div>
                 </div>
               );

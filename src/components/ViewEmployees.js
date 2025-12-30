@@ -173,22 +173,95 @@ const ViewEmployees = () => {
 
     // Handle delete employee
     const handleDeleteEmployee = async (employee) => {
-        if (!window.confirm(`Are you sure you want to delete ${employee.employeeName}? This action cannot be undone.`)) {
+        if (!window.confirm(`Are you sure you want to PERMANENTLY delete employee "${employee.employeeName}"?\n\nThis action will:\n1. Remove the employee record permanently\n2. Unassign all their tasks and clients\n\nThis action CANNOT be undone.`)) {
             return;
         }
 
         try {
-            const employeeRef = ref(database, `employees/${employee.id}`);
-            await update(employeeRef, {
-                deleted: true,
-                deletedAt: new Date().toISOString(),
-                deletedBy: 'Production Incharge'
-            });
+            const { get } = await import('firebase/database');
+            const updates = {};
 
-            showToast(`✅ Employee ${employee.employeeName} deleted successfully!`, 'success', 3000);
+            // 1. Fetch all tasks and clients to check for assignments
+            // We need to do this because we don't have them in state here
+            const tasksSnapshot = await get(ref(database, 'tasks'));
+            const clientsSnapshot = await get(ref(database, 'clients'));
+            const strategyClientsSnapshot = await get(ref(database, 'strategyClients'));
+
+            // 2. Unassign Tasks
+            if (tasksSnapshot.exists()) {
+                const tasksData = tasksSnapshot.val();
+                Object.keys(tasksData).forEach(taskId => {
+                    const task = tasksData[taskId];
+                    if (
+                        task.assignedTo === employee.id ||
+                        task.assignedTo === employee.email ||
+                        task.assignedTo === employee.employeeName ||
+                        task.assignedEmployee === employee.id ||
+                        task.assignedEmployee === employee.email ||
+                        task.assignedEmployee === employee.employeeName
+                    ) {
+                        updates[`tasks/${taskId}/assignedTo`] = null;
+                        updates[`tasks/${taskId}/assignedEmployee`] = null;
+                        updates[`tasks/${taskId}/assignedToEmployeeName`] = null;
+
+                        // If task is in progress, move it back to pending or appropriate state
+                        if (task.status === 'in-progress' || task.status === 'assigned-to-department') {
+                            updates[`tasks/${taskId}/status`] = 'pending';
+                        }
+                    }
+                });
+            }
+
+            // 3. Unassign Clients (Regular)
+            if (clientsSnapshot.exists()) {
+                const clientsData = clientsSnapshot.val();
+                Object.keys(clientsData).forEach(clientId => {
+                    const client = clientsData[clientId];
+                    if (
+                        client.assignedToEmployee === employee.id ||
+                        client.assignedToEmployee === employee.email ||
+                        client.assignedToEmployee === employee.employeeName ||
+                        client.assignedEmployee === employee.id ||
+                        client.assignedEmployee === employee.email ||
+                        client.assignedEmployee === employee.employeeName
+                    ) {
+                        updates[`clients/${clientId}/assignedToEmployee`] = null;
+                        updates[`clients/${clientId}/assignedEmployee`] = null;
+                        updates[`clients/${clientId}/assignedToEmployeeName`] = null;
+                    }
+                });
+            }
+
+            // 4. Unassign Strategy Clients
+            if (strategyClientsSnapshot.exists()) {
+                const stratClientsData = strategyClientsSnapshot.val();
+                Object.keys(stratClientsData).forEach(clientId => {
+                    const client = stratClientsData[clientId];
+                    if (
+                        client.assignedToEmployee === employee.id ||
+                        client.assignedToEmployee === employee.email ||
+                        client.assignedToEmployee === employee.employeeName ||
+                        client.assignedEmployee === employee.id ||
+                        client.assignedEmployee === employee.email ||
+                        client.assignedEmployee === employee.employeeName
+                    ) {
+                        updates[`strategyClients/${clientId}/assignedToEmployee`] = null;
+                        updates[`strategyClients/${clientId}/assignedEmployee`] = null;
+                        updates[`strategyClients/${clientId}/assignedToEmployeeName`] = null;
+                    }
+                });
+            }
+
+            // 5. Permanent Delete Employee
+            updates[`employees/${employee.id}`] = null;
+
+            // Execute all updates atomically
+            await update(ref(database), updates);
+
+            showToast(`✅ Employee ${employee.employeeName} permanently deleted and data unassigned!`, 'success', 5000);
         } catch (error) {
             console.error('Error deleting employee:', error);
-            showToast('❌ Error deleting employee', 'error', 3000);
+            showToast('❌ Failed to delete employee: ' + error.message, 'error', 5000);
         }
     };
 
