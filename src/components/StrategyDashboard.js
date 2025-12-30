@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ref, onValue, push, update, get } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { TrendingUp, LogOut, Plus, Upload, Calendar, Bell, BarChart3, PieChart, FileText, FileSpreadsheet, Download, Search, LayoutDashboard } from 'lucide-react';
+import { TrendingUp, LogOut, Plus, Upload, Calendar, Bell, BarChart3, PieChart, FileText, FileSpreadsheet, Download, Search, LayoutDashboard, Briefcase, CheckCircle, AlertCircle, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import * as XLSX from 'xlsx';
@@ -2401,71 +2401,165 @@ const StrategyDashboard = ({ employeeData = null, isEmbedded = false }) => {
             {/* Stats Cards - Show always on dashboard, hide when calendar is shown */}
             {!showCalendar && (
               <div className="strategy-stats-container">
-                <div className="strategy-stats-grid">
+                <div className="strategy-stats-grid" style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '24px'
+                }}>
+                  {/* Total Tasks */}
                   <div
-                    className="strategy-stat-card stat-total"
                     onClick={() => handleStatsCardClick('all')}
                     style={{
-                      cursor: 'pointer',
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
                       color: 'white',
-                      border: statsFilter === 'all' ? '3px solid white' : 'none',
-                      boxShadow: statsFilter === 'all' ? '0 8px 24px rgba(102,126,234,0.4)' : '0 4px 12px rgba(102,126,234,0.2)'
+                      boxShadow: statsFilter === 'all' ? '0 8px 24px rgba(255, 94, 98, 0.4)' : '0 4px 15px rgba(255, 94, 98, 0.3)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      border: statsFilter === 'all' ? '3px solid white' : 'none'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
-                    <h3>{allMonthTasks.length}</h3>
-                    <p>Total Tasks</p>
-                    <small>Tasks for selected month</small>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Briefcase size={30} color="white" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.length}</h3>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Total Tasks</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Tasks for selected month</p>
+                    </div>
                   </div>
+
+                  {/* Approved */}
                   <div
-                    className="strategy-stat-card stat-approved"
                     onClick={() => handleStatsCardClick('approved')}
                     style={{
-                      cursor: 'pointer',
-                      background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
+                      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
                       color: 'white',
-                      border: statsFilter === 'approved' ? '3px solid white' : 'none',
-                      boxShadow: statsFilter === 'approved' ? '0 8px 24px rgba(86,171,47,0.4)' : '0 4px 12px rgba(86,171,47,0.2)'
+                      boxShadow: statsFilter === 'approved' ? '0 8px 24px rgba(56, 239, 125, 0.4)' : '0 4px 15px rgba(56, 239, 125, 0.3)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      border: statsFilter === 'approved' ? '3px solid white' : 'none'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
-                    <h3>{allMonthTasks.filter(t => t.status === 'approved').length}</h3>
-                    <p>Approved</p>
-                    <small>Ready for production</small>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <CheckCircle size={30} color="white" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.filter(t => t.status === 'approved').length}</h3>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Approved</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Ready for production</p>
+                    </div>
                   </div>
+
+                  {/* Pending */}
                   <div
-                    className="strategy-stat-card stat-pending"
                     onClick={() => handleStatsCardClick('pending')}
                     style={{
-                      cursor: 'pointer',
-                      background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+                      background: 'linear-gradient(135deg, #EA384D 0%, #D31027 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
                       color: 'white',
-                      border: statsFilter === 'pending' ? '3px solid white' : 'none',
-                      boxShadow: statsFilter === 'pending' ? '0 8px 24px rgba(255,107,107,0.4)' : '0 4px 12px rgba(255,107,107,0.2)'
+                      boxShadow: statsFilter === 'pending' ? '0 8px 24px rgba(211, 16, 39, 0.4)' : '0 4px 15px rgba(211, 16, 39, 0.3)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      border: statsFilter === 'pending' ? '3px solid white' : 'none'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
-                    <h3>{allMonthTasks.filter(t => t.status === 'pending' || t.status === 'pending-production').length}</h3>
-                    <p>Pending</p>
-                    <small>Awaiting approval</small>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <AlertCircle size={30} color="white" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.filter(t => t.status === 'pending' || t.status === 'pending-production').length}</h3>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Pending</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Awaiting approval</p>
+                    </div>
                   </div>
+
+                  {/* Clients */}
                   <div
-                    className="strategy-stat-card stat-progress"
                     onClick={() => {
                       setShowClientTasks(true);
-                      // Scroll to client tasks section
                       if (clientTasksRef.current) {
                         clientTasksRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                       }
                     }}
                     style={{
-                      cursor: 'pointer',
-                      background: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
+                      background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
+                      borderRadius: '16px',
+                      padding: '24px',
                       color: 'white',
-                      boxShadow: '0 4px 12px rgba(116,185,255,0.2)'
+                      boxShadow: '0 4px 15px rgba(74, 0, 224, 0.3)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
-                    <h3>{clients.length}</h3>
-                    <p>Clients</p>
-                    <small>Active clients</small>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Users size={30} color="white" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{clients.length}</h3>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Clients</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Active clients</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3232,58 +3326,154 @@ const StrategyDashboard = ({ employeeData = null, isEmbedded = false }) => {
               <>
                 {/* Stats Cards - Show when calendar is visible */}
                 <div className="strategy-stats-container">
-                  <div className="strategy-stats-grid">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: '24px',
+                    marginBottom: '32px'
+                  }}>
+                    {/* Total Tasks */}
                     <div
-                      className="strategy-stat-card stat-total"
                       style={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
+                        borderRadius: '16px',
+                        padding: '24px',
                         color: 'white',
-                        boxShadow: '0 4px 12px rgba(102,126,234,0.2)',
-                        cursor: 'default'
+                        boxShadow: '0 4px 15px rgba(255, 94, 98, 0.3)',
+                        cursor: 'default',
+                        transition: 'transform 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px'
                       }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <h3>{allMonthTasks.length}</h3>
-                      <p>Total Tasks</p>
-                      <small>Tasks for selected month</small>
+                      <div style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        <Briefcase size={30} color="white" />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.length}</h3>
+                        <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Total Tasks</p>
+                        <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Tasks for selected month</p>
+                      </div>
                     </div>
+
+                    {/* Approved (Completed) */}
                     <div
-                      className="strategy-stat-card stat-approved"
                       style={{
-                        background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
+                        background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                        borderRadius: '16px',
+                        padding: '24px',
                         color: 'white',
-                        boxShadow: '0 4px 12px rgba(86,171,47,0.2)',
-                        cursor: 'default'
+                        boxShadow: '0 4px 15px rgba(56, 239, 125, 0.3)',
+                        cursor: 'default',
+                        transition: 'transform 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px'
                       }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <h3>{allMonthTasks.filter(t => t.status === 'approved').length}</h3>
-                      <p>Approved</p>
-                      <small>Ready for production</small>
+                      <div style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        <CheckCircle size={30} color="white" />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.filter(t => t.status === 'approved').length}</h3>
+                        <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Approved</p>
+                        <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Ready for production</p>
+                      </div>
                     </div>
+
+                    {/* Pending */}
                     <div
-                      className="strategy-stat-card stat-pending"
                       style={{
-                        background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+                        background: 'linear-gradient(135deg, #EA384D 0%, #D31027 100%)',
+                        borderRadius: '16px',
+                        padding: '24px',
                         color: 'white',
-                        boxShadow: '0 4px 12px rgba(255,107,107,0.2)',
-                        cursor: 'default'
+                        boxShadow: '0 4px 15px rgba(211, 16, 39, 0.3)',
+                        cursor: 'default',
+                        transition: 'transform 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px'
                       }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <h3>{allMonthTasks.filter(t => t.status === 'pending' || t.status === 'pending-production').length}</h3>
-                      <p>Pending</p>
-                      <small>Awaiting approval</small>
+                      <div style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        <AlertCircle size={30} color="white" />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.filter(t => t.status === 'pending' || t.status === 'pending-production').length}</h3>
+                        <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Pending</p>
+                        <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Awaiting approval</p>
+                      </div>
                     </div>
+
+                    {/* Active Clients */}
                     <div
-                      className="strategy-stat-card stat-progress"
                       style={{
-                        background: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
+                        background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
+                        borderRadius: '16px',
+                        padding: '24px',
                         color: 'white',
-                        boxShadow: '0 4px 12px rgba(116,185,255,0.2)',
-                        cursor: 'default'
+                        boxShadow: '0 4px 15px rgba(74, 0, 224, 0.3)',
+                        cursor: 'default',
+                        transition: 'transform 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px'
                       }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <h3>{clients.length}</h3>
-                      <p>Clients</p>
-                      <small>Active clients</small>
+                      <div style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        <Users size={30} color="white" />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{clients.length}</h3>
+                        <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Clients</p>
+                        <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Active clients</p>
+                      </div>
                     </div>
                   </div>
                 </div>

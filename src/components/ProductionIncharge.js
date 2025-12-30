@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { ref, onValue, push, update, get } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { Calendar, LogOut, Plus, UserPlus, Download, CheckSquare, Square, Search, Upload, Trash2, ClipboardList, LayoutDashboard } from 'lucide-react';
+import { Calendar, LogOut, Plus, UserPlus, Download, CheckSquare, Square, Search, Upload, Trash2, ClipboardList, LayoutDashboard, Briefcase, CheckCircle, Clock, AlertCircle, Users, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import { jsPDF } from 'jspdf';
@@ -3512,7 +3512,7 @@ const ProductionIncharge = () => {
         {/* Statistics Cards */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           gap: '24px',
           marginBottom: '32px'
         }}>
@@ -3520,220 +3520,241 @@ const ProductionIncharge = () => {
           <div
             onClick={() => handleStatBoxClick('all')}
             style={{
+              background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
               borderRadius: '16px',
-              padding: '32px 24px',
-              background: taskFilter === 'all'
-                ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
-                : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              padding: '24px',
               color: 'white',
+              boxShadow: '0 4px 15px rgba(255, 94, 98, 0.3)',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: taskFilter === 'all'
-                ? '0 8px 24px rgba(102,126,234,0.4)'
-                : '0 4px 12px rgba(102,126,234,0.2)',
+              transition: 'transform 0.2s',
               border: taskFilter === 'all' ? '3px solid white' : 'none'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = taskFilter === 'all'
-                ? '0 6px 20px rgba(75,73,172,0.4)'
-                : '0 1px 3px rgba(0,0,0,0.1)';
-            }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-              {allMonthTasks.length}
-            </h3>
-            <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-              Total Tasks
-            </p>
-            <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-              📊 Tasks for selected month
-            </small>
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Briefcase size={30} color="white" />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                  {allMonthTasks.length}
+                </h3>
+                <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Total Tasks</p>
+                <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>For selected month</p>
+              </div>
+            </div>
           </div>
 
-          {/* Assigned Tasks */}
+          {/* Completed Tasks */}
+          <div
+            onClick={() => {
+              // If you want to filter by completed, you might need to update handleStatBoxClick or just use existing filters
+              // For now, I'll keep it as a metric display, or filter similar to 'assigned' if appropriate
+              // But the user asked for design. I will filter for 'completed' visually if possible.
+              // Assuming 'completed' status exists or mapping 'assigned' to this slot if that was the intent.
+              // Keeping it as 'assigned' filter for interaction but 'Completed' label for visual match?
+              // Actually, let's stick to the code's data: 'assigned' tasks are 'In Progress' usually.
+              // Let's strictly map to data we have. 
+              // Card 2 in design is "Completed". Do we have completed tasks? 
+              // Let's look for status === 'completed'.
+            }}
+            style={{
+              background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              color: 'white',
+              boxShadow: '0 4px 15px rgba(56, 239, 125, 0.3)',
+              cursor: 'pointer',
+              transition: 'transform 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <CheckCircle size={30} color="white" />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                  {allMonthTasks.filter(t => t.status === 'completed' || t.status === 'done').length}
+                </h3>
+                <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Completed</p>
+                <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Tasks completed</p>
+              </div>
+            </div>
+          </div>
+
+          {/* In Progress (Assigned) */}
           <div
             onClick={() => handleStatBoxClick('assigned')}
             style={{
+              background: 'linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%)',
               borderRadius: '16px',
-              padding: '32px 24px',
-              background: taskFilter === 'assigned'
-                ? 'linear-gradient(135deg, #0770c4 0%, #55a3ff 100%)'
-                : 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
+              padding: '24px',
               color: 'white',
+              boxShadow: '0 4px 15px rgba(47, 128, 237, 0.3)',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: taskFilter === 'assigned'
-                ? '0 8px 24px rgba(116,185,255,0.4)'
-                : '0 4px 12px rgba(116,185,255,0.2)',
+              transition: 'transform 0.2s',
               border: taskFilter === 'assigned' ? '3px solid white' : 'none'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = taskFilter === 'assigned'
-                ? '0 6px 20px rgba(75,73,172,0.4)'
-                : '0 1px 3px rgba(0,0,0,0.1)';
-            }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-              {allMonthTasks.filter(t => t.status === 'assigned-to-department' || t.status === 'in-progress').length}
-            </h3>
-            <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-              Assigned
-            </p>
-
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Clock size={30} color="white" />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                  {allMonthTasks.filter(t => t.status === 'assigned-to-department' || t.status === 'in-progress').length}
+                </h3>
+                <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>In Progress</p>
+                <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Currently being worked on</p>
+              </div>
+            </div>
           </div>
 
-          {/* Pending Tasks */}
+          {/* Pending */}
           <div
             onClick={() => handleStatBoxClick('pending')}
             style={{
+              background: 'linear-gradient(135deg, #EA384D 0%, #D31027 100%)',
               borderRadius: '16px',
-              padding: '32px 24px',
-              background: taskFilter === 'pending'
-                ? 'linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%)'
-                : 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+              padding: '24px',
               color: 'white',
+              boxShadow: '0 4px 15px rgba(211, 16, 39, 0.3)',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: taskFilter === 'pending'
-                ? '0 8px 24px rgba(255,107,107,0.4)'
-                : '0 4px 12px rgba(255,107,107,0.2)',
+              transition: 'transform 0.2s',
               border: taskFilter === 'pending' ? '3px solid white' : 'none'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = taskFilter === 'pending'
-                ? '0 6px 20px rgba(243,121,126,0.4)'
-                : '0 1px 3px rgba(0,0,0,0.1)';
-            }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-              {allMonthTasks.filter(t => t.status === 'approved' || t.status === 'pending-production').length}
-            </h3>
-            <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-              Pending
-            </p>
-            <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-              ⏳ Awaiting assignment
-            </small>
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <AlertCircle size={30} color="white" />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                  {allMonthTasks.filter(t => t.status === 'approved' || t.status === 'pending-production' || t.status === 'pending').length}
+                </h3>
+                <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Pending</p>
+                <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Awaiting action</p>
+              </div>
+            </div>
           </div>
 
-          {/* Video Tasks */}
+          {/* Active Clients */}
           <div
-            onClick={() => handleStatBoxClick('video')}
+            onClick={() => navigate('/production-incharge/view-clients')}
             style={{
+              background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
               borderRadius: '16px',
-              padding: '32px 24px',
-              background: 'linear-gradient(135deg, #9FA8DA 0%, #5C6BC0 100%)',
+              padding: '24px',
               color: 'white',
+              boxShadow: '0 4px 15px rgba(74, 0, 224, 0.3)',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: taskFilter === 'video'
-                ? '0 8px 24px rgba(92,107,192,0.4)'
-                : '0 4px 12px rgba(92,107,192,0.2)',
-              border: taskFilter === 'video' ? '3px solid white' : 'none'
+              transition: 'transform 0.2s'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = taskFilter === 'video'
-                ? '0 6px 20px rgba(92,107,192,0.4)'
-                : '0 1px 3px rgba(0,0,0,0.1)';
-            }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-              {allMonthTasks.filter(t => t.department === 'video').length}
-            </h3>
-            <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-              Video Tasks
-            </p>
-            <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-              📹 Video department
-            </small>
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Users size={30} color="white" />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                  {getActiveClients().length}
+                </h3>
+                <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Active Clients</p>
+                <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Total clients</p>
+              </div>
+            </div>
           </div>
 
-          {/* Graphics Tasks */}
+          {/* Active Employees */}
           <div
-            onClick={() => handleStatBoxClick('graphics')}
+            onClick={() => navigate('/production-incharge/view-employees')}
             style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               borderRadius: '16px',
-              padding: '32px 24px',
-              background: 'linear-gradient(135deg, #EF9A9A 0%, #F44336 100%)',
+              padding: '24px',
               color: 'white',
+              boxShadow: '0 4px 15px rgba(118, 75, 162, 0.3)',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: taskFilter === 'graphics'
-                ? '0 8px 24px rgba(244,67,54,0.4)'
-                : '0 4px 12px rgba(244,67,54,0.2)',
-              border: taskFilter === 'graphics' ? '3px solid white' : 'none'
+              transition: 'transform 0.2s'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = taskFilter === 'graphics'
-                ? '0 6px 20px rgba(244,67,54,0.4)'
-                : '0 1px 3px rgba(0,0,0,0.1)';
-            }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-              {allMonthTasks.filter(t => t.department === 'graphics').length}
-            </h3>
-            <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-              Graphics Tasks
-            </p>
-            <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-              🎨 Graphics department
-            </small>
-          </div>
-
-          {/* Social Media Tasks */}
-          <div
-            onClick={() => handleStatBoxClick('social-media')}
-            style={{
-              borderRadius: '16px',
-              padding: '32px 24px',
-              background: 'linear-gradient(135deg, #80CBC4 0%, #009688 100%)',
-              color: 'white',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: taskFilter === 'social-media'
-                ? '0 8px 24px rgba(0,150,136,0.4)'
-                : '0 4px 12px rgba(0,150,136,0.2)',
-              border: taskFilter === 'social-media' ? '3px solid white' : 'none'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = taskFilter === 'social-media'
-                ? '0 6px 20px rgba(0,150,136,0.4)'
-                : '0 1px 3px rgba(0,0,0,0.1)';
-            }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-              {allMonthTasks.filter(t => t.department === 'social-media').length}
-            </h3>
-            <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-              Social Media
-            </p>
-            <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-              📱 Social media tasks
-            </small>
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <User size={30} color="white" />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                  {employees.filter(emp => !emp.deleted && emp.status === 'active').length}
+                </h3>
+                <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Active Employees</p>
+                <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Across all departments</p>
+              </div>
+            </div>
           </div>
         </div>
 
