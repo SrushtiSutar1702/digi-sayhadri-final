@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ref, onValue, update, push } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { Video, LogOut, CheckCircle, XCircle, Clock, Calendar, ChevronLeft, ChevronRight, LayoutDashboard, User, Users, Plus, List, Send, BarChart3, PieChart, Download, TrendingUp, Search, PlayCircle, AlertCircle } from 'lucide-react';
+import { Video, LogOut, CheckCircle, XCircle, Clock, Calendar, ChevronLeft, ChevronRight, LayoutDashboard, User, Users, Plus, List, Send, BarChart3, PieChart, Download, TrendingUp, Search, PlayCircle, AlertCircle, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import './Dashboard.css';
@@ -2151,67 +2151,60 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
             {!showMyTasks && !showEmployeeTasks && !showAllTasks && !showExtraTasks && !showCalendar && (
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(5, 1fr)',
-                gap: '12px',
-                marginBottom: '20px'
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px'
               }}>
                 {/* Total Tasks */}
                 <div
                   onClick={() => handleStatCardClick('all')}
                   style={{
-                    borderRadius: '10px',
-                    padding: '18px 20px',
-                    background: activeFilter === 'all'
-                      ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
-                      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
+                    borderRadius: '16px',
+                    padding: '24px',
                     color: 'white',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: activeFilter === 'all'
-                      ? '0 6px 16px rgba(102,126,234,0.35)'
-                      : '0 2px 8px rgba(102,126,234,0.2)',
-                    transform: activeFilter === 'all' ? 'translateY(-2px)' : 'translateY(0)',
-                    border: activeFilter === 'all' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                    position: 'relative'
+                      ? '0 8px 24px rgba(255, 94, 98, 0.4)'
+                      : '0 4px 15px rgba(255, 94, 98, 0.3)',
+                    transform: activeFilter === 'all' ? 'translateY(-5px)' : 'translateY(0)',
+                    border: activeFilter === 'all' ? '3px solid white' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px'
                   }}
                   onMouseEnter={(e) => {
-                    if (activeFilter !== 'all') {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                    }
+                    e.currentTarget.style.transform = 'translateY(-5px)';
                   }}
                   onMouseLeave={(e) => {
                     if (activeFilter !== 'all') {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(102,126,234,0.2)';
                     }
                   }}>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                    {allMonthTasks.length}
-                  </h3>
-                  <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                    Total Tasks
-                  </p>
-                  <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                    📊 Tasks for selected month
-                  </small>
-                  {activeFilter === 'all' && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      backgroundColor: 'rgba(255,255,255,0.2)',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px'
-                    }}>
-                      ✓
-                    </div>
-                  )}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <Briefcase size={30} color="white" />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                      {allMonthTasks.length}
+                    </h3>
+                    <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>
+                      Total Tasks
+                    </p>
+                    <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>
+                      Tasks for selected month
+                    </p>
+                  </div>
                 </div>
 
                 {/* In Progress Tasks */}
@@ -2219,58 +2212,51 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                   onClick={() => handleStatCardClick('in-progress')}
                   style={{
                     borderRadius: '16px',
-                    padding: '32px 24px',
-                    background: activeFilter === 'in-progress'
-                      ? 'linear-gradient(135deg, #5a9bd4 0%, #0770c1 100%)'
-                      : 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
+                    padding: '24px',
+                    background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                     color: 'white',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: activeFilter === 'in-progress'
-                      ? '0 8px 20px rgba(116,185,255,0.4)'
-                      : '0 4px 12px rgba(116,185,255,0.2)',
-                    transform: activeFilter === 'in-progress' ? 'translateY(-2px)' : 'translateY(0)',
-                    border: activeFilter === 'in-progress' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                    position: 'relative'
+                      ? '0 8px 24px rgba(0, 242, 254, 0.4)'
+                      : '0 4px 15px rgba(0, 242, 254, 0.3)',
+                    transform: activeFilter === 'in-progress' ? 'translateY(-5px)' : 'translateY(0)',
+                    border: activeFilter === 'in-progress' ? '3px solid white' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px'
                   }}
                   onMouseEnter={(e) => {
-                    if (activeFilter !== 'in-progress') {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                    }
+                    e.currentTarget.style.transform = 'translateY(-5px)';
                   }}
                   onMouseLeave={(e) => {
                     if (activeFilter !== 'in-progress') {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(116,185,255,0.2)';
                     }
                   }}>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                    {allMonthTasks.filter(t => t.status === 'in-progress' || t.status === 'assigned' || t.status === 'assigned-to-department').length}
-                  </h3>
-                  <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                    In Progress
-                  </p>
-                  <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                    🔄 In progress or assigned
-                  </small>
-                  {activeFilter === 'in-progress' && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      backgroundColor: 'rgba(255,255,255,0.2)',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px'
-                    }}>
-                      ✓
-                    </div>
-                  )}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <Clock size={30} color="white" />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                      {allMonthTasks.filter(t => t.status === 'in-progress' || t.status === 'assigned' || t.status === 'assigned-to-department').length}
+                    </h3>
+                    <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>
+                      In Progress
+                    </p>
+                    <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>
+                      In progress or assigned
+                    </p>
+                  </div>
                 </div>
 
                 {/* Pending Approval Tasks */}
@@ -2278,58 +2264,51 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                   onClick={() => handleStatCardClick('pending-client-approval')}
                   style={{
                     borderRadius: '16px',
-                    padding: '32px 24px',
-                    background: activeFilter === 'pending-client-approval'
-                      ? 'linear-gradient(135deg, #e55555 0%, #d44812 100%)'
-                      : 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+                    padding: '24px',
+                    background: 'linear-gradient(135deg, #EA384D 0%, #D31027 100%)',
                     color: 'white',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: activeFilter === 'pending-client-approval'
-                      ? '0 8px 20px rgba(255,107,107,0.4)'
-                      : '0 4px 12px rgba(255,107,107,0.2)',
-                    transform: activeFilter === 'pending-client-approval' ? 'translateY(-2px)' : 'translateY(0)',
-                    border: activeFilter === 'pending-client-approval' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                    position: 'relative'
+                      ? '0 8px 24px rgba(211, 16, 39, 0.4)'
+                      : '0 4px 15px rgba(211, 16, 39, 0.3)',
+                    transform: activeFilter === 'pending-client-approval' ? 'translateY(-5px)' : 'translateY(0)',
+                    border: activeFilter === 'pending-client-approval' ? '3px solid white' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px'
                   }}
                   onMouseEnter={(e) => {
-                    if (activeFilter !== 'pending-client-approval') {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                    }
+                    e.currentTarget.style.transform = 'translateY(-5px)';
                   }}
                   onMouseLeave={(e) => {
                     if (activeFilter !== 'pending-client-approval') {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,107,107,0.2)';
                     }
                   }}>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                    {allMonthTasks.filter(t => t.status === 'pending-client-approval').length}
-                  </h3>
-                  <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                    Pending Approval
-                  </p>
-                  <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                    ⏳ Awaiting client approval
-                  </small>
-                  {activeFilter === 'pending-client-approval' && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      backgroundColor: 'rgba(255,255,255,0.2)',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px'
-                    }}>
-                      ✓
-                    </div>
-                  )}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <AlertCircle size={30} color="white" />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                      {allMonthTasks.filter(t => t.status === 'pending-client-approval').length}
+                    </h3>
+                    <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>
+                      Pending Approval
+                    </p>
+                    <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>
+                      Awaiting client approval
+                    </p>
+                  </div>
                 </div>
 
                 {/* Completed Tasks */}
@@ -2337,58 +2316,51 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                   onClick={() => handleStatCardClick('completed')}
                   style={{
                     borderRadius: '16px',
-                    padding: '32px 24px',
-                    background: activeFilter === 'completed'
-                      ? 'linear-gradient(135deg, #4a9625 0%, #96d9b8 100%)'
-                      : 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
+                    padding: '24px',
+                    background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
                     color: 'white',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: activeFilter === 'completed'
-                      ? '0 8px 20px rgba(86,171,47,0.4)'
-                      : '0 4px 12px rgba(86,171,47,0.2)',
-                    transform: activeFilter === 'completed' ? 'translateY(-2px)' : 'translateY(0)',
-                    border: activeFilter === 'completed' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                    position: 'relative'
+                      ? '0 8px 24px rgba(86, 171, 47, 0.4)'
+                      : '0 4px 15px rgba(86, 171, 47, 0.3)',
+                    transform: activeFilter === 'completed' ? 'translateY(-5px)' : 'translateY(0)',
+                    border: activeFilter === 'completed' ? '3px solid white' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px'
                   }}
                   onMouseEnter={(e) => {
-                    if (activeFilter !== 'completed') {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                    }
+                    e.currentTarget.style.transform = 'translateY(-5px)';
                   }}
                   onMouseLeave={(e) => {
                     if (activeFilter !== 'completed') {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(86,171,47,0.2)';
                     }
                   }}>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                    {allMonthTasks.filter(t => t.status === 'completed').length}
-                  </h3>
-                  <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                    Completed
-                  </p>
-                  <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                    ✅ Finished and ready
-                  </small>
-                  {activeFilter === 'completed' && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      backgroundColor: 'rgba(255,255,255,0.2)',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px'
-                    }}>
-                      ✓
-                    </div>
-                  )}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <CheckCircle size={30} color="white" />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                      {allMonthTasks.filter(t => t.status === 'completed').length}
+                    </h3>
+                    <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>
+                      Completed
+                    </p>
+                    <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>
+                      Finished and ready
+                    </p>
+                  </div>
                 </div>
 
                 {/* Posted/Approved Tasks */}
@@ -2396,61 +2368,52 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                   onClick={() => handleStatCardClick('approved')}
                   style={{
                     borderRadius: '16px',
-                    padding: '32px 24px',
-                    background: activeFilter === 'approved'
-                      ? 'linear-gradient(135deg, #17b584 0%, #4dd9b2 100%)'
-                      : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
+                    padding: '24px',
+                    background: 'linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%)',
                     color: 'white',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: activeFilter === 'approved'
-                      ? '0 8px 20px rgba(0,184,148,0.4)'
-                      : '0 4px 12px rgba(0,184,148,0.2)',
-                    transform: activeFilter === 'approved' ? 'translateY(-2px)' : 'translateY(0)',
-                    border: activeFilter === 'approved' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                    position: 'relative'
+                      ? '0 8px 24px rgba(16, 172, 132, 0.4)'
+                      : '0 4px 15px rgba(16, 172, 132, 0.3)',
+                    transform: activeFilter === 'approved' ? 'translateY(-5px)' : 'translateY(0)',
+                    border: activeFilter === 'approved' ? '3px solid white' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px'
                   }}
                   onMouseEnter={(e) => {
-                    if (activeFilter !== 'approved') {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                    }
+                    e.currentTarget.style.transform = 'translateY(-5px)';
                   }}
                   onMouseLeave={(e) => {
                     if (activeFilter !== 'approved') {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,184,148,0.2)';
                     }
                   }}>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                    {allMonthTasks.filter(t => t.status === 'approved' || t.status === 'posted').length}
-                  </h3>
-                  <p style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                    Posted/Approved
-                  </p>
-                  <small style={{ display: 'block', marginTop: '8px', fontSize: '12px', opacity: 0.8, fontWeight: '500' }}>
-                    📤 Published or client approved
-                  </small>
-                  {activeFilter === 'approved' && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      backgroundColor: 'rgba(255,255,255,0.2)',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px'
-                    }}>
-                      ✓
-                    </div>
-                  )}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <CheckCircle size={30} color="white" />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                      {allMonthTasks.filter(t => t.status === 'approved' || t.status === 'posted').length}
+                    </h3>
+                    <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>
+                      Posted/Approved
+                    </p>
+                    <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>
+                      Published or client approved
+                    </p>
+                  </div>
                 </div>
-
-
               </div>
             )}
 

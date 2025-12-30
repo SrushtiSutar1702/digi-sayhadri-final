@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ref, onValue, update, push } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { Image, LogOut, CheckCircle, XCircle, Clock, Calendar, ChevronLeft, ChevronRight, Search, Download, FileText, List, Grid, Bell, User, Users, Plus, Send, BarChart3, PieChart, TrendingUp, PlayCircle, AlertCircle } from 'lucide-react';
+import { Image, LogOut, CheckCircle, XCircle, Clock, Calendar, ChevronLeft, ChevronRight, Search, Download, FileText, List, Grid, Bell, User, Users, Plus, Send, BarChart3, PieChart, TrendingUp, PlayCircle, AlertCircle, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import { jsPDF } from 'jspdf';
@@ -2282,7 +2282,13 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       cursor: 'pointer',
                       transform: selectedStatus === 'total' ? 'scale(1.05)' : 'scale(1)',
                       border: selectedStatus === 'total' ? '3px solid white' : 'none',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px',
+                      padding: '24px'
                     }}
                     onClick={() => handleStatBoxClick('total')}
                     onMouseEnter={(e) => {
@@ -2298,8 +2304,23 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       }
                     }}
                   >
-                    <h3>{filteredTasks.length}</h3>
-                    <p>Total Tasks</p>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Briefcase size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Total Tasks</p>
+                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Tasks for selected month</span>
+                    </div>
                   </div>
                   <div
                     className="stat-card stat-progress"
@@ -2310,7 +2331,13 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       cursor: 'pointer',
                       transform: selectedStatus === 'in-progress' ? 'scale(1.05)' : 'scale(1)',
                       border: selectedStatus === 'in-progress' ? '3px solid white' : 'none',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px',
+                      padding: '24px'
                     }}
                     onClick={() => handleStatBoxClick('in-progress')}
                     onMouseEnter={(e) => {
@@ -2326,8 +2353,23 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       }
                     }}
                   >
-                    <h3>{filteredTasks.filter(t => t.status === 'assigned' || t.status === 'in-progress').length}</h3>
-                    <p>In Progress</p>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Clock size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'assigned' || t.status === 'in-progress').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>In Progress</p>
+                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Working on it</span>
+                    </div>
                   </div>
                   <div
                     className="stat-card stat-pending"
@@ -2338,7 +2380,13 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       cursor: 'pointer',
                       transform: selectedStatus === 'pending-approval' ? 'scale(1.05)' : 'scale(1)',
                       border: selectedStatus === 'pending-approval' ? '3px solid white' : 'none',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px',
+                      padding: '24px'
                     }}
                     onClick={() => handleStatBoxClick('pending-approval')}
                     onMouseEnter={(e) => {
@@ -2354,8 +2402,23 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       }
                     }}
                   >
-                    <h3>{filteredTasks.filter(t => t.status === 'pending-client-approval').length}</h3>
-                    <p>Pending Approval</p>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <AlertCircle size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'pending-client-approval').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Pending</p>
+                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Awaiting approval</span>
+                    </div>
                   </div>
                   <div
                     className="stat-card stat-completed"
@@ -2366,7 +2429,13 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       cursor: 'pointer',
                       transform: selectedStatus === 'completed' ? 'scale(1.05)' : 'scale(1)',
                       border: selectedStatus === 'completed' ? '3px solid white' : 'none',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px',
+                      padding: '24px'
                     }}
                     onClick={() => handleStatBoxClick('completed')}
                     onMouseEnter={(e) => {
@@ -2382,8 +2451,23 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       }
                     }}
                   >
-                    <h3>{filteredTasks.filter(t => t.status === 'completed').length}</h3>
-                    <p>Completed</p>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <CheckCircle size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'completed').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Completed</p>
+                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Done tasks</span>
+                    </div>
                   </div>
                   <div
                     className="stat-card stat-approved"
@@ -2394,7 +2478,13 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       cursor: 'pointer',
                       transform: selectedStatus === 'approved' ? 'scale(1.05)' : 'scale(1)',
                       border: selectedStatus === 'approved' ? '3px solid white' : 'none',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      textAlign: 'left',
+                      gap: '16px',
+                      padding: '24px'
                     }}
                     onClick={() => handleStatBoxClick('approved')}
                     onMouseEnter={(e) => {
@@ -2410,8 +2500,23 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       }
                     }}
                   >
-                    <h3>{filteredTasks.filter(t => t.status === 'approved' || t.status === 'posted').length}</h3>
-                    <p>Posted/Approved</p>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Send size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'approved' || t.status === 'posted').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Approved</p>
+                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Ready for production</span>
+                    </div>
                   </div>
                 </div>
               </div>
