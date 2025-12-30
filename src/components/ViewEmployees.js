@@ -7,6 +7,22 @@ import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import './ProductionIncharge.css';
 
+const SYSTEM_EMPLOYEES = [
+    { id: 'sys_1', employeeName: 'Super Admin', email: 'superadmin@gmail.com', department: 'Management', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_2', employeeName: 'Production Incharge', email: 'productionincharge@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_3', employeeName: 'Production Incharge (Alt)', email: 'proin@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_4', employeeName: 'Video Head', email: 'video@gmail.com', department: 'video', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_5', employeeName: 'Graphics Head', email: 'graphics@gmail.com', department: 'graphics', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_6', employeeName: 'Social Media Head', email: 'social@gmail.com', department: 'social-media', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+    { id: 'sys_7', employeeName: 'Strategy Head', email: 'head@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_8', employeeName: 'Strategy Management', email: 'strategy@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-25T00:00:00.000Z' },
+    { id: 'sys_9', employeeName: 'Social Media Emp', email: 'socialemp@gmail.com', department: 'social-media', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_10', employeeName: 'Strategy Emp', email: 'strategyemp@gmail.com', department: 'strategy', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_11', employeeName: 'Graphics Emp', email: 'graphicemp@gmail.com', department: 'graphics', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_12', employeeName: 'Video Emp', email: 'videoemp@gmail.com', department: 'video', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+    { id: 'sys_13', employeeName: 'Production Admin', email: 'admin@gmail.com', department: 'production', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+];
+
 const ViewEmployees = () => {
     const navigate = useNavigate();
     const { toasts, showToast, removeToast } = useToast();
@@ -51,18 +67,22 @@ const ViewEmployees = () => {
             console.log('ViewEmployees: Raw employees data:', data);
 
             if (data) {
-                const employeesArray = Object.keys(data)
+                const dbEmployees = Object.keys(data)
                     .map(key => ({
                         id: key,
                         ...data[key]
                     }))
                     .filter(employee => !employee.deleted); // Filter out deleted employees
 
-                console.log('ViewEmployees: Employees loaded:', employeesArray.length, employeesArray);
-                setEmployees(employeesArray);
+                // Merge system employees with database employees (avoiding duplicates if they were added to DB)
+                const dbEmails = new Set(dbEmployees.map(e => e.email?.toLowerCase()));
+                const uniqueSystemEmployees = SYSTEM_EMPLOYEES.filter(se => !dbEmails.has(se.email?.toLowerCase()));
+
+                const combinedEmployees = [...uniqueSystemEmployees, ...dbEmployees];
+                console.log('ViewEmployees: Employees loaded (System + DB):', combinedEmployees.length);
+                setEmployees(combinedEmployees);
             } else {
-                console.log('ViewEmployees: No employees found in database');
-                setEmployees([]);
+                setEmployees(SYSTEM_EMPLOYEES);
             }
         });
 
@@ -108,6 +128,10 @@ const ViewEmployees = () => {
         }
 
         try {
+            if (SYSTEM_EMPLOYEES.some(se => se.id === employeeId)) {
+                showToast('System accounts cannot be disabled via this panel.', 'warning', 3000);
+                return;
+            }
             const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
             const employeeRef = ref(database, `employees/${employeeId}`);
             await update(employeeRef, {
@@ -136,6 +160,11 @@ const ViewEmployees = () => {
     const handleSaveEmployeeEdits = async () => {
         if (!editingEmployee || !editingEmployee.id) {
             showToast('❌ No employee selected for editing', 'error', 3000);
+            return;
+        }
+
+        if (editingEmployee.isSystem) {
+            showToast('❌ System accounts cannot be edited.', 'error', 3000);
             return;
         }
 
@@ -173,19 +202,52 @@ const ViewEmployees = () => {
 
     // Handle delete employee
     const handleDeleteEmployee = async (employee) => {
-        if (!window.confirm(`Are you sure you want to delete ${employee.employeeName}? This action cannot be undone.`)) {
+        if (employee.isSystem) {
+            showToast('❌ System accounts cannot be deleted.', 'error', 3000);
+            return;
+        }
+
+        if (!window.confirm(`Are you sure you want to delete ${employee.employeeName}?\n\nThis will:\n✓ Remove employee from database\n✓ Mark Firebase Auth account for deletion\n\nThis action cannot be undone.`)) {
             return;
         }
 
         try {
-            const employeeRef = ref(database, `employees/${employee.id}`);
-            await update(employeeRef, {
-                deleted: true,
-                deletedAt: new Date().toISOString(),
-                deletedBy: 'Production Incharge'
-            });
+            const updates = {};
 
-            showToast(`✅ Employee ${employee.employeeName} deleted successfully!`, 'success', 3000);
+            // Mark employee as deleted
+            updates[`employees/${employee.id}/deleted`] = true;
+            updates[`employees/${employee.id}/deletedAt`] = new Date().toISOString();
+            updates[`employees/${employee.id}/deletedBy`] = 'Production Incharge';
+
+            // If employee has Firebase UID, track it for manual deletion
+            if (employee.firebaseUid) {
+                updates[`deletedAuthAccounts/${employee.firebaseUid}`] = {
+                    email: employee.email,
+                    employeeName: employee.employeeName,
+                    deletedAt: new Date().toISOString(),
+                    deletedBy: 'Production Incharge',
+                    note: 'Requires manual deletion from Firebase Authentication Console'
+                };
+            }
+
+            await update(ref(database), updates);
+
+            if (employee.firebaseUid) {
+                showToast(
+                    `✅ Employee deleted from database!\n⚠️ IMPORTANT: Please manually delete their Firebase Auth account:\n📧 Email: ${employee.email}\n🔑 UID: ${employee.firebaseUid}`,
+                    'warning',
+                    8000
+                );
+
+                // Log to console for easy access
+                console.warn('🔴 MANUAL ACTION REQUIRED:');
+                console.warn('Delete Firebase Auth account:');
+                console.warn('Email:', employee.email);
+                console.warn('UID:', employee.firebaseUid);
+                console.warn('Go to: https://console.firebase.google.com/project/sayhadrid/authentication/users');
+            } else {
+                showToast(`✅ Employee ${employee.employeeName} deleted successfully!`, 'success', 3000);
+            }
         } catch (error) {
             console.error('Error deleting employee:', error);
             showToast('❌ Error deleting employee', 'error', 3000);
@@ -667,10 +729,10 @@ const ViewEmployees = () => {
                                                             borderRadius: '6px',
                                                             fontSize: '11px',
                                                             fontWeight: '600',
-                                                            backgroundColor: emp.role === 'head' ? '#fef3c7' : '#dbeafe',
-                                                            color: emp.role === 'head' ? '#92400e' : '#1e40af'
+                                                            backgroundColor: emp.isSystem ? '#cffafe' : emp.role === 'head' ? '#fef3c7' : '#dbeafe',
+                                                            color: emp.isSystem ? '#0891b2' : emp.role === 'head' ? '#92400e' : '#1e40af'
                                                         }}>
-                                                            {emp.role === 'head' ? '👑 Head' : '👤 Employee'}
+                                                            {emp.isSystem ? '🔒 System' : (emp.role === 'head' ? '👑 Head' : '👤 Employee')}
                                                         </span>
                                                     </td>
                                                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
@@ -719,26 +781,36 @@ const ViewEmployees = () => {
                                                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                                                         <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                                                             <button
-                                                                onClick={() => handleEditEmployee(emp)}
+                                                                onClick={() => {
+                                                                    if (emp.isSystem) {
+                                                                        showToast('System accounts cannot be edited via this panel.', 'warning', 3000);
+                                                                        return;
+                                                                    }
+                                                                    handleEditEmployee(emp);
+                                                                }}
                                                                 style={{
                                                                     padding: '6px 10px',
-                                                                    background: '#3b82f6',
+                                                                    background: emp.isSystem ? '#9ca3af' : '#3b82f6',
                                                                     color: 'white',
                                                                     border: 'none',
                                                                     borderRadius: '6px',
                                                                     fontSize: '12px',
                                                                     fontWeight: '500',
-                                                                    cursor: 'pointer',
+                                                                    cursor: emp.isSystem ? 'not-allowed' : 'pointer',
                                                                     transition: 'background 0.2s',
                                                                     display: 'flex',
                                                                     alignItems: 'center',
                                                                     gap: '4px'
                                                                 }}
-                                                                onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
-                                                                onMouseOut={(e) => e.currentTarget.style.background = '#3b82f6'}
-                                                                title="Edit Employee"
+                                                                onMouseOver={(e) => {
+                                                                    if (!emp.isSystem) e.currentTarget.style.background = '#2563eb';
+                                                                }}
+                                                                onMouseOut={(e) => {
+                                                                    if (!emp.isSystem) e.currentTarget.style.background = '#3b82f6';
+                                                                }}
+                                                                title={emp.isSystem ? "System Account (Locked)" : "Edit Employee"}
                                                             >
-                                                                ✏️ Edit
+                                                                {emp.isSystem ? '🔒 Locked' : '✏️ Edit'}
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDeleteEmployee(emp)}

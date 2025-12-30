@@ -538,6 +538,21 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
         });
 
         setEmployees(employeesList);
+
+        // Security Check: functionality to ensure deleted/inactive users are logged out
+        if (loggedInUserEmail && !isSuperAdmin) {
+          // Skip check for hardcoded/system accounts that might not be in DB
+          if (loggedInUserEmail !== 'social@gmail.com') {
+            const currentUser = allEmployees.find(e => e.email === loggedInUserEmail);
+
+            if (!currentUser || currentUser.status === 'inactive' || currentUser.status === 'disabled' || currentUser.deleted === true) {
+              console.log('Current user access revoked. Logging out...');
+              sessionStorage.clear();
+              localStorage.clear(); // Clear all storage
+              navigate('/');
+            }
+          }
+        }
       } else {
         setEmployees([]);
       }

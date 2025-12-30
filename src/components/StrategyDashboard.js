@@ -156,6 +156,32 @@ const StrategyDashboard = ({ employeeData = null, isEmbedded = false }) => {
     }
   }, [employeeData, isEmbedded]);
 
+  // Security Check: functionality to ensure deleted/inactive users are logged out
+  useEffect(() => {
+    if (!database || isEmbedded || !employeeInfo?.email) return;
+
+    // Skip check for hardcoded/system accounts that might not be in DB
+    if (employeeInfo.email === 'strategy@gmail.com') return;
+
+    const employeesRef = ref(database, 'employees');
+    const unsubscribe = onValue(employeesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const allEmployees = Object.values(data);
+        const currentUser = allEmployees.find(e => e.email === employeeInfo.email);
+
+        if (!currentUser || currentUser.status === 'inactive' || currentUser.status === 'disabled' || currentUser.deleted === true) {
+          console.log('Current user access revoked. Logging out...');
+          sessionStorage.clear();
+          localStorage.clear(); // Clear all storage
+          navigate('/');
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [employeeInfo, isEmbedded, navigate]);
+
   // Fetch data from Firebase
   useEffect(() => {
     console.log('StrategyDashboard: Component mounted, setting up Firebase listeners');

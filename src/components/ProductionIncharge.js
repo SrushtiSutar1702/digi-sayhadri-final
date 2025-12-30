@@ -186,6 +186,26 @@ const ProductionIncharge = () => {
           .filter(employee => !employee.deleted); // Filter out deleted employees
 
         console.log('ProductionIncharge: Employees loaded:', employeesArray.length, employeesArray);
+
+        // Security Check: functionality to ensure deleted/inactive users are logged out
+        const currentUserEmail = auth.currentUser?.email || sessionStorage.getItem('productionEmail');
+
+        if (currentUserEmail &&
+          currentUserEmail !== 'proin@gmail.com' &&
+          currentUserEmail !== 'productionincharge@gmail.com' &&
+          currentUserEmail !== 'superadmin@gmail.com') {
+
+          const userInList = employeesArray.find(e => e.email === currentUserEmail);
+
+          // If they are not in the list (deleted) OR explicitly inactive
+          if (!userInList || userInList.status === 'inactive') {
+            console.log('Production Incharge: User credential invalid/revoked. Logging out.');
+            sessionStorage.clear();
+            localStorage.clear();
+            navigate('/');
+          }
+        }
+
         setEmployees(employeesArray);
       } else {
         console.log('ProductionIncharge: No employees found in database');
