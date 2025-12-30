@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ref, push } from 'firebase/database';
-import { database } from '../firebase';
+import { ref, push, get } from 'firebase/database';
+import { database, secondaryAuth } from '../firebase';
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import { ArrowLeft, Calendar, UserPlus, Plus, Upload, LogOut, LayoutDashboard } from 'lucide-react';
@@ -28,14 +29,50 @@ const AddEmployeeForm = () => {
         }
 
         try {
+            // Check if email already exists in database
             const employeesRef = ref(database, 'employees');
+            const snapshot = await get(employeesRef);
+            if (snapshot.exists()) {
+                const employeesData = snapshot.val();
+                const emailExists = Object.values(employeesData).some(emp =>
+                    emp.email && emp.email.toLowerCase() === newEmployee.email.toLowerCase()
+                );
+
+                if (emailExists) {
+                    showToast('⚠️ An employee with this email already exists!', 'error', 4000);
+                    return;
+                }
+            }
+
+            // Validate password length
+            if (newEmployee.password.length < 6) {
+                showToast('❌ Password must be at least 6 characters long', 'error', 3000);
+                return;
+            }
+
+            // Step 1: Create Firebase Authentication account using secondary auth
+            console.log('Creating Firebase Auth account for:', newEmployee.email);
+            const userCredential = await createUserWithEmailAndPassword(
+                secondaryAuth,
+                newEmployee.email,
+                newEmployee.password
+            );
+
+            console.log('✅ Firebase Auth account created:', userCredential.user.uid);
+
+            // Step 2: Sign out from secondary auth immediately to prevent session conflicts
+            await signOut(secondaryAuth);
+            console.log('✅ Signed out from secondary auth');
+
+            // Step 3: Add employee to Realtime Database
             await push(employeesRef, {
                 ...newEmployee,
+                firebaseUid: userCredential.user.uid, // Store Firebase Auth UID
                 createdAt: new Date().toISOString(),
                 createdBy: 'Production Incharge'
             });
 
-            showToast(`✅ Employee ${newEmployee.employeeName} added successfully!`, 'success', 3000);
+            showToast(`✅ Employee ${newEmployee.employeeName} added successfully with Firebase Auth account!`, 'success', 3000);
 
             // Navigate back after short delay to show toast
             setTimeout(() => {
@@ -44,7 +81,17 @@ const AddEmployeeForm = () => {
 
         } catch (error) {
             console.error('Error adding employee:', error);
-            showToast('❌ Error adding employee', 'error', 3000);
+
+            // Provide specific error messages
+            if (error.code === 'auth/email-already-in-use') {
+                showToast('❌ This email is already registered in Firebase Authentication', 'error', 4000);
+            } else if (error.code === 'auth/invalid-email') {
+                showToast('❌ Invalid email address', 'error', 3000);
+            } else if (error.code === 'auth/weak-password') {
+                showToast('❌ Password is too weak. Use at least 6 characters', 'error', 3000);
+            } else {
+                showToast(`❌ Error adding employee: ${error.message}`, 'error', 3000);
+            }
         }
     };
 

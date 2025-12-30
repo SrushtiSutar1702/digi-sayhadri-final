@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { ref, onValue, update, push } from 'firebase/database';
-import { database, auth } from '../firebase';
-import { signOut } from 'firebase/auth';
+import { database, auth, secondaryAuth } from '../firebase';
+import { signOut, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield,
@@ -60,6 +60,22 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import './SuperAdmin.css';
+
+const SYSTEM_EMPLOYEES = [
+  { id: 'sys_1', employeeName: 'Super Admin', email: 'superadmin@gmail.com', department: 'Management', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_2', employeeName: 'Production Incharge', email: 'productionincharge@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_3', employeeName: 'Production Incharge (Alt)', email: 'proin@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_4', employeeName: 'Video Head', email: 'video@gmail.com', department: 'video', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_5', employeeName: 'Graphics Head', email: 'graphics@gmail.com', department: 'graphics', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_6', employeeName: 'Social Media Head', email: 'social@gmail.com', department: 'social-media', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_7', employeeName: 'Strategy Head', email: 'head@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_8', employeeName: 'Strategy Management', email: 'strategy@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-25T00:00:00.000Z' },
+  { id: 'sys_9', employeeName: 'Social Media Emp', email: 'socialemp@gmail.com', department: 'social-media', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_10', employeeName: 'Strategy Emp', email: 'strategyemp@gmail.com', department: 'strategy', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_11', employeeName: 'Graphics Emp', email: 'graphicemp@gmail.com', department: 'graphics', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_12', employeeName: 'Video Emp', email: 'videoemp@gmail.com', department: 'video', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_13', employeeName: 'Production Admin', email: 'admin@gmail.com', department: 'production', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+];
 
 const SuperAdmin = () => {
   const [tasks, setTasks] = useState([]);
@@ -233,14 +249,20 @@ const SuperAdmin = () => {
     const unsubEmployees = onValue(employeesRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const employeesArray = Object.keys(data).map(key => ({
+        const dbEmployees = Object.keys(data).map(key => ({
           id: key,
           ...data[key]
         }));
-        console.log('Loaded employees:', employeesArray);
-        setEmployees(employeesArray);
+
+        // Merge system employees with database employees (avoiding duplicates if they were added to DB)
+        const dbEmails = new Set(dbEmployees.map(e => e.email?.toLowerCase()));
+        const uniqueSystemEmployees = SYSTEM_EMPLOYEES.filter(se => !dbEmails.has(se.email?.toLowerCase()));
+
+        const combinedEmployees = [...uniqueSystemEmployees, ...dbEmployees];
+        console.log('Combined employees (System + DB):', combinedEmployees);
+        setEmployees(combinedEmployees);
       } else {
-        setEmployees([]);
+        setEmployees(SYSTEM_EMPLOYEES);
       }
     });
 
@@ -326,7 +348,7 @@ const SuperAdmin = () => {
   // Handle Delete Employee
   const handleDeleteEmployee = async (employee) => {
     const confirmDelete = window.confirm(
-      `Are you sure you want to PERMANENTLY delete employee "${employee.employeeName}"?\n\nThis action will remove the employee, unassign their tasks and clients. This cannot be undone.`
+      `Are you sure you want to PERMANENTLY delete employee "${employee.employeeName}"?\n\nThis action will:\n✓ Remove the employee from database\n✓ Unassign their tasks and clients\n✓ Mark their Firebase Auth account for deletion\n\nThis cannot be undone.`
     );
 
     if (!confirmDelete) return;
@@ -371,18 +393,47 @@ const SuperAdmin = () => {
         updates[`${basePath}/${client.id}/assignedToEmployeeName`] = null;
       });
 
-      // 3. Delete Employee
+      // 3. Mark employee as deleted and store Firebase UID for manual cleanup
+      if (employee.firebaseUid) {
+        // Store in deletedAuthAccounts for tracking
+        updates[`deletedAuthAccounts/${employee.firebaseUid}`] = {
+          email: employee.email,
+          employeeName: employee.employeeName,
+          deletedAt: new Date().toISOString(),
+          deletedBy: 'Super Admin',
+          note: 'Requires manual deletion from Firebase Authentication Console'
+        };
+      }
+
+      // 4. Delete Employee from database
       updates[`employees/${employee.id}`] = null;
 
       await update(ref(database), updates);
-      showToast('Employee permanently deleted and data unassigned!', 'success');
+
+      // Show appropriate message based on whether Firebase UID exists
+      if (employee.firebaseUid) {
+        showToast(
+          `✅ Employee deleted from database!\n⚠️ IMPORTANT: Please manually delete their Firebase Auth account:\n📧 Email: ${employee.email}\n🔑 UID: ${employee.firebaseUid}\n\nGo to Firebase Console → Authentication → Find user → Delete`,
+          'warning',
+          8000
+        );
+
+        // Also log to console for easy copy-paste
+        console.warn('🔴 MANUAL ACTION REQUIRED:');
+        console.warn('Delete Firebase Auth account:');
+        console.warn('Email:', employee.email);
+        console.warn('UID:', employee.firebaseUid);
+        console.warn('Go to: https://console.firebase.google.com/project/sayhadrid/authentication/users');
+      } else {
+        showToast('✅ Employee permanently deleted and data unassigned!', 'success');
+      }
 
       if (selectedEmployee && selectedEmployee.id === employee.id) {
         setSelectedEmployee(null);
       }
     } catch (error) {
       console.error('Error deleting employee:', error);
-      showToast('Failed to delete employee: ' + error.message, 'error');
+      showToast('❌ Failed to delete employee: ' + error.message, 'error');
     }
   };
 
@@ -1367,6 +1418,34 @@ const SuperAdmin = () => {
     }
 
     try {
+      // Check if email already exists in database
+      const emailExists = employees.some(emp => emp.email.toLowerCase() === newEmployee.email.toLowerCase());
+      if (emailExists) {
+        showToast('An employee with this email already exists!', 'error');
+        return;
+      }
+
+      // Validate password length
+      if (newEmployee.password.length < 6) {
+        showToast('Password must be at least 6 characters long', 'error');
+        return;
+      }
+
+      // Step 1: Create Firebase Authentication account using secondary auth
+      console.log('Creating Firebase Auth account for:', newEmployee.email);
+      const userCredential = await createUserWithEmailAndPassword(
+        secondaryAuth,
+        newEmployee.email,
+        newEmployee.password
+      );
+
+      console.log('✅ Firebase Auth account created:', userCredential.user.uid);
+
+      // Step 2: Sign out from secondary auth immediately to prevent session conflicts
+      await signOut(secondaryAuth);
+      console.log('✅ Signed out from secondary auth');
+
+      // Step 3: Add employee to Realtime Database
       const employeesRef = ref(database, 'employees');
       await push(employeesRef, {
         employeeName: newEmployee.employeeName,
@@ -1374,10 +1453,14 @@ const SuperAdmin = () => {
         password: newEmployee.password,
         department: newEmployee.department,
         role: newEmployee.role || 'employee',
+        firebaseUid: userCredential.user.uid, // Store Firebase Auth UID
         createdAt: new Date().toISOString(),
         status: 'active'
       });
-      showToast('Employee added successfully!', 'success');
+
+      showToast(`✅ Employee ${newEmployee.employeeName} added successfully with Firebase Auth account!`, 'success');
+
+      // Reset form
       setNewEmployee({
         employeeName: '',
         department: '',
@@ -1386,11 +1469,22 @@ const SuperAdmin = () => {
         password: '',
         status: 'active'
       });
-      // Navigate to employees view instead of closing modal
+
+      // Navigate to employees view
       setSelectedView('employees');
     } catch (error) {
       console.error('Error adding employee:', error);
-      showToast('Failed to add employee', 'error');
+
+      // Provide specific error messages
+      if (error.code === 'auth/email-already-in-use') {
+        showToast('❌ This email is already registered in Firebase Authentication', 'error');
+      } else if (error.code === 'auth/invalid-email') {
+        showToast('❌ Invalid email address', 'error');
+      } else if (error.code === 'auth/weak-password') {
+        showToast('❌ Password is too weak. Use at least 6 characters', 'error');
+      } else {
+        showToast(`❌ Failed to add employee: ${error.message}`, 'error');
+      }
     }
   };
 
@@ -5348,10 +5442,10 @@ const SuperAdmin = () => {
                               borderRadius: '6px',
                               fontSize: '11px',
                               fontWeight: '600',
-                              backgroundColor: emp.role === 'head' ? '#fef3c7' : '#dbeafe',
-                              color: emp.role === 'head' ? '#92400e' : '#1e40af'
+                              backgroundColor: emp.isSystem ? '#cffafe' : emp.role === 'head' ? '#fef3c7' : '#dbeafe',
+                              color: emp.isSystem ? '#0891b2' : emp.role === 'head' ? '#92400e' : '#1e40af'
                             }}>
-                              {emp.role === 'head' ? '👑 Head' : '👤 Employee'}
+                              {emp.isSystem ? '🔒 System' : (emp.role === 'head' ? '👑 Head' : '👤 Employee')}
                             </span>
                           </td>
                           <td style={{ textAlign: 'center', padding: '12px 8px' }}>
@@ -5363,6 +5457,10 @@ const SuperAdmin = () => {
                           <td style={{ textAlign: 'center', padding: '12px 8px' }}>
                             <button
                               onClick={async () => {
+                                if (emp.isSystem) {
+                                  showToast('System accounts cannot be disabled via this panel.', 'warning');
+                                  return;
+                                }
                                 const newStatus = emp.status === 'active' ? 'inactive' : 'active';
                                 try {
                                   const employeeRef = ref(database, `employees/${emp.id}`);
@@ -5401,48 +5499,68 @@ const SuperAdmin = () => {
                           <td style={{ textAlign: 'center', padding: '12px 8px' }}>
                             <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                               <button
-                                onClick={() => handleEditEmployee(emp)}
+                                onClick={() => {
+                                  if (emp.isSystem) {
+                                    showToast('System accounts cannot be edited via this panel.', 'warning');
+                                    return;
+                                  }
+                                  handleEditEmployee(emp);
+                                }}
                                 style={{
                                   padding: '6px 10px',
-                                  background: '#3b82f6',
+                                  background: emp.isSystem ? '#9ca3af' : '#3b82f6',
                                   color: 'white',
                                   border: 'none',
                                   borderRadius: '6px',
                                   fontSize: '12px',
                                   fontWeight: '500',
-                                  cursor: 'pointer',
+                                  cursor: emp.isSystem ? 'not-allowed' : 'pointer',
                                   transition: 'background 0.2s',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: '4px'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
-                                onMouseOut={(e) => e.currentTarget.style.background = '#3b82f6'}
-                                title="Edit Employee"
+                                onMouseOver={(e) => {
+                                  if (!emp.isSystem) e.currentTarget.style.background = '#2563eb';
+                                }}
+                                onMouseOut={(e) => {
+                                  if (!emp.isSystem) e.currentTarget.style.background = '#3b82f6';
+                                }}
+                                title={emp.isSystem ? "System Account (Locked)" : "Edit Employee"}
                               >
-                                ✏️ Edit
+                                {emp.isSystem ? '🔒 Locked' : '✏️ Edit'}
                               </button>
                               <button
-                                onClick={() => handleDeleteEmployee(emp)}
+                                onClick={() => {
+                                  if (emp.isSystem) {
+                                    showToast('System accounts cannot be deleted.', 'error');
+                                    return;
+                                  }
+                                  handleDeleteEmployee(emp);
+                                }}
                                 style={{
                                   padding: '6px 10px',
-                                  background: '#ef4444',
+                                  background: emp.isSystem ? '#9ca3af' : '#ef4444',
                                   color: 'white',
                                   border: 'none',
                                   borderRadius: '6px',
                                   fontSize: '12px',
                                   fontWeight: '500',
-                                  cursor: 'pointer',
+                                  cursor: emp.isSystem ? 'not-allowed' : 'pointer',
                                   transition: 'background 0.2s',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: '4px'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.background = '#dc2626'}
-                                onMouseOut={(e) => e.currentTarget.style.background = '#ef4444'}
-                                title="Delete Employee"
+                                onMouseOver={(e) => {
+                                  if (!emp.isSystem) e.currentTarget.style.background = '#dc2626';
+                                }}
+                                onMouseOut={(e) => {
+                                  if (!emp.isSystem) e.currentTarget.style.background = '#ef4444';
+                                }}
+                                title={emp.isSystem ? "System Account (Locked)" : "Delete Employee"}
                               >
-                                🗑️ Delete
+                                {emp.isSystem ? '🔒 Locked' : '🗑️ Delete'}
                               </button>
                             </div>
                           </td>
