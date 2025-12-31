@@ -54,6 +54,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
   const [reportsClientFilter, setReportsClientFilter] = useState('all'); // Client filter for reports
   const [reportsStatusFilter, setReportsStatusFilter] = useState('all'); // Status filter for reports
   const [reportsTimePeriod, setReportsTimePeriod] = useState('month'); // 'day', 'week', 'month'
+  const [myTaskFilter, setMyTaskFilter] = useState('all'); // 'all', 'today'
   const navigate = useNavigate();
   const { toasts, showToast, removeToast } = useToast();
 
@@ -1003,7 +1004,11 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
             <ul className="strategy-sidebar-menu">
               <li className="strategy-sidebar-menu-item">
                 <button
-                  onClick={() => setSelectedView('dashboard')}
+                  onClick={() => {
+                    setSelectedView('dashboard');
+                    setShowClientWorkflowModal(false);
+                    setSelectedClientForWorkflow(null);
+                  }}
                   className={`strategy-sidebar-menu-link ${selectedView === 'dashboard' ? 'active' : ''}`}
                   style={{
                     width: '100%',
@@ -1023,7 +1028,12 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
               </li>
               <li className="strategy-sidebar-menu-item">
                 <button
-                  onClick={() => setSelectedView('mytask')}
+                  onClick={() => {
+                    setSelectedView('mytask');
+                    setMyTaskFilter('all');
+                    setShowClientWorkflowModal(false);
+                    setSelectedClientForWorkflow(null);
+                  }}
                   className={`strategy-sidebar-menu-link ${selectedView === 'mytask' ? 'active' : ''}`}
                   style={{
                     width: '100%',
@@ -1043,7 +1053,11 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
               </li>
               <li className="strategy-sidebar-menu-item">
                 <button
-                  onClick={() => setSelectedView('clients')}
+                  onClick={() => {
+                    setSelectedView('clients');
+                    setShowClientWorkflowModal(false);
+                    setSelectedClientForWorkflow(null);
+                  }}
                   className={`strategy-sidebar-menu-link ${selectedView === 'clients' ? 'active' : ''}`}
                   style={{
                     width: '100%',
@@ -1063,7 +1077,11 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
               </li>
               <li className="strategy-sidebar-menu-item">
                 <button
-                  onClick={() => setSelectedView('report')}
+                  onClick={() => {
+                    setSelectedView('report');
+                    setShowClientWorkflowModal(false);
+                    setSelectedClientForWorkflow(null);
+                  }}
                   className={`strategy-sidebar-menu-link ${selectedView === 'report' ? 'active' : ''}`}
                   style={{
                     width: '100%',
@@ -1436,15 +1454,8 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 {/* Quick Action */}
                 <button
                   onClick={() => {
-                    const today = new Date().toISOString().split('T')[0];
-                    const todayTasks = filteredTasks.filter(task =>
-                      task.deadline === today || task.postDate === today
-                    );
-                    if (todayTasks.length > 0) {
-                      showToast(`📋 ${todayTasks.length} task(s) scheduled for today`, 'info', 3000);
-                    } else {
-                      showToast('No tasks scheduled for today!', 'info', 3000);
-                    }
+                    setSelectedView('mytask');
+                    setMyTaskFilter('today');
                   }}
                   style={{
                     background: 'rgba(255,255,255,0.2)',
@@ -1663,7 +1674,8 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 {/* Quick Action */}
                 <button
                   onClick={() => {
-                    showToast('📊 Weekly report generated', 'success', 3000);
+                    setSelectedView('mytask');
+                    setMyTaskFilter('all');
                   }}
                   style={{
                     background: 'rgba(255,255,255,0.2)',
@@ -2156,7 +2168,29 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
               <div className="strategy-header-content">
                 <div className="strategy-header-left">
                   <div className="strategy-header-title">
-                    <h1>My Task</h1>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <h1>My Task</h1>
+                      {myTaskFilter === 'today' && (
+                        <button
+                          onClick={() => setMyTaskFilter('all')}
+                          style={{
+                            padding: '4px 12px',
+                            backgroundColor: '#fee2e2',
+                            color: '#991b1b',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: '1px solid #fca5a5',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          Today's Tasks ✕
+                        </button>
+                      )}
+                    </div>
                     <p>Work on clients assigned to you through all 4 stages</p>
                   </div>
                 </div>
@@ -2193,8 +2227,13 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
               </div>
               <div style={{ padding: '20px', background: 'white', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
                 {(() => {
-                  // Filter tasks by the month selected in "My Task" view
+                  // Filter tasks by the month selected in "My Task" view or by today's date if filter is 'today'
                   const myTaskFilteredTasks = tasks.filter(task => {
+                    if (myTaskFilter === 'today') {
+                      const today = new Date().toISOString().split('T')[0];
+                      return task.postDate === today || task.deadline === today;
+                    }
+
                     const postDate = task.postDate;
                     const deadline = task.deadline;
                     return (postDate && postDate.startsWith(myTaskSelectedMonth)) ||
@@ -5166,30 +5205,6 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                     Client ID: {selectedClientForWorkflow.clientId} | Work through all 4 stages
                   </p>
                 </div>
-                <button
-                  onClick={() => {
-                    setShowClientWorkflowModal(false);
-                    setSelectedClientForWorkflow(null);
-                  }}
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    border: 'none',
-                    color: 'white',
-                    fontSize: '28px',
-                    cursor: 'pointer',
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-                >
-                  ×
-                </button>
               </div>
 
               {/* Client Progress - 4 Stages - Full Width */}

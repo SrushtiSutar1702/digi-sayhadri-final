@@ -20,7 +20,7 @@ body {
 /* Sidebar Navigation - Default */
 .employee-sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  background: #1F7D53;
   min-height: 100vh;
   padding: 24px 0;
   position: fixed;
@@ -32,12 +32,12 @@ body {
 
 /* Video Theme Sidebar */
 .employee-dashboard.video-theme .employee-sidebar {
-  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  background: #1F7D53;
 }
 
 /* Graphics Theme Sidebar */
 .employee-dashboard.graphics-theme .employee-sidebar {
-  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  background: #1F7D53;
 }
 
 /* Main Content Area */
@@ -53,7 +53,7 @@ body {
   box-sizing: border-box;
 }
 
-.employee-main-content > * {
+.employee-main-content>* {
   max-width: 100% !important;
   box-sizing: border-box;
 }
@@ -295,7 +295,7 @@ body {
     width: 240px;
     background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
   }
-  
+
   .employee-main-content {
     margin-left: 240px;
   }
@@ -309,15 +309,15 @@ body {
     min-height: auto;
     background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
   }
-  
+
   .employee-main-content {
     margin-left: 0;
   }
-  
+
   .employee-dashboard {
     flex-direction: column;
   }
-  
+
   .employee-sidebar-user {
     position: relative;
     bottom: auto;
@@ -326,6 +326,7 @@ body {
     margin-top: 24px;
   }
 }
+
 /* Daily Report and Team Performance Cards for Employee Dashboard */
 .employee-card.daily-report-card,
 .employee-card.team-performance-card {
@@ -334,16 +335,17 @@ body {
 
 .employee-card.daily-report-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(102,126,234,0.3) !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
 }
 
 .employee-card.team-performance-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(86,171,47,0.3) !important;
+  box-shadow: 0 8px 25px rgba(86, 171, 47, 0.3) !important;
 }
 
 /* Mobile responsive for Employee Report Cards */
 @media (max-width: 768px) {
+
   .employee-card.daily-report-card,
   .employee-card.team-performance-card {
     padding: 16px !important;
@@ -355,7 +357,7 @@ body {
   }
 
   /* Make cards stack vertically on mobile */
-  .employee-card + .employee-card {
+  .employee-card+.employee-card {
     margin-top: 0 !important;
   }
 
@@ -367,6 +369,7 @@ body {
 }
 
 @media (max-width: 480px) {
+
   .employee-card.daily-report-card,
   .employee-card.team-performance-card {
     padding: 12px !important;
@@ -406,7 +409,7 @@ body {
 }
 
 /* Make table containers scrollable on small screens */
-.employee-main-content > div {
+.employee-main-content>div {
   max-width: 100%;
   overflow-x: auto;
 }
@@ -416,7 +419,7 @@ body {
   .employee-main-content table {
     font-size: 12px;
   }
-  
+
   .employee-main-content th,
   .employee-main-content td {
     padding: 8px 10px !important;
@@ -434,7 +437,7 @@ body {
     max-width: 100vw;
     padding: 16px;
   }
-  
+
   .employee-main-content table {
     font-size: 11px;
   }
@@ -449,7 +452,7 @@ body {
   max-width: 100%;
 }
 
-.employee-main-content [style*="minHeight: 100vh"] > div {
+.employee-main-content [style*="minHeight: 100vh"]>div {
   max-width: 100%;
   box-sizing: border-box;
 }

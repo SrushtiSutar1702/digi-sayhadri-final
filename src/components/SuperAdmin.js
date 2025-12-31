@@ -124,7 +124,6 @@ const SuperAdmin = () => {
 
   // View Clients states
   const [clientListSearch, setClientListSearch] = useState('');
-  const [showAddClientModal, setShowAddClientModal] = useState(false);
   const [newClient, setNewClient] = useState({
     clientId: '',
     clientName: '',
@@ -276,7 +275,7 @@ const SuperAdmin = () => {
 
   // Auto-generate Client ID when Add Client form opens
   useEffect(() => {
-    if (showAddClientModal) {
+    if (selectedView === 'add-client') {
       console.log('Auto-generating client ID, current clients:', clients.length);
 
       if (clients.length === 0) {
@@ -295,7 +294,7 @@ const SuperAdmin = () => {
         setNewClient(prev => ({ ...prev, clientId: String(nextId) }));
       }
     }
-  }, [showAddClientModal, clients]);
+  }, [selectedView, clients]);
 
   const handleLogout = async () => {
     try {
@@ -1425,7 +1424,7 @@ const SuperAdmin = () => {
         videoInstructions: '',
         graphicsInstructions: ''
       });
-      setShowAddClientModal(false);
+      setSelectedView('view-clients');
     } catch (error) {
       console.error('Error adding client:', error);
       showToast('❌ Error adding client', 'error', 3000);
@@ -1837,8 +1836,12 @@ const SuperAdmin = () => {
                     </li>
                     <li style={{ marginBottom: '4px' }}>
                       <button
-                        className="superadmin-sidebar-menu-link"
-                        onClick={() => setShowAddClientModal(true)}
+                        className={`superadmin-sidebar-menu-link ${selectedView === 'add-client' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSelectedView('add-client');
+                          setSelectedDepartment('production');
+                          setSelectedEmployee(null);
+                        }}
                         style={{
                           fontSize: '13px',
                           padding: '8px 12px'
@@ -2514,7 +2517,7 @@ const SuperAdmin = () => {
       <div className="superadmin-main-content">
         <div className="superadmin-header">
           {/* Month filter in header - Hide in Reports view, Change Password, and Add Employee */}
-          {selectedView !== 'reports' && selectedView !== 'change-password' && selectedView !== 'add-employee' && (
+          {selectedView !== 'reports' && selectedView !== 'change-password' && selectedView !== 'add-employee' && selectedView !== 'add-client' && (
             <div className="superadmin-header-content" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', gap: '16px' }}>
               <div className="superadmin-header-right" style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                 <div className="superadmin-filter-group">
@@ -2900,7 +2903,7 @@ const SuperAdmin = () => {
           })()}
 
           {/* Search and Filter Bar - Hide in Overview, Change Password, and Add Employee */}
-          {selectedView !== 'overview' && selectedView !== 'change-password' && selectedView !== 'add-employee' && (
+          {selectedView !== 'overview' && selectedView !== 'change-password' && selectedView !== 'add-employee' && selectedView !== 'add-client' && (
             <>
               <div className="superadmin-search-filter-bar">
                 {/* Search Bar */}
@@ -5083,6 +5086,267 @@ const SuperAdmin = () => {
           </div>
         )}
 
+        {selectedView === 'add-client' && (
+          <div className="superadmin-section">
+            <h2 className="superadmin-section-title">Add New Client</h2>
+            <div style={{
+              maxWidth: '650px',
+              margin: '0 auto',
+              background: 'white',
+              padding: '32px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <form onSubmit={handleAddClient}>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Client ID *
+                  </label>
+                  <input
+                    type="text"
+                    value={newClient.clientId}
+                    readOnly
+                    placeholder="Auto-generated"
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      backgroundColor: '#f9fafb',
+                      color: '#6b7280',
+                      cursor: 'not-allowed'
+                    }}
+                  />
+                  <small style={{
+                    display: 'block',
+                    marginTop: '6px',
+                    fontSize: '12px',
+                    color: '#6b7280'
+                  }}>
+                    Auto-generated sequentially (1, 2, 3...)
+                  </small>
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Client Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={newClient.clientName}
+                    onChange={(e) => setNewClient({ ...newClient, clientName: e.target.value })}
+                    placeholder="Enter client name"
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Contact Number *
+                  </label>
+                  <input
+                    type="tel"
+                    value={newClient.contactNumber}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      if (value.length <= 10) {
+                        setNewClient({ ...newClient, contactNumber: value });
+                      }
+                    }}
+                    placeholder="Enter 10-digit mobile number"
+                    required
+                    pattern="[0-9]{10}"
+                    maxLength="10"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                  <small style={{
+                    display: 'block',
+                    marginTop: '6px',
+                    fontSize: '12px',
+                    color: '#6b7280'
+                  }}>
+                    Must be exactly 10 digits
+                  </small>
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Email ID *
+                  </label>
+                  <input
+                    type="email"
+                    value={newClient.email}
+                    onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                    placeholder="client@example.com"
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Video Instructions (Optional)
+                  </label>
+                  <textarea
+                    value={newClient.videoInstructions}
+                    onChange={(e) => setNewClient({ ...newClient, videoInstructions: e.target.value })}
+                    placeholder="Special instructions for video content..."
+                    rows="3"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s',
+                      resize: 'vertical'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Graphics Instructions (Optional)
+                  </label>
+                  <textarea
+                    value={newClient.graphicsInstructions}
+                    onChange={(e) => setNewClient({ ...newClient, graphicsInstructions: e.target.value })}
+                    placeholder="Special instructions for graphics content..."
+                    rows="3"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s',
+                      resize: 'vertical'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'flex-end'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedView('view-clients')}
+                    style={{
+                      padding: '12px 24px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      backgroundColor: 'white',
+                      color: '#6b7280',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: '12px 24px',
+                      backgroundColor: '#4B49AC',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <Users size={18} />
+                    Add Client
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {selectedView === 'view-clients' && (
           <div className="superadmin-section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
@@ -5103,7 +5367,7 @@ const SuperAdmin = () => {
                   <span>Total: {clients.length} {clients.length === 1 ? 'Client' : 'Clients'}</span>
                 </div>
                 <button
-                  onClick={() => setShowAddClientModal(true)}
+                  onClick={() => setSelectedView('add-client')}
                   style={{
                     padding: '10px 16px',
                     background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
@@ -7817,309 +8081,8 @@ const SuperAdmin = () => {
           </div>
         </div>
       )}
-
-      {/* Add Client Modal */}
-      {showAddClientModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: '40px',
-            maxWidth: '650px',
-            width: '90%',
-            maxHeight: '85vh',
-            overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '24px'
-            }}>
-              <h2 style={{
-                margin: 0,
-                fontSize: '24px',
-                fontWeight: '700',
-                color: '#1f2937'
-              }}>👤 Add New Client</h2>
-              <button
-                onClick={() => setShowAddClientModal(false)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  color: '#6b7280',
-                  padding: '4px'
-                }}
-              >
-                ×
-              </button>
-            </div>
-
-            <form onSubmit={handleAddClient}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151'
-                }}>
-                  Client ID *
-                </label>
-                <input
-                  type="text"
-                  value={newClient.clientId}
-                  readOnly
-                  placeholder="Auto-generated"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    backgroundColor: '#f9fafb',
-                    color: '#6b7280',
-                    cursor: 'not-allowed'
-                  }}
-                />
-                <small style={{
-                  display: 'block',
-                  marginTop: '6px',
-                  fontSize: '12px',
-                  color: '#6b7280'
-                }}>
-                  Auto-generated sequentially (1, 2, 3...)
-                </small>
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151'
-                }}>
-                  Client Name *
-                </label>
-                <input
-                  type="text"
-                  value={newClient.clientName}
-                  onChange={(e) => setNewClient({ ...newClient, clientName: e.target.value })}
-                  placeholder="Enter client name"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                />
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151'
-                }}>
-                  Contact Number *
-                </label>
-                <input
-                  type="tel"
-                  value={newClient.contactNumber}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '');
-                    if (value.length <= 10) {
-                      setNewClient({ ...newClient, contactNumber: value });
-                    }
-                  }}
-                  placeholder="Enter 10-digit mobile number"
-                  required
-                  pattern="[0-9]{10}"
-                  maxLength="10"
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                />
-                <small style={{
-                  display: 'block',
-                  marginTop: '6px',
-                  fontSize: '12px',
-                  color: '#6b7280'
-                }}>
-                  Must be exactly 10 digits
-                </small>
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151'
-                }}>
-                  Email ID *
-                </label>
-                <input
-                  type="email"
-                  value={newClient.email}
-                  onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-                  placeholder="client@example.com"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                />
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151'
-                }}>
-                  Video Instructions (Optional)
-                </label>
-                <textarea
-                  value={newClient.videoInstructions}
-                  onChange={(e) => setNewClient({ ...newClient, videoInstructions: e.target.value })}
-                  placeholder="Special instructions for video content..."
-                  rows="3"
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.2s',
-                    resize: 'vertical'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                />
-              </div>
-
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151'
-                }}>
-                  Graphics Instructions (Optional)
-                </label>
-                <textarea
-                  value={newClient.graphicsInstructions}
-                  onChange={(e) => setNewClient({ ...newClient, graphicsInstructions: e.target.value })}
-                  placeholder="Special instructions for graphics content..."
-                  rows="3"
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.2s',
-                    resize: 'vertical'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#4B49AC'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                />
-              </div>
-
-              <div style={{
-                display: 'flex',
-                gap: '12px',
-                justifyContent: 'flex-end'
-              }}>
-                <button
-                  type="button"
-                  onClick={() => setShowAddClientModal(false)}
-                  style={{
-                    padding: '12px 24px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    backgroundColor: 'white',
-                    color: '#6b7280',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  style={{
-                    padding: '12px 24px',
-                    backgroundColor: '#4B49AC',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <Users size={18} />
-                  Add Client
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default SuperAdmin;   
+export default SuperAdmin;

@@ -15,7 +15,7 @@
 /* Sidebar Navigation */
 .social-media-employee-sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  background: #1F7D53;
   min-height: 100vh;
   padding: 24px 0;
   position: fixed;
@@ -267,7 +267,7 @@
     width: 240px;
     background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
   }
-  
+
   .social-media-employee-main-content {
     margin-left: 240px;
   }
@@ -281,15 +281,15 @@
     min-height: auto;
     background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
   }
-  
+
   .social-media-employee-main-content {
     margin-left: 0;
   }
-  
+
   .social-media-employee-dashboard {
     flex-direction: column;
   }
-  
+
   .social-media-employee-sidebar-user {
     position: relative;
     bottom: auto;
