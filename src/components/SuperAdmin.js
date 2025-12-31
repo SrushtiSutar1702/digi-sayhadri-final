@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { ref, onValue, update, push } from 'firebase/database';
-import { database, auth } from '../firebase';
-import { signOut } from 'firebase/auth';
+import { database, auth, secondaryAuth } from '../firebase';
+import { signOut, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield,
@@ -60,6 +60,22 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import './SuperAdmin.css';
+
+const SYSTEM_EMPLOYEES = [
+  { id: 'sys_1', employeeName: 'Super Admin', email: 'superadmin@gmail.com', department: 'Management', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_2', employeeName: 'Production Incharge', email: 'productionincharge@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_3', employeeName: 'Production Incharge (Alt)', email: 'proin@gmail.com', department: 'production', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_4', employeeName: 'Video Head', email: 'video@gmail.com', department: 'video', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_5', employeeName: 'Graphics Head', email: 'graphics@gmail.com', department: 'graphics', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_6', employeeName: 'Social Media Head', email: 'social@gmail.com', department: 'social-media', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+  { id: 'sys_7', employeeName: 'Strategy Head', email: 'head@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_8', employeeName: 'Strategy Management', email: 'strategy@gmail.com', department: 'strategy', role: 'head', status: 'active', isSystem: true, createdAt: '2025-11-25T00:00:00.000Z' },
+  { id: 'sys_9', employeeName: 'Social Media Emp', email: 'socialemp@gmail.com', department: 'social-media', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_10', employeeName: 'Strategy Emp', email: 'strategyemp@gmail.com', department: 'strategy', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_11', employeeName: 'Graphics Emp', email: 'graphicemp@gmail.com', department: 'graphics', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_12', employeeName: 'Video Emp', email: 'videoemp@gmail.com', department: 'video', role: 'employee', status: 'active', isSystem: true, createdAt: '2025-12-22T00:00:00.000Z' },
+  { id: 'sys_13', employeeName: 'Production Admin', email: 'admin@gmail.com', department: 'production', role: 'admin', status: 'active', isSystem: true, createdAt: '2025-11-03T00:00:00.000Z' },
+];
 
 const SuperAdmin = () => {
   const [tasks, setTasks] = useState([]);
@@ -233,14 +249,20 @@ const SuperAdmin = () => {
     const unsubEmployees = onValue(employeesRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const employeesArray = Object.keys(data).map(key => ({
+        const dbEmployees = Object.keys(data).map(key => ({
           id: key,
           ...data[key]
         }));
-        console.log('Loaded employees:', employeesArray);
-        setEmployees(employeesArray);
+
+        // Merge system employees with database employees (avoiding duplicates if they were added to DB)
+        const dbEmails = new Set(dbEmployees.map(e => e.email?.toLowerCase()));
+        const uniqueSystemEmployees = SYSTEM_EMPLOYEES.filter(se => !dbEmails.has(se.email?.toLowerCase()));
+
+        const combinedEmployees = [...uniqueSystemEmployees, ...dbEmployees];
+        console.log('Combined employees (System + DB):', combinedEmployees);
+        setEmployees(combinedEmployees);
       } else {
-        setEmployees([]);
+        setEmployees(SYSTEM_EMPLOYEES);
       }
     });
 
@@ -325,66 +347,116 @@ const SuperAdmin = () => {
 
   // Handle Delete Employee
   const handleDeleteEmployee = async (employee) => {
+    if (!employee || (!employee.id && !employee.email)) {
+      showToast('❌ Invalid employee data', 'error');
+      return;
+    }
+
+    if (employee.email === 'superadmin@gmail.com') {
+      showToast('❌ The primary Super Admin account cannot be deleted.', 'error');
+      return;
+    }
+
     const confirmDelete = window.confirm(
-      `Are you sure you want to PERMANENTLY delete employee "${employee.employeeName}"?\n\nThis action will remove the employee, unassign their tasks and clients. This cannot be undone.`
+      `Are you sure you want to PERMANENTLY delete employee "${employee.employeeName || employee.email}"?\n\nThis action will:\n✓ Remove the employee from database\n✓ Unassign their tasks and clients\n✓ Mark their Firebase Auth account for deletion\n\nThis cannot be undone.`
     );
 
     if (!confirmDelete) return;
 
     try {
+      console.log('🗑️ Starting deletion for employee:', employee);
       const updates = {};
 
       // 1. Unassign Tasks
-      const empTasks = tasks.filter(t =>
-        t.assignedTo === employee.id ||
-        t.assignedTo === employee.email ||
-        t.assignedTo === employee.employeeName ||
-        t.assignedEmployee === employee.id ||
-        t.assignedEmployee === employee.email ||
-        t.assignedEmployee === employee.employeeName
-      );
+      if (Array.isArray(tasks)) {
+        const empTasks = tasks.filter(t =>
+          t.assignedTo === employee.id ||
+          t.assignedTo === employee.email ||
+          (employee.employeeName && t.assignedTo === employee.employeeName) ||
+          t.assignedEmployee === employee.id ||
+          t.assignedEmployee === employee.email ||
+          (employee.employeeName && t.assignedEmployee === employee.employeeName)
+        );
 
-      empTasks.forEach(task => {
-        updates[`tasks/${task.id}/assignedTo`] = null;
-        updates[`tasks/${task.id}/assignedEmployee`] = null;
-        updates[`tasks/${task.id}/assignedToEmployeeName`] = null;
+        console.log(`Found ${empTasks.length} tasks to unassign`);
+        empTasks.forEach(task => {
+          updates[`tasks/${task.id}/assignedTo`] = null;
+          updates[`tasks/${task.id}/assignedEmployee`] = null;
+          updates[`tasks/${task.id}/assignedToEmployeeName`] = null;
 
-        if (task.status === 'in-progress' || task.status === 'assigned-to-department') {
-          updates[`tasks/${task.id}/status`] = 'pending';
-        }
-      });
+          if (task.status === 'in-progress' || task.status === 'assigned-to-department') {
+            updates[`tasks/${task.id}/status`] = 'pending';
+          }
+        });
+      }
 
       // 2. Unassign Clients
-      const empClients = clients.filter(c =>
-        c.assignedToEmployee === employee.id ||
-        c.assignedToEmployee === employee.email ||
-        c.assignedToEmployee === employee.employeeName ||
-        c.assignedEmployee === employee.id ||
-        c.assignedEmployee === employee.email ||
-        c.assignedEmployee === employee.employeeName
-      );
+      if (Array.isArray(clients)) {
+        const empClients = clients.filter(c =>
+          c.assignedToEmployee === employee.id ||
+          c.assignedToEmployee === employee.email ||
+          (employee.employeeName && c.assignedToEmployee === employee.employeeName) ||
+          c.assignedEmployee === employee.id ||
+          c.assignedEmployee === employee.email ||
+          (employee.employeeName && c.assignedEmployee === employee.employeeName)
+        );
 
-      empClients.forEach(client => {
-        const basePath = client.source === 'strategy' ? 'strategyClients' : 'clients';
-        updates[`${basePath}/${client.id}/assignedToEmployee`] = null;
-        updates[`${basePath}/${client.id}/assignedEmployee`] = null;
-        updates[`${basePath}/${client.id}/assignedToEmployeeName`] = null;
-      });
+        console.log(`Found ${empClients.length} clients to unassign`);
+        empClients.forEach(client => {
+          const basePath = client.source === 'strategy' ? 'strategyClients' : 'clients';
+          updates[`${basePath}/${client.id}/assignedToEmployee`] = null;
+          updates[`${basePath}/${client.id}/assignedEmployee`] = null;
+          updates[`${basePath}/${client.id}/assignedToEmployeeName`] = null;
+        });
+      }
 
-      // 3. Delete Employee
-      updates[`employees/${employee.id}`] = null;
+      // 3. Mark employee as deleted and store Firebase UID for manual cleanup
+      if (employee.firebaseUid) {
+        updates[`deletedAuthAccounts/${employee.firebaseUid}`] = {
+          email: employee.email,
+          employeeName: employee.employeeName || 'Unknown',
+          deletedAt: new Date().toISOString(),
+          deletedBy: 'Super Admin',
+          note: 'Requires manual deletion from Firebase Authentication Console'
+        };
+      }
 
+      // 4. Delete Employee from database
+      if (employee.id) {
+        updates[`employees/${employee.id}`] = null;
+      } else if (employee.email) {
+        // Find ID by email if missing
+        const foundEmp = employees.find(e => e.email === employee.email);
+        if (foundEmp && foundEmp.id) {
+          updates[`employees/${foundEmp.id}`] = null;
+        }
+      }
+
+      console.log('Sending updates to Firebase:', updates);
       await update(ref(database), updates);
-      showToast('Employee permanently deleted and data unassigned!', 'success');
 
-      if (selectedEmployee && selectedEmployee.id === employee.id) {
+      // Show appropriate message based on whether Firebase UID exists
+      if (employee.firebaseUid) {
+        showToast(
+          `✅ Employee deleted from database!\n⚠️ IMPORTANT: Please manually delete their Firebase Auth account:\n📧 Email: ${employee.email}\n🔑 UID: ${employee.firebaseUid}\n\nGo to Firebase Console → Authentication → Find user → Delete`,
+          'warning',
+          10000
+        );
+
+        console.warn('🔴 MANUAL ACTION REQUIRED: Delete Firebase Auth account for', employee.email);
+      } else {
+        showToast('✅ Employee permanently deleted and data unassigned!', 'success');
+      }
+
+      if (selectedEmployee && (selectedEmployee.id === employee.id || selectedEmployee.email === employee.email)) {
         setSelectedEmployee(null);
       }
     } catch (error) {
       console.error('Error deleting employee:', error);
-      showToast('Failed to delete employee: ' + error.message, 'error');
+      showToast('❌ Failed to delete employee: ' + error.message, 'error');
     }
   };
+
 
   // Toggle employee expansion to show clients
   const toggleEmployeeExpansion = (employeeId) => {
@@ -1367,6 +1439,34 @@ const SuperAdmin = () => {
     }
 
     try {
+      // Check if email already exists in database
+      const emailExists = employees.some(emp => emp.email.toLowerCase() === newEmployee.email.toLowerCase());
+      if (emailExists) {
+        showToast('An employee with this email already exists!', 'error');
+        return;
+      }
+
+      // Validate password length
+      if (newEmployee.password.length < 6) {
+        showToast('Password must be at least 6 characters long', 'error');
+        return;
+      }
+
+      // Step 1: Create Firebase Authentication account using secondary auth
+      console.log('Creating Firebase Auth account for:', newEmployee.email);
+      const userCredential = await createUserWithEmailAndPassword(
+        secondaryAuth,
+        newEmployee.email,
+        newEmployee.password
+      );
+
+      console.log('✅ Firebase Auth account created:', userCredential.user.uid);
+
+      // Step 2: Sign out from secondary auth immediately to prevent session conflicts
+      await signOut(secondaryAuth);
+      console.log('✅ Signed out from secondary auth');
+
+      // Step 3: Add employee to Realtime Database
       const employeesRef = ref(database, 'employees');
       await push(employeesRef, {
         employeeName: newEmployee.employeeName,
@@ -1374,10 +1474,14 @@ const SuperAdmin = () => {
         password: newEmployee.password,
         department: newEmployee.department,
         role: newEmployee.role || 'employee',
+        firebaseUid: userCredential.user.uid, // Store Firebase Auth UID
         createdAt: new Date().toISOString(),
         status: 'active'
       });
-      showToast('Employee added successfully!', 'success');
+
+      showToast(`✅ Employee ${newEmployee.employeeName} added successfully with Firebase Auth account!`, 'success');
+
+      // Reset form
       setNewEmployee({
         employeeName: '',
         department: '',
@@ -1386,11 +1490,22 @@ const SuperAdmin = () => {
         password: '',
         status: 'active'
       });
-      // Navigate to employees view instead of closing modal
+
+      // Navigate to employees view
       setSelectedView('employees');
     } catch (error) {
       console.error('Error adding employee:', error);
-      showToast('Failed to add employee', 'error');
+
+      // Provide specific error messages
+      if (error.code === 'auth/email-already-in-use') {
+        showToast('❌ This email is already registered in Firebase Authentication', 'error');
+      } else if (error.code === 'auth/invalid-email') {
+        showToast('❌ Invalid email address', 'error');
+      } else if (error.code === 'auth/weak-password') {
+        showToast('❌ Password is too weak. Use at least 6 characters', 'error');
+      } else {
+        showToast(`❌ Failed to add employee: ${error.message}`, 'error');
+      }
     }
   };
 
@@ -5126,14 +5241,14 @@ const SuperAdmin = () => {
                     <table className="superadmin-table" style={{ width: '100%', minWidth: '800px' }}>
                       <thead>
                         <tr style={{ background: '#f8fafc' }}>
-                          <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Client ID</th>
-                          <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Client Name</th>
-                          <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Contact</th>
-                          <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Email</th>
-                          <th style={{ textAlign: 'center', padding: '16px', fontWeight: '600', color: '#374151' }}>Video Instructions</th>
-                          <th style={{ textAlign: 'center', padding: '16px', fontWeight: '600', color: '#374151' }}>Graphics Instructions</th>
-                          <th style={{ textAlign: 'center', padding: '16px', fontWeight: '600', color: '#374151' }}>Status</th>
-                          <th style={{ textAlign: 'center', padding: '16px', fontWeight: '600', color: '#374151' }}>Assigned Employee</th>
+                          <th style={{ textAlign: 'left', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Client ID</th>
+                          <th style={{ textAlign: 'left', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Client Name</th>
+                          <th style={{ textAlign: 'left', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Contact</th>
+                          <th style={{ textAlign: 'left', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Email</th>
+                          <th style={{ textAlign: 'center', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Video Instructions</th>
+                          <th style={{ textAlign: 'center', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Graphics Instructions</th>
+                          <th style={{ textAlign: 'center', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Status</th>
+                          <th style={{ textAlign: 'center', padding: '10px 8px', fontWeight: '600', color: '#374151', fontSize: '13px' }}>Assigned Employee</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -5156,23 +5271,23 @@ const SuperAdmin = () => {
                               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
                               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                             >
-                              <td style={{ padding: '16px', fontSize: '14px', color: '#374151' }}>
+                              <td style={{ padding: '10px 8px', fontSize: '13px', color: '#374151' }}>
                                 {client.clientId || 'N/A'}
                               </td>
-                              <td style={{ padding: '16px', fontSize: '14px', fontWeight: '500', color: '#111827' }}>
+                              <td style={{ padding: '10px 8px', fontSize: '13px', fontWeight: '500', color: '#111827' }}>
                                 {client.clientName || 'N/A'}
                               </td>
-                              <td style={{ padding: '16px', fontSize: '14px', color: '#374151' }}>
+                              <td style={{ padding: '10px 8px', fontSize: '13px', color: '#374151' }}>
                                 {client.contactNumber || 'N/A'}
                               </td>
-                              <td style={{ padding: '16px', fontSize: '14px', color: '#374151' }}>
+                              <td style={{ padding: '10px 8px', fontSize: '13px', color: '#374151' }}>
                                 {client.email || 'N/A'}
                               </td>
-                              <td style={{ padding: '16px', textAlign: 'center' }}>
+                              <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                 <span style={{
                                   padding: '4px 8px',
                                   borderRadius: '4px',
-                                  fontSize: '12px',
+                                  fontSize: '11px',
                                   fontWeight: '500',
                                   background: client.videoInstructions ? '#dcfce7' : '#f3f4f6',
                                   color: client.videoInstructions ? '#166534' : '#6b7280'
@@ -5180,11 +5295,11 @@ const SuperAdmin = () => {
                                   {client.videoInstructions ? 'Available' : 'No instructions'}
                                 </span>
                               </td>
-                              <td style={{ padding: '16px', textAlign: 'center' }}>
+                              <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                 <span style={{
                                   padding: '4px 8px',
                                   borderRadius: '4px',
-                                  fontSize: '12px',
+                                  fontSize: '11px',
                                   fontWeight: '500',
                                   background: client.graphicsInstructions ? '#dcfce7' : '#f3f4f6',
                                   color: client.graphicsInstructions ? '#166534' : '#6b7280'
@@ -5192,11 +5307,11 @@ const SuperAdmin = () => {
                                   {client.graphicsInstructions ? 'Available' : 'No instructions'}
                                 </span>
                               </td>
-                              <td style={{ padding: '16px', textAlign: 'center' }}>
+                              <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                                 <span style={{
                                   padding: '4px 8px',
                                   borderRadius: '4px',
-                                  fontSize: '12px',
+                                  fontSize: '11px',
                                   fontWeight: '500',
                                   background: client.status === 'active' ? '#dcfce7' : '#fef3c7',
                                   color: client.status === 'active' ? '#166534' : '#92400e'
@@ -5204,7 +5319,7 @@ const SuperAdmin = () => {
                                   {client.status === 'active' ? '✓ Active' : client.status || 'Unknown'}
                                 </span>
                               </td>
-                              <td style={{ padding: '16px', textAlign: 'center', fontSize: '14px', color: '#374151' }}>
+                              <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: '13px', color: '#374151' }}>
                                 {assignedEmployee ? (
                                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                                     <div style={{
@@ -5274,27 +5389,27 @@ const SuperAdmin = () => {
             <div className="superadmin-table-container" style={{ overflowX: 'auto', width: '100%' }}>
               <table className="superadmin-table" style={{ width: '100%', tableLayout: 'fixed' }}>
                 <colgroup>
-                  <col style={{ width: '13%' }} />
-                  <col style={{ width: '15%' }} />
-                  <col style={{ width: '10%' }} />
-                  <col style={{ width: '11%' }} />
-                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '12%' }} />
+                  <col style={{ width: '14%' }} />
                   <col style={{ width: '8%' }} />
                   <col style={{ width: '10%' }} />
-                  <col style={{ width: '10%' }} />
-                  <col style={{ width: '13%' }} />
+                  <col style={{ width: '9%' }} />
+                  <col style={{ width: '7%' }} />
+                  <col style={{ width: '9%' }} />
+                  <col style={{ width: '9%' }} />
+                  <col style={{ width: '22%' }} />
                 </colgroup>
                 <thead>
                   <tr>
-                    <th style={{ textAlign: 'left', padding: '12px 8px' }}>Name</th>
-                    <th style={{ textAlign: 'left', padding: '12px 8px' }}>Email</th>
-                    <th style={{ textAlign: 'center', padding: '12px 8px' }}>Password</th>
-                    <th style={{ textAlign: 'center', padding: '12px 8px' }}>Department</th>
-                    <th style={{ textAlign: 'center', padding: '12px 8px' }}>Role</th>
-                    <th style={{ textAlign: 'center', padding: '12px 8px' }}>Status</th>
-                    <th style={{ textAlign: 'center', padding: '12px 8px' }}>Created At</th>
-                    <th style={{ textAlign: 'center', padding: '12px 8px' }}>Enable/Disable</th>
-                    <th style={{ textAlign: 'center', padding: '12px 8px' }}>Actions</th>
+                    <th style={{ textAlign: 'left', padding: '10px 4px' }}>Name</th>
+                    <th style={{ textAlign: 'left', padding: '10px 4px' }}>Email</th>
+                    <th style={{ textAlign: 'center', padding: '10px 4px' }}>Password</th>
+                    <th style={{ textAlign: 'center', padding: '10px 4px' }}>Department</th>
+                    <th style={{ textAlign: 'center', padding: '10px 4px' }}>Role</th>
+                    <th style={{ textAlign: 'center', padding: '10px 4px' }}>Status</th>
+                    <th style={{ textAlign: 'center', padding: '10px 4px' }}>Created At</th>
+                    <th style={{ textAlign: 'center', padding: '10px 4px' }}>Enable/Disable</th>
+                    <th style={{ textAlign: 'center', padding: '10px 4px' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -5306,20 +5421,20 @@ const SuperAdmin = () => {
                             backgroundColor: 'transparent'
                           }}
                         >
-                          <td style={{ textAlign: 'left', padding: '12px 8px' }}>
+                          <td style={{ textAlign: 'left', padding: '10px 4px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
                               <div className="employee-avatar" style={{ flexShrink: 0 }}>
                                 {emp.employeeName?.charAt(0).toUpperCase() || 'E'}
                               </div>
-                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{emp.employeeName}</span>
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '13px' }}>{emp.employeeName}</span>
                             </div>
                           </td>
-                          <td style={{ textAlign: 'left', padding: '12px 8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{emp.email}</td>
-                          <td style={{ textAlign: 'center', padding: '12px 8px' }}>
+                          <td style={{ textAlign: 'left', padding: '10px 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '13px' }}>{emp.email}</td>
+                          <td style={{ textAlign: 'center', padding: '10px 4px' }}>
                             <span style={{
                               fontFamily: 'monospace',
-                              fontSize: '12px',
-                              padding: '4px 6px',
+                              fontSize: '11px',
+                              padding: '2px 4px',
                               backgroundColor: '#f3f4f6',
                               borderRadius: '4px',
                               color: '#374151',
@@ -5331,8 +5446,8 @@ const SuperAdmin = () => {
                               {emp.password || 'N/A'}
                             </span>
                           </td>
-                          <td style={{ textAlign: 'center', padding: '12px 8px' }}>
-                            <span className={`dept-badge ${emp.department}`} style={{ fontSize: '11px', padding: '4px 8px' }}>
+                          <td style={{ textAlign: 'center', padding: '10px 4px' }}>
+                            <span className={`dept-badge ${emp.department}`} style={{ fontSize: '10px', padding: '2px 6px' }}>
                               {emp.department === 'video' ? '📹 Video' :
                                 emp.department === 'graphics' ? '🎨 Graphics' :
                                   emp.department === 'social-media' ? '📱 Social' :
@@ -5341,28 +5456,32 @@ const SuperAdmin = () => {
                                         emp.department}
                             </span>
                           </td>
-                          <td style={{ textAlign: 'center', padding: '12px 8px' }}>
+                          <td style={{ textAlign: 'center', padding: '10px 4px' }}>
                             <span style={{
                               display: 'inline-block',
-                              padding: '4px 8px',
+                              padding: '2px 6px',
                               borderRadius: '6px',
-                              fontSize: '11px',
+                              fontSize: '10px',
                               fontWeight: '600',
-                              backgroundColor: emp.role === 'head' ? '#fef3c7' : '#dbeafe',
-                              color: emp.role === 'head' ? '#92400e' : '#1e40af'
+                              backgroundColor: emp.isSystem ? '#cffafe' : emp.role === 'head' ? '#fef3c7' : '#dbeafe',
+                              color: emp.isSystem ? '#0891b2' : emp.role === 'head' ? '#92400e' : '#1e40af'
                             }}>
-                              {emp.role === 'head' ? '👑 Head' : '👤 Employee'}
+                              {emp.isSystem ? '🔒 System' : (emp.role === 'head' ? '👑 Head' : '👤 Employee')}
                             </span>
                           </td>
-                          <td style={{ textAlign: 'center', padding: '12px 8px' }}>
-                            <span className={`status-badge ${emp.status || 'active'}`} style={{ fontSize: '11px' }}>
+                          <td style={{ textAlign: 'center', padding: '10px 4px' }}>
+                            <span className={`status-badge ${emp.status || 'active'}`} style={{ fontSize: '10px', padding: '2px 6px' }}>
                               {emp.status || 'active'}
                             </span>
                           </td>
-                          <td style={{ textAlign: 'center', padding: '12px 8px', fontSize: '12px' }}>{emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : 'N/A'}</td>
-                          <td style={{ textAlign: 'center', padding: '12px 8px' }}>
+                          <td style={{ textAlign: 'center', padding: '10px 4px', fontSize: '12px' }}>{emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : 'N/A'}</td>
+                          <td style={{ textAlign: 'center', padding: '10px 4px' }}>
                             <button
                               onClick={async () => {
+                                if (emp.isSystem) {
+                                  showToast('System accounts cannot be disabled via this panel.', 'warning');
+                                  return;
+                                }
                                 const newStatus = emp.status === 'active' ? 'inactive' : 'active';
                                 try {
                                   const employeeRef = ref(database, `employees/${emp.id}`);
@@ -5398,10 +5517,12 @@ const SuperAdmin = () => {
                               }} />
                             </button>
                           </td>
-                          <td style={{ textAlign: 'center', padding: '12px 8px' }}>
+                          <td style={{ textAlign: 'center', padding: '10px 4px' }}>
                             <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                               <button
-                                onClick={() => handleEditEmployee(emp)}
+                                onClick={() => {
+                                  handleEditEmployee(emp);
+                                }}
                                 style={{
                                   padding: '6px 10px',
                                   background: '#3b82f6',
@@ -5416,14 +5537,24 @@ const SuperAdmin = () => {
                                   alignItems: 'center',
                                   gap: '4px'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
-                                onMouseOut={(e) => e.currentTarget.style.background = '#3b82f6'}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.background = '#2563eb';
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.background = '#3b82f6';
+                                }}
                                 title="Edit Employee"
                               >
                                 ✏️ Edit
                               </button>
                               <button
-                                onClick={() => handleDeleteEmployee(emp)}
+                                onClick={() => {
+                                  if (emp.email === 'superadmin@gmail.com') {
+                                    showToast('The primary Super Admin account cannot be deleted for safety.', 'error');
+                                    return;
+                                  }
+                                  handleDeleteEmployee(emp);
+                                }}
                                 style={{
                                   padding: '6px 10px',
                                   background: '#ef4444',
@@ -5438,12 +5569,17 @@ const SuperAdmin = () => {
                                   alignItems: 'center',
                                   gap: '4px'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.background = '#dc2626'}
-                                onMouseOut={(e) => e.currentTarget.style.background = '#ef4444'}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.background = '#dc2626';
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.background = '#ef4444';
+                                }}
                                 title="Delete Employee"
                               >
                                 🗑️ Delete
                               </button>
+
                             </div>
                           </td>
                         </tr>

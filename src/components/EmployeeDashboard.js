@@ -163,11 +163,14 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
             try {
               const empData = JSON.parse(storedEmail);
               const currentEmp = employeesList.find(e => e.email === empData.email);
-              if (currentEmp && currentEmp.status === 'inactive') {
-                // Employee has been disabled, log them out
+
+              // If employee is not found (deleted) or status is inactive/disabled
+              if (!currentEmp || currentEmp.status === 'inactive' || currentEmp.status === 'disabled' || currentEmp.deleted === true) {
+                // Employee has been deleted or disabled, log them out
+                console.log('Employee account deleted or disabled. Logging out...');
                 sessionStorage.clear();
                 localStorage.clear();
-                showToast('Your account has been disabled. Please contact the administrator.', 'error');
+                showToast('Your account has been deleted or disabled. Logging out...', 'error');
                 setTimeout(() => {
                   navigate('/');
                 }, 2000);
@@ -1544,8 +1547,8 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
               <>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: '24px',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '16px',
                   marginBottom: '24px',
                   padding: '0'
                 }}>
@@ -1553,54 +1556,55 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   <div
                     onClick={() => handleStatCardClick('all')}
                     style={{
-                      background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
-                      borderRadius: '16px',
-                      padding: '24px',
+                      background: activeFilter === 'all'
+                        ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
+                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      borderRadius: '12px',
+                      padding: '32px 24px',
                       color: 'white',
                       boxShadow: activeFilter === 'all'
-                        ? '0 8px 24px rgba(255, 94, 98, 0.4)'
-                        : '0 4px 15px rgba(255, 94, 98, 0.3)',
+                        ? '0 8px 20px rgba(102,126,234,0.4)'
+                        : '0 4px 12px rgba(102,126,234,0.2)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'all' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
-                      border: activeFilter === 'all' ? '3px solid white' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
+                      transform: activeFilter === 'all' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(102,126,234,0.3)';
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'all') {
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102,126,234,0.2)';
                       } else {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
                       }
                     }}>
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <Briefcase size={30} color="white" />
+                    {activeFilter === 'all' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255,255,255,0.25)',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                    <div style={{ fontSize: '48px', fontWeight: '700', lineHeight: 1, marginBottom: '12px' }}>
+                      {stats.total}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
-                        {stats.total}
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
-                        Total Tasks
-                      </div>
-                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
-                        All assigned tasks
-                      </div>
+                    <div style={{ fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.95 }}>
+                      TOTAL TASKS
                     </div>
                   </div>
 
@@ -1608,54 +1612,55 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   <div
                     onClick={() => handleStatCardClick('in-progress')}
                     style={{
-                      background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                      background: activeFilter === 'in-progress'
+                        ? 'linear-gradient(135deg, #5a9bd4 0%, #0770c1 100%)'
+                        : 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
                       borderRadius: '16px',
-                      padding: '24px',
+                      padding: '28px 20px',
                       color: 'white',
                       boxShadow: activeFilter === 'in-progress'
-                        ? '0 8px 24px rgba(0, 242, 254, 0.4)'
-                        : '0 4px 15px rgba(0, 242, 254, 0.3)',
+                        ? '0 8px 20px rgba(116,185,255,0.4)'
+                        : '0 4px 12px rgba(116,185,255,0.2)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'in-progress' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
-                      border: activeFilter === 'in-progress' ? '3px solid white' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
+                      transform: activeFilter === 'in-progress' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(116,185,255,0.3)';
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'in-progress') {
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(116,185,255,0.2)';
                       } else {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
                       }
                     }}>
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <Clock size={30} color="white" />
+                    {activeFilter === 'in-progress' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255,255,255,0.25)',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
+                      {stats.inProgress}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
-                        {stats.inProgress}
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
-                        In Progress
-                      </div>
-                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
-                        Currently active
-                      </div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      IN PROGRESS
                     </div>
                   </div>
 
@@ -1663,54 +1668,55 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   <div
                     onClick={() => handleStatCardClick('completed')}
                     style={{
-                      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                      background: activeFilter === 'completed'
+                        ? 'linear-gradient(135deg, #4a9625 0%, #96d9b8 100%)'
+                        : 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
                       borderRadius: '16px',
-                      padding: '24px',
+                      padding: '28px 20px',
                       color: 'white',
                       boxShadow: activeFilter === 'completed'
-                        ? '0 8px 24px rgba(56, 239, 125, 0.4)'
-                        : '0 4px 15px rgba(56, 239, 125, 0.3)',
+                        ? '0 8px 20px rgba(86,171,47,0.4)'
+                        : '0 4px 12px rgba(86,171,47,0.2)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'completed' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
-                      border: activeFilter === 'completed' ? '3px solid white' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
+                      transform: activeFilter === 'completed' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(86,171,47,0.3)';
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'completed') {
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(86,171,47,0.2)';
                       } else {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
                       }
                     }}>
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <CheckCircle size={30} color="white" />
+                    {activeFilter === 'completed' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255,255,255,0.25)',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
+                      {stats.completed}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
-                        {stats.completed}
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
-                        Completed
-                      </div>
-                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
-                        Finished tasks
-                      </div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      COMPLETED
                     </div>
                   </div>
 
@@ -1718,54 +1724,55 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   <div
                     onClick={() => handleStatCardClick('pending-client-approval')}
                     style={{
-                      background: 'linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%)',
+                      background: activeFilter === 'pending-client-approval'
+                        ? 'linear-gradient(135deg, #e55555 0%, #d44812 100%)'
+                        : 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
                       borderRadius: '16px',
-                      padding: '24px',
+                      padding: '28px 20px',
                       color: 'white',
                       boxShadow: activeFilter === 'pending-client-approval'
-                        ? '0 8px 24px rgba(255, 75, 43, 0.4)'
-                        : '0 4px 15px rgba(255, 75, 43, 0.3)',
+                        ? '0 8px 20px rgba(255,107,107,0.4)'
+                        : '0 4px 12px rgba(255,107,107,0.2)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'pending-client-approval' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
-                      border: activeFilter === 'pending-client-approval' ? '3px solid white' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
+                      transform: activeFilter === 'pending-client-approval' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(255,107,107,0.3)';
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'pending-client-approval') {
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,107,107,0.2)';
                       } else {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
                       }
                     }}>
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <AlertCircle size={30} color="white" />
+                    {activeFilter === 'pending-client-approval' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255,255,255,0.25)',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
+                      {stats.pendingApproval}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
-                        {stats.pendingApproval}
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
-                        Pending Approval
-                      </div>
-                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
-                        Awaiting approval
-                      </div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      PENDING APPROVAL
                     </div>
                   </div>
 
@@ -1773,54 +1780,55 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   <div
                     onClick={() => handleStatCardClick('approved')}
                     style={{
-                      background: 'linear-gradient(135deg, #0cebeb 0%, #20e3b2 100%, #29ffc6 100%)',
+                      background: activeFilter === 'approved'
+                        ? 'linear-gradient(135deg, #17b584 0%, #4dd9b2 100%)'
+                        : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
                       borderRadius: '16px',
-                      padding: '24px',
+                      padding: '28px 20px',
                       color: 'white',
                       boxShadow: activeFilter === 'approved'
-                        ? '0 8px 24px rgba(32, 227, 178, 0.4)'
-                        : '0 4px 15px rgba(32, 227, 178, 0.3)',
+                        ? '0 8px 20px rgba(0,184,148,0.4)'
+                        : '0 4px 12px rgba(0,184,148,0.2)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'approved' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
-                      border: activeFilter === 'approved' ? '3px solid white' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
+                      transform: activeFilter === 'approved' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,184,148,0.3)';
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'approved') {
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,184,148,0.2)';
                       } else {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
                       }
                     }}>
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <CheckCircle size={30} color="white" />
+                    {activeFilter === 'approved' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255,255,255,0.25)',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
+                      {stats.approved}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
-                        {stats.approved}
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
-                        Approved
-                      </div>
-                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
-                        Client approved
-                      </div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      APPROVED
                     </div>
                   </div>
 
@@ -1828,54 +1836,55 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   <div
                     onClick={() => handleStatCardClick('posted')}
                     style={{
-                      background: 'linear-gradient(135deg, #d81b60 0%, #f06292 100%)',
+                      background: activeFilter === 'posted'
+                        ? 'linear-gradient(135deg, #d81b60 0%, #f06292 100%)'
+                        : 'linear-gradient(135deg, #e91e63 0%, #f48fb1 100%)',
                       borderRadius: '16px',
-                      padding: '24px',
+                      padding: '28px 20px',
                       color: 'white',
                       boxShadow: activeFilter === 'posted'
-                        ? '0 8px 24px rgba(233, 30, 99, 0.4)'
-                        : '0 4px 15px rgba(233, 30, 99, 0.3)',
+                        ? '0 8px 20px rgba(233,30,99,0.4)'
+                        : '0 4px 12px rgba(233,30,99,0.2)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'posted' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
-                      border: activeFilter === 'posted' ? '3px solid white' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
+                      transform: activeFilter === 'posted' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(233,30,99,0.3)';
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'posted') {
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(233,30,99,0.2)';
                       } else {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
                       }
                     }}>
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <CheckCircle size={30} color="white" />
+                    {activeFilter === 'posted' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255,255,255,0.25)',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
+                      {stats.posted}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
-                        {stats.posted}
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
-                        Posted
-                      </div>
-                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
-                        Published
-                      </div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      POSTED
                     </div>
                   </div>
 
@@ -1883,54 +1892,55 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                   <div
                     onClick={() => handleStatCardClick('revision-required')}
                     style={{
-                      background: 'linear-gradient(135deg, #6a4190 0%, #5a6fd8 100%)',
+                      background: activeFilter === 'revision-required'
+                        ? 'linear-gradient(135deg, #6a4190 0%, #5a6fd8 100%)'
+                        : 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
                       borderRadius: '16px',
-                      padding: '24px',
+                      padding: '28px 20px',
                       color: 'white',
                       boxShadow: activeFilter === 'revision-required'
-                        ? '0 8px 24px rgba(118, 75, 162, 0.4)'
-                        : '0 4px 15px rgba(118, 75, 162, 0.3)',
+                        ? '0 8px 20px rgba(118,75,162,0.4)'
+                        : '0 4px 12px rgba(118,75,162,0.2)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'revision-required' ? 'translateY(-5px) scale(1.02)' : 'translateY(0)',
-                      border: activeFilter === 'revision-required' ? '3px solid white' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
+                      transform: activeFilter === 'revision-required' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(118,75,162,0.3)';
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'revision-required') {
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(118,75,162,0.2)';
                       } else {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
                       }
                     }}>
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <XCircle size={30} color="white" />
+                    {activeFilter === 'revision-required' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        backgroundColor: 'rgba(255,255,255,0.25)',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'bold'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
+                      {stats.revisionRequired}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '32px', fontWeight: '700', lineHeight: 1, marginBottom: '4px' }}>
-                        {stats.revisionRequired}
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: '600' }}>
-                        Revision Required
-                      </div>
-                      <div style={{ fontSize: '12px', opacity: 0.9 }}>
-                        Needs changes
-                      </div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      REVISION REQUIRED
                     </div>
                   </div>
                 </div>
@@ -1944,7 +1954,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                 }}>
                   {/* Daily Report Card */}
                   <div className="employee-card daily-report-card" style={{
-                    background: 'linear-gradient(135deg, #37B46F 0%, #2d9159 100%)',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     borderRadius: '16px',
                     padding: '24px',
                     boxShadow: '0 4px 12px rgba(102,126,234,0.2)',

@@ -186,6 +186,26 @@ const ProductionIncharge = () => {
           .filter(employee => !employee.deleted); // Filter out deleted employees
 
         console.log('ProductionIncharge: Employees loaded:', employeesArray.length, employeesArray);
+
+        // Security Check: functionality to ensure deleted/inactive users are logged out
+        const currentUserEmail = auth.currentUser?.email || sessionStorage.getItem('productionEmail');
+
+        if (currentUserEmail &&
+          currentUserEmail !== 'proin@gmail.com' &&
+          currentUserEmail !== 'productionincharge@gmail.com' &&
+          currentUserEmail !== 'superadmin@gmail.com') {
+
+          const userInList = employeesArray.find(e => e.email === currentUserEmail);
+
+          // If they are not in the list (deleted) OR explicitly inactive
+          if (!userInList || userInList.status === 'inactive') {
+            console.log('Production Incharge: User credential invalid/revoked. Logging out.');
+            sessionStorage.clear();
+            localStorage.clear();
+            navigate('/');
+          }
+        }
+
         setEmployees(employeesArray);
       } else {
         console.log('ProductionIncharge: No employees found in database');
@@ -847,62 +867,89 @@ const ProductionIncharge = () => {
 
   // Handle Delete Employee
   const handleDeleteEmployee = async (employee) => {
+    if (!employee || (!employee.id && !employee.email)) {
+      showToast('❌ Invalid employee data', 'error');
+      return;
+    }
+
+    if (employee.isSystem) {
+      showToast('❌ System accounts cannot be deleted.', 'error');
+      return;
+    }
+
     const confirmDelete = window.confirm(
-      `Are you sure you want to PERMANENTLY delete employee "${employee.employeeName}"?\n\nThis action will remove the employee, unassign their tasks and clients. This cannot be undone.`
+      `Are you sure you want to PERMANENTLY delete employee "${employee.employeeName || employee.email}"?\n\nThis action will remove the employee, unassign their tasks and clients. This cannot be undone.`
     );
 
     if (!confirmDelete) return;
 
     try {
+      console.log('🗑️ Starting deletion for employee:', employee);
       const updates = {};
 
       // 1. Unassign Tasks
-      const empTasks = tasks.filter(t =>
-        t.assignedTo === employee.id ||
-        t.assignedTo === employee.email ||
-        t.assignedTo === employee.employeeName ||
-        t.assignedEmployee === employee.id ||
-        t.assignedEmployee === employee.email ||
-        t.assignedEmployee === employee.employeeName
-      );
+      if (Array.isArray(tasks)) {
+        const empTasks = tasks.filter(t =>
+          t.assignedTo === employee.id ||
+          t.assignedTo === employee.email ||
+          (employee.employeeName && t.assignedTo === employee.employeeName) ||
+          t.assignedEmployee === employee.id ||
+          t.assignedEmployee === employee.email ||
+          (employee.employeeName && t.assignedEmployee === employee.employeeName)
+        );
 
-      empTasks.forEach(task => {
-        updates[`tasks/${task.id}/assignedTo`] = null;
-        updates[`tasks/${task.id}/assignedEmployee`] = null;
-        updates[`tasks/${task.id}/assignedToEmployeeName`] = null;
+        console.log(`Found ${empTasks.length} tasks to unassign`);
+        empTasks.forEach(task => {
+          updates[`tasks/${task.id}/assignedTo`] = null;
+          updates[`tasks/${task.id}/assignedEmployee`] = null;
+          updates[`tasks/${task.id}/assignedToEmployeeName`] = null;
 
-        if (task.status === 'in-progress' || task.status === 'assigned-to-department') {
-          updates[`tasks/${task.id}/status`] = 'pending';
-        }
-      });
+          if (task.status === 'in-progress' || task.status === 'assigned-to-department') {
+            updates[`tasks/${task.id}/status`] = 'pending';
+          }
+        });
+      }
 
       // 2. Unassign Clients
-      const empClients = clients.filter(c =>
-        c.assignedToEmployee === employee.id ||
-        c.assignedToEmployee === employee.email ||
-        c.assignedToEmployee === employee.employeeName ||
-        c.assignedEmployee === employee.id ||
-        c.assignedEmployee === employee.email ||
-        c.assignedEmployee === employee.employeeName
-      );
+      if (Array.isArray(clients)) {
+        const empClients = clients.filter(c =>
+          c.assignedToEmployee === employee.id ||
+          c.assignedToEmployee === employee.email ||
+          (employee.employeeName && c.assignedToEmployee === employee.employeeName) ||
+          c.assignedEmployee === employee.id ||
+          c.assignedEmployee === employee.email ||
+          (employee.employeeName && c.assignedEmployee === employee.employeeName)
+        );
 
-      empClients.forEach(client => {
-        const basePath = client.source === 'strategy' ? 'strategyClients' : 'clients';
-        updates[`${basePath}/${client.id}/assignedToEmployee`] = null;
-        updates[`${basePath}/${client.id}/assignedEmployee`] = null;
-        updates[`${basePath}/${client.id}/assignedToEmployeeName`] = null;
-      });
+        console.log(`Found ${empClients.length} clients to unassign`);
+        empClients.forEach(client => {
+          const basePath = client.source === 'strategy' ? 'strategyClients' : 'clients';
+          updates[`${basePath}/${client.id}/assignedToEmployee`] = null;
+          updates[`${basePath}/${client.id}/assignedEmployee`] = null;
+          updates[`${basePath}/${client.id}/assignedToEmployeeName`] = null;
+        });
+      }
 
-      // 3. Delete Employee
-      updates[`employees/${employee.id}`] = null;
+      // 3. Delete Employee from database
+      if (employee.id) {
+        updates[`employees/${employee.id}`] = null;
+      } else if (employee.email) {
+        // Fallback to finding ID by email
+        const foundEmp = employees.find(e => e.email === employee.email);
+        if (foundEmp && foundEmp.id) {
+          updates[`employees/${foundEmp.id}`] = null;
+        }
+      }
 
+      console.log('Sending updates to Firebase:', updates);
       await update(ref(database), updates);
-      showToast('Employee permanently deleted and data unassigned!', 'success');
+      showToast('✅ Employee permanently deleted and data unassigned!', 'success');
     } catch (error) {
       console.error('Error deleting employee:', error);
-      showToast('Failed to delete employee: ' + error.message, 'error');
+      showToast('❌ Failed to delete employee: ' + error.message, 'error');
     }
   };
+
 
   // Handle employee status toggle
   const handleEmployeeStatusToggle = async (employeeId, currentStatus) => {
@@ -2380,35 +2427,40 @@ const ProductionIncharge = () => {
                   }}>
                     <thead>
                       <tr style={{ backgroundColor: '#667eea', color: 'white' }}>
-                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           CLIENT ID
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           CLIENT NAME
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           IDEAS
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           CONTENT
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           REFERENCE
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'left', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           SPECIAL NOTES
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           DEPARTMENT
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           TYPE
                         </th>
-                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                        <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           POST DATE
                         </th>
+<<<<<<< HEAD
                         <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           
+=======
+                        <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
+                          ACTIONS
+>>>>>>> main
                         </th>
                       </tr>
                     </thead>
@@ -2422,14 +2474,14 @@ const ProductionIncharge = () => {
                             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
                           >
-                            <td style={{ padding: '12px 16px', fontSize: '13px', color: '#374151', fontWeight: '500' }}>
+                            <td style={{ padding: '8px 10px', fontSize: '12px', color: '#374151', fontWeight: '500' }}>
                               {row.clientId || '-'}
                             </td>
-                            <td style={{ padding: '12px 16px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <td style={{ padding: '8px 10px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <div style={{
-                                  width: '32px',
-                                  height: '32px',
+                                  width: '28px',
+                                  height: '28px',
                                   borderRadius: '50%',
                                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                   display: 'flex',
@@ -2437,36 +2489,36 @@ const ProductionIncharge = () => {
                                   justifyContent: 'center',
                                   color: 'white',
                                   fontWeight: '600',
-                                  fontSize: '13px'
+                                  fontSize: '12px'
                                 }}>
                                   {row.clientName?.charAt(0).toUpperCase() || 'C'}
                                 </div>
-                                <span style={{ fontWeight: '500', fontSize: '14px', color: '#374151' }}>
+                                <span style={{ fontWeight: '500', fontSize: '13px', color: '#374151' }}>
                                   {row.clientName || '-'}
                                 </span>
                               </div>
                             </td>
-                            <td style={{ padding: '12px 16px', fontSize: '13px', color: '#6b7280' }}>
+                            <td style={{ padding: '8px 10px', fontSize: '12px', color: '#6b7280' }}>
                               {row.ideas || '-'}
                             </td>
-                            <td style={{ padding: '12px 16px', fontSize: '13px', color: '#6b7280' }}>
+                            <td style={{ padding: '8px 10px', fontSize: '12px', color: '#6b7280' }}>
                               {row.content || '-'}
                             </td>
-                            <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                            <td style={{ padding: '8px 10px', fontSize: '12px' }}>
                               {row.referenceLink ? (
                                 <a href={row.referenceLink} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>
                                   🔗 Link
                                 </a>
                               ) : '-'}
                             </td>
-                            <td style={{ padding: '12px 16px', fontSize: '13px', color: '#6b7280' }}>
+                            <td style={{ padding: '8px 10px', fontSize: '12px', color: '#6b7280' }}>
                               {row.specialNotes || '-'}
                             </td>
-                            <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                            <td style={{ padding: '8px 10px', textAlign: 'center' }}>
                               <span style={{
-                                padding: '4px 10px',
+                                padding: '3px 8px',
                                 borderRadius: '12px',
-                                fontSize: '11px',
+                                fontSize: '10px',
                                 fontWeight: '600',
                                 backgroundColor: row.department?.toLowerCase() === 'video' ? '#dbeafe' : '#fce7f3',
                                 color: row.department?.toLowerCase() === 'video' ? '#1e40af' : '#831843',
@@ -2475,13 +2527,13 @@ const ProductionIncharge = () => {
                                 {row.department || '-'}
                               </span>
                             </td>
-                            <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', color: '#6b7280' }}>
+                            <td style={{ padding: '8px 10px', textAlign: 'center', fontSize: '11px', color: '#6b7280' }}>
                               {row.type || '-'}
                             </td>
-                            <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', color: '#6b7280' }}>
+                            <td style={{ padding: '8px 10px', textAlign: 'center', fontSize: '11px', color: '#6b7280' }}>
                               {row.postDate ? new Date(row.postDate).toLocaleDateString('en-GB') : '-'}
                             </td>
-                            <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                            <td style={{ padding: '8px 10px', textAlign: 'center' }}>
                               <button
                                 onClick={() => {
                                   // Find the client and row index
