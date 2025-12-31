@@ -12,7 +12,7 @@
 /* Sidebar Navigation */
 .graphics-sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
+  background: linear-gradient(180deg, #1F7D53 0%, #1a6b47 100%);
   min-height: 100vh;
   padding: 24px 0;
   position: fixed;
@@ -47,7 +47,7 @@
 }
 
 .graphics-sidebar-logo-icon {
-  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  background: linear-gradient(135deg, #1F7D53 0%, #1a6b47 100%);
   padding: 12px;
   border-radius: 12px;
   display: flex;
@@ -264,7 +264,7 @@
     width: 240px;
     background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
   }
-  
+
   .graphics-main-content {
     margin-left: 240px;
   }
@@ -278,15 +278,15 @@
     min-height: auto;
     background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #22c55e 100%);
   }
-  
+
   .graphics-main-content {
     margin-left: 0;
   }
-  
+
   .graphics-dashboard {
     flex-direction: column;
   }
-  
+
   .graphics-sidebar-user {
     position: relative;
     bottom: auto;
@@ -295,6 +295,7 @@
     margin-top: 24px;
   }
 }
+
 /* Dashboard Layout - Copied from Dashboard.css */
 .dashboard {
   min-height: 100vh;
@@ -633,7 +634,7 @@
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .stats-row {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -643,19 +644,19 @@
   .dashboard {
     padding: 15px;
   }
-  
+
   .dashboard-header {
     flex-direction: column;
     gap: 15px;
     padding: 20px;
   }
-  
+
   .header-left {
     flex-direction: column;
     text-align: center;
     gap: 10px;
   }
-  
+
   .stats-row {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -672,7 +673,7 @@
 /* Sidebar Navigation */
 .strategy-sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #37B46F 0%, #2d9159 100%);
+  background: linear-gradient(180deg, #1F7D53 100%, #1F7D53 100%);
   min-height: 100vh;
   padding: 24px 0;
   position: fixed;
@@ -1052,7 +1053,7 @@
   .strategy-sidebar {
     width: 240px;
   }
-  
+
   .strategy-main-content {
     margin-left: 240px;
   }
@@ -1065,11 +1066,11 @@
     position: relative;
     min-height: auto;
   }
-  
+
   .strategy-main-content {
     margin-left: 0;
   }
-  
+
   .strategy-sidebar-user {
     position: relative;
     bottom: auto;
@@ -1077,18 +1078,19 @@
     right: auto;
     margin-top: 24px;
   }
-  
+
   .strategy-header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .strategy-header-right {
     width: 100%;
     justify-content: space-between;
   }
 }
+
 /* S
 earch Bar Styles */
 .search-input {
@@ -1164,6 +1166,7 @@ earch Bar Styles */
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1177,11 +1180,11 @@ earch Bar Styles */
     width: 100%;
     gap: 12px;
   }
-  
+
   .strategy-filter-group {
     width: 100%;
   }
-  
+
   .search-input {
     width: 100%;
     minWidth: auto;
@@ -1279,12 +1282,12 @@ earch Bar Styles */
   .search-filter-section {
     flex-direction: column;
   }
-  
+
   .search-container {
     width: 100%;
     min-width: auto;
   }
-  
+
   .download-all-btn {
     width: 100%;
     justify-content: center;
@@ -1624,11 +1627,11 @@ earch Bar Styles */
   .task-card-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .view-toggle-container {
     width: 100%;
   }
-  
+
   .view-toggle-btn {
     flex: 1;
     justify-content: center;
@@ -1662,7 +1665,7 @@ earch Bar Styles */
 .focused-task-card {
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   border: 1px solid #e9ecef;
   transition: all 0.3s ease;
@@ -1671,5 +1674,5 @@ earch Bar Styles */
 
 .focused-task-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }

@@ -2365,31 +2365,78 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
 
             {/* Statistics - Hide when viewing My Tasks, All Tasks, or Extra Tasks */}
             {!showMyTasks && !showAllTasks && !showExtraTasks && !showEmployeeTasks && (
-              <div className="card full-width">
-                <div className="card-header">
-                  <h2>📊 Graphics Statistics</h2>
+              <div style={{ marginBottom: '32px' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '20px',
+                  padding: '8px 4px'
+                }}>
+                  {/* <div style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '10px',
+                    background: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                  }}>
+                    <span style={{ fontSize: '20px' }}>📊</span>
+                  </div>
+                  <h2 style={{
+                    margin: 0,
+                    fontSize: '20px',
+                    fontWeight: '700',
+                    color: '#2c3e50'
+                  }}>Graphics Statistics</h2> */}
                   {selectedStatus !== 'all' && (
                     <div style={{
-                      padding: '8px 16px',
+                      padding: '6px 14px',
                       backgroundColor: '#e3f2fd',
                       borderRadius: '8px',
-                      fontSize: '14px',
+                      fontSize: '13px',
                       fontWeight: '600',
-                      color: '#1976d2'
+                      color: '#1976d2',
+                      marginLeft: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
                     }}>
-                      Currently viewing: {getStatusDisplayText()} ({statusFilteredTasks.length})
+                      <span>Filtering by: {getStatusDisplayText()}</span>
+                      <button
+                        onClick={() => handleStatBoxClick('all')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#1976d2',
+                          cursor: 'pointer',
+                          padding: '0 4px',
+                          fontSize: '16px',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >×</button>
                     </div>
                   )}
                 </div>
-                <div className="stats-row">
+
+                <div className="stats-row" style={{
+                  marginTop: '0',
+                  gap: '20px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)'
+                }}>
+                  {/* Total Tasks */}
                   <div
-                    className="stat-card stat-total"
+                    className="stat-card"
                     style={{
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
-                      boxShadow: selectedStatus === 'total' ? '0 8px 25px rgba(102, 126, 234, 0.6)' : '0 4px 12px rgba(102,126,234,0.2)',
+                      boxShadow: selectedStatus === 'total' ? '0 10px 25px rgba(102, 126, 234, 0.5)' : '0 4px 15px rgba(102, 126, 234, 0.15)',
                       cursor: 'pointer',
-                      transform: selectedStatus === 'total' ? 'scale(1.05)' : 'scale(1)',
+                      transform: selectedStatus === 'total' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
                       border: selectedStatus === 'total' ? '3px solid white' : 'none',
                       transition: 'all 0.3s ease',
                       display: 'flex',
@@ -2397,48 +2444,39 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       alignItems: 'center',
                       textAlign: 'left',
                       gap: '16px',
-                      padding: '24px'
+                      padding: '24px',
+                      borderRadius: '20px'
                     }}
                     onClick={() => handleStatBoxClick('total')}
-                    onMouseEnter={(e) => {
-                      if (selectedStatus !== 'total') {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.5)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedStatus !== 'total') {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102,126,234,0.2)';
-                      }
-                    }}
                   >
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
                       background: 'rgba(255, 255, 255, 0.2)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <Briefcase size={24} />
+                      <Briefcase size={28} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.length}</h3>
-                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Total Tasks</p>
-                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Tasks for selected month</span>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '800' }}>{filteredTasks.length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Total Tasks</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Tasks for selected month</span>
                     </div>
                   </div>
+
+                  {/* In Progress */}
                   <div
-                    className="stat-card stat-progress"
+                    className="stat-card"
                     style={{
-                      background: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
+                      background: 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
                       color: 'white',
-                      boxShadow: selectedStatus === 'in-progress' ? '0 8px 25px rgba(116, 185, 255, 0.6)' : '0 4px 12px rgba(116,185,255,0.2)',
+                      boxShadow: selectedStatus === 'in-progress' ? '0 10px 25px rgba(33, 147, 176, 0.5)' : '0 4px 15px rgba(33, 147, 176, 0.15)',
                       cursor: 'pointer',
-                      transform: selectedStatus === 'in-progress' ? 'scale(1.05)' : 'scale(1)',
+                      transform: selectedStatus === 'in-progress' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
                       border: selectedStatus === 'in-progress' ? '3px solid white' : 'none',
                       transition: 'all 0.3s ease',
                       display: 'flex',
@@ -2446,48 +2484,39 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       alignItems: 'center',
                       textAlign: 'left',
                       gap: '16px',
-                      padding: '24px'
+                      padding: '24px',
+                      borderRadius: '20px'
                     }}
                     onClick={() => handleStatBoxClick('in-progress')}
-                    onMouseEnter={(e) => {
-                      if (selectedStatus !== 'in-progress') {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(116, 185, 255, 0.5)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedStatus !== 'in-progress') {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(116,185,255,0.2)';
-                      }
-                    }}
                   >
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
                       background: 'rgba(255, 255, 255, 0.2)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <Clock size={24} />
+                      <Clock size={28} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'assigned' || t.status === 'in-progress').length}</h3>
-                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>In Progress</p>
-                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Working on it</span>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '800' }}>{filteredTasks.filter(t => t.status === 'assigned' || t.status === 'in-progress').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>In Progress</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Working on it</span>
                     </div>
                   </div>
+
+                  {/* Pending */}
                   <div
-                    className="stat-card stat-pending"
+                    className="stat-card"
                     style={{
-                      background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+                      background: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)',
                       color: 'white',
-                      boxShadow: selectedStatus === 'pending-approval' ? '0 8px 25px rgba(255, 107, 107, 0.6)' : '0 4px 12px rgba(255,107,107,0.2)',
+                      boxShadow: selectedStatus === 'pending-approval' ? '0 10px 25px rgba(255, 65, 108, 0.5)' : '0 4px 15px rgba(255, 65, 108, 0.15)',
                       cursor: 'pointer',
-                      transform: selectedStatus === 'pending-approval' ? 'scale(1.05)' : 'scale(1)',
+                      transform: selectedStatus === 'pending-approval' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
                       border: selectedStatus === 'pending-approval' ? '3px solid white' : 'none',
                       transition: 'all 0.3s ease',
                       display: 'flex',
@@ -2495,48 +2524,39 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       alignItems: 'center',
                       textAlign: 'left',
                       gap: '16px',
-                      padding: '24px'
+                      padding: '24px',
+                      borderRadius: '20px'
                     }}
                     onClick={() => handleStatBoxClick('pending-approval')}
-                    onMouseEnter={(e) => {
-                      if (selectedStatus !== 'pending-approval') {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.5)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedStatus !== 'pending-approval') {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,107,107,0.2)';
-                      }
-                    }}
                   >
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
                       background: 'rgba(255, 255, 255, 0.2)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <AlertCircle size={24} />
+                      <AlertCircle size={28} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'pending-client-approval').length}</h3>
-                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Pending</p>
-                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Awaiting approval</span>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '800' }}>{filteredTasks.filter(t => t.status === 'pending-client-approval').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Pending</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Awaiting approval</span>
                     </div>
                   </div>
+
+                  {/* Completed */}
                   <div
-                    className="stat-card stat-completed"
+                    className="stat-card"
                     style={{
                       background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
                       color: 'white',
-                      boxShadow: selectedStatus === 'completed' ? '0 8px 25px rgba(86, 171, 47, 0.6)' : '0 4px 12px rgba(86,171,47,0.2)',
+                      boxShadow: selectedStatus === 'completed' ? '0 10px 25px rgba(86, 171, 47, 0.5)' : '0 4px 15px rgba(86, 171, 47, 0.15)',
                       cursor: 'pointer',
-                      transform: selectedStatus === 'completed' ? 'scale(1.05)' : 'scale(1)',
+                      transform: selectedStatus === 'completed' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
                       border: selectedStatus === 'completed' ? '3px solid white' : 'none',
                       transition: 'all 0.3s ease',
                       display: 'flex',
@@ -2544,48 +2564,39 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       alignItems: 'center',
                       textAlign: 'left',
                       gap: '16px',
-                      padding: '24px'
+                      padding: '24px',
+                      borderRadius: '20px'
                     }}
                     onClick={() => handleStatBoxClick('completed')}
-                    onMouseEnter={(e) => {
-                      if (selectedStatus !== 'completed') {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(86, 171, 47, 0.5)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedStatus !== 'completed') {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(86,171,47,0.2)';
-                      }
-                    }}
                   >
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
                       background: 'rgba(255, 255, 255, 0.2)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <CheckCircle size={24} />
+                      <CheckCircle size={28} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'completed').length}</h3>
-                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Completed</p>
-                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Done tasks</span>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '800' }}>{filteredTasks.filter(t => t.status === 'completed').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Completed</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Done tasks</span>
                     </div>
                   </div>
+
+                  {/* Approved */}
                   <div
-                    className="stat-card stat-approved"
+                    className="stat-card"
                     style={{
                       background: 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
                       color: 'white',
-                      boxShadow: selectedStatus === 'approved' ? '0 8px 25px rgba(0, 184, 148, 0.6)' : '0 4px 12px rgba(0,184,148,0.2)',
+                      boxShadow: selectedStatus === 'approved' ? '0 10px 25px rgba(29, 209, 161, 0.5)' : '0 4px 15px rgba(29, 209, 161, 0.15)',
                       cursor: 'pointer',
-                      transform: selectedStatus === 'approved' ? 'scale(1.05)' : 'scale(1)',
+                      transform: selectedStatus === 'approved' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
                       border: selectedStatus === 'approved' ? '3px solid white' : 'none',
                       transition: 'all 0.3s ease',
                       display: 'flex',
@@ -2593,38 +2604,27 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                       alignItems: 'center',
                       textAlign: 'left',
                       gap: '16px',
-                      padding: '24px'
+                      padding: '24px',
+                      borderRadius: '20px'
                     }}
                     onClick={() => handleStatBoxClick('approved')}
-                    onMouseEnter={(e) => {
-                      if (selectedStatus !== 'approved') {
-                        e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 184, 148, 0.5)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedStatus !== 'approved') {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,184,148,0.2)';
-                      }
-                    }}
                   >
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
                       background: 'rgba(255, 255, 255, 0.2)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <Send size={24} />
+                      <Send size={28} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1 }}>{filteredTasks.filter(t => t.status === 'approved' || t.status === 'posted').length}</h3>
-                      <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>Approved</p>
-                      <span style={{ fontSize: '11px', opacity: 0.7, display: 'block', marginTop: '2px' }}>Ready for production</span>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '800' }}>{filteredTasks.filter(t => t.status === 'approved' || t.status === 'posted').length}</h3>
+                      <p style={{ fontSize: '13px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Approved</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Ready for production</span>
                     </div>
                   </div>
                 </div>

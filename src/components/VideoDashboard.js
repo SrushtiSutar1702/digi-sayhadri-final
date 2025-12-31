@@ -537,7 +537,9 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
       task.taskName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.projectName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.assignedTo?.toLowerCase().includes(searchTerm.toLowerCase());
+      task.assignedTo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.deadline?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.postDate?.toLowerCase().includes(searchTerm.toLowerCase());
 
     // Apply SuperAdmin employee filter (only when in SuperAdmin context)
     let employeeFilterMatch = true;
@@ -2595,18 +2597,37 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                   <button
                     onClick={() => {
                       const today = new Date().toISOString().split('T')[0];
+                      const todayMonth = today.slice(0, 7);
+
+                      // Set month to current month to ensure today's tasks are visible
+                      setSelectedMonth(todayMonth);
+
+                      // Switch to All Tasks view
+                      setShowAllTasks(true);
+                      setShowMyTasks(false);
+                      setShowEmployeeTasks(false);
+                      setShowExtraTasks(false);
+                      setShowCalendar(false);
+                      setShowReports(false);
+
+                      // Filter by today's date
+                      setSearchTerm(today);
+                      setActiveFilter('all');
+
                       const todayTasks = allMonthTasks.filter(task =>
                         task.deadline === today || task.postDate === today
                       );
+
                       if (todayTasks.length > 0) {
-                        // Scroll to tasks section
-                        const tasksSection = document.querySelector('.video-tasks-card');
-                        if (tasksSection) {
-                          tasksSection.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                          });
-                        }
+                        setTimeout(() => {
+                          const tasksSection = document.querySelector('.video-tasks-card');
+                          if (tasksSection) {
+                            tasksSection.scrollIntoView({
+                              behavior: 'smooth',
+                              block: 'start'
+                            });
+                          }
+                        }, 100);
                       } else {
                         showToast('No tasks scheduled for today!', 'info');
                       }
@@ -2840,14 +2861,28 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                   {/* Quick Action */}
                   <button
                     onClick={() => {
+                      // Switch to All Tasks view
+                      setShowAllTasks(true);
+                      setShowMyTasks(false);
+                      setShowEmployeeTasks(false);
+                      setShowExtraTasks(false);
+                      setShowCalendar(false);
+                      setShowReports(false);
+
+                      // Clear filters
+                      setSearchTerm('');
+                      setActiveFilter('all');
+
                       // Scroll to tasks section
-                      const tasksSection = document.querySelector('.video-tasks-card');
-                      if (tasksSection) {
-                        tasksSection.scrollIntoView({
-                          behavior: 'smooth',
-                          block: 'start'
-                        });
-                      }
+                      setTimeout(() => {
+                        const tasksSection = document.querySelector('.video-tasks-card');
+                        if (tasksSection) {
+                          tasksSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                          });
+                        }
+                      }, 100);
                     }}
                     style={{
                       background: 'rgba(255,255,255,0.2)',

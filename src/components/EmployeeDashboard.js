@@ -1347,7 +1347,7 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     );
   }
 
@@ -1547,9 +1547,9 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
               <>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(4, 1fr)',
-                  gap: '16px',
-                  marginBottom: '24px',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px',
                   padding: '0'
                 }}>
                   {/* Total Tasks */}
@@ -1557,54 +1557,40 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     onClick={() => handleStatCardClick('all')}
                     style={{
                       background: activeFilter === 'all'
-                        ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
-                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      borderRadius: '12px',
-                      padding: '32px 24px',
+                        ? 'linear-gradient(135deg, #FF8C4F 0%, #FF4D51 100%)'
+                        : 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
+                      borderRadius: '20px',
+                      padding: '24px',
                       color: 'white',
                       boxShadow: activeFilter === 'all'
-                        ? '0 8px 20px rgba(102,126,234,0.4)'
-                        : '0 4px 12px rgba(102,126,234,0.2)',
+                        ? '0 10px 25px rgba(255, 94, 98, 0.4)'
+                        : '0 4px 15px rgba(255, 94, 98, 0.15)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'all' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-                      position: 'relative'
+                      transform: activeFilter === 'all' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
+                      border: activeFilter === 'all' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      textAlign: 'left'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(102,126,234,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeFilter !== 'all') {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102,126,234,0.2)';
-                      } else {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      }
+                  >
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                    {activeFilter === 'all' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        backgroundColor: 'rgba(255,255,255,0.25)',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold'
-                      }}>
-                        ✓
-                      </div>
-                    )}
-                    <div style={{ fontSize: '48px', fontWeight: '700', lineHeight: 1, marginBottom: '12px' }}>
-                      {stats.total}
+                      <Briefcase size={28} />
                     </div>
-                    <div style={{ fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.95 }}>
-                      TOTAL TASKS
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 2px 0', lineHeight: 1, fontWeight: '800' }}>{stats.total}</h3>
+                      <p style={{ fontSize: '15px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Total Tasks</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>All tasks of month</span>
                     </div>
                   </div>
 
@@ -1613,54 +1599,40 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     onClick={() => handleStatCardClick('in-progress')}
                     style={{
                       background: activeFilter === 'in-progress'
-                        ? 'linear-gradient(135deg, #5a9bd4 0%, #0770c1 100%)'
-                        : 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
-                      borderRadius: '16px',
-                      padding: '28px 20px',
+                        ? 'linear-gradient(135deg, #3E94FE 0%, #00E1FE 100%)'
+                        : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                      borderRadius: '20px',
+                      padding: '24px',
                       color: 'white',
                       boxShadow: activeFilter === 'in-progress'
-                        ? '0 8px 20px rgba(116,185,255,0.4)'
-                        : '0 4px 12px rgba(116,185,255,0.2)',
+                        ? '0 10px 25px rgba(79, 172, 254, 0.4)'
+                        : '0 4px 15px rgba(79, 172, 254, 0.15)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'in-progress' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-                      position: 'relative'
+                      transform: activeFilter === 'in-progress' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
+                      border: activeFilter === 'in-progress' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      textAlign: 'left'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(116,185,255,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeFilter !== 'in-progress') {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(116,185,255,0.2)';
-                      } else {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      }
+                  >
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                    {activeFilter === 'in-progress' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        backgroundColor: 'rgba(255,255,255,0.25)',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold'
-                      }}>
-                        ✓
-                      </div>
-                    )}
-                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-                      {stats.inProgress}
+                      <Clock size={28} />
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      IN PROGRESS
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 2px 0', lineHeight: 1, fontWeight: '800' }}>{stats.inProgress}</h3>
+                      <p style={{ fontSize: '15px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>In Progress</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Tasks being worked on</span>
                     </div>
                   </div>
 
@@ -1669,110 +1641,82 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     onClick={() => handleStatCardClick('completed')}
                     style={{
                       background: activeFilter === 'completed'
-                        ? 'linear-gradient(135deg, #4a9625 0%, #96d9b8 100%)'
-                        : 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
-                      borderRadius: '16px',
-                      padding: '28px 20px',
+                        ? 'linear-gradient(135deg, #39D96D 0%, #2ED9C5 100%)'
+                        : 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                      borderRadius: '20px',
+                      padding: '24px',
                       color: 'white',
                       boxShadow: activeFilter === 'completed'
-                        ? '0 8px 20px rgba(86,171,47,0.4)'
-                        : '0 4px 12px rgba(86,171,47,0.2)',
+                        ? '0 10px 25px rgba(67, 233, 123, 0.4)'
+                        : '0 4px 15px rgba(67, 233, 123, 0.15)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'completed' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-                      position: 'relative'
+                      transform: activeFilter === 'completed' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
+                      border: activeFilter === 'completed' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      textAlign: 'left'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(86,171,47,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeFilter !== 'completed') {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(86,171,47,0.2)';
-                      } else {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      }
+                  >
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                    {activeFilter === 'completed' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        backgroundColor: 'rgba(255,255,255,0.25)',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold'
-                      }}>
-                        ✓
-                      </div>
-                    )}
-                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-                      {stats.completed}
+                      <CheckCircle size={28} />
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      COMPLETED
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 2px 0', lineHeight: 1, fontWeight: '800' }}>{stats.completed}</h3>
+                      <p style={{ fontSize: '15px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Completed</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Finished tasks</span>
                     </div>
                   </div>
 
-                  {/* Pending Approval */}
+                  {/* Pending Client Approval */}
                   <div
                     onClick={() => handleStatCardClick('pending-client-approval')}
                     style={{
                       background: activeFilter === 'pending-client-approval'
-                        ? 'linear-gradient(135deg, #e55555 0%, #d44812 100%)'
-                        : 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
-                      borderRadius: '16px',
-                      padding: '28px 20px',
+                        ? 'linear-gradient(135deg, #E8452D 0%, #D43022 100%)'
+                        : 'linear-gradient(135deg, #f85032 0%, #e73827 100%)',
+                      borderRadius: '20px',
+                      padding: '24px',
                       color: 'white',
                       boxShadow: activeFilter === 'pending-client-approval'
-                        ? '0 8px 20px rgba(255,107,107,0.4)'
-                        : '0 4px 12px rgba(255,107,107,0.2)',
+                        ? '0 10px 25px rgba(248, 80, 50, 0.4)'
+                        : '0 4px 15px rgba(248, 80, 50, 0.15)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'pending-client-approval' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-                      position: 'relative'
+                      transform: activeFilter === 'pending-client-approval' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
+                      border: activeFilter === 'pending-client-approval' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      textAlign: 'left'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(255,107,107,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeFilter !== 'pending-client-approval') {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,107,107,0.2)';
-                      } else {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      }
+                  >
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                    {activeFilter === 'pending-client-approval' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        backgroundColor: 'rgba(255,255,255,0.25)',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold'
-                      }}>
-                        ✓
-                      </div>
-                    )}
-                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-                      {stats.pendingApproval}
+                      <AlertCircle size={28} />
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      PENDING APPROVAL
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 2px 0', lineHeight: 1, fontWeight: '800' }}>{stats.pendingApproval}</h3>
+                      <p style={{ fontSize: '15px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Pending</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Awaiting client feedback</span>
                     </div>
                   </div>
 
@@ -1781,54 +1725,40 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     onClick={() => handleStatCardClick('approved')}
                     style={{
                       background: activeFilter === 'approved'
-                        ? 'linear-gradient(135deg, #17b584 0%, #4dd9b2 100%)'
-                        : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
-                      borderRadius: '16px',
-                      padding: '28px 20px',
+                        ? 'linear-gradient(135deg, #5A6EDC 0%, #6A41B6 100%)'
+                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      borderRadius: '20px',
+                      padding: '24px',
                       color: 'white',
                       boxShadow: activeFilter === 'approved'
-                        ? '0 8px 20px rgba(0,184,148,0.4)'
-                        : '0 4px 12px rgba(0,184,148,0.2)',
+                        ? '0 10px 25px rgba(102, 126, 234, 0.4)'
+                        : '0 4px 15px rgba(102, 126, 234, 0.15)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'approved' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-                      position: 'relative'
+                      transform: activeFilter === 'approved' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
+                      border: activeFilter === 'approved' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      textAlign: 'left'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,184,148,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeFilter !== 'approved') {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,184,148,0.2)';
-                      } else {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      }
+                  >
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                    {activeFilter === 'approved' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        backgroundColor: 'rgba(255,255,255,0.25)',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold'
-                      }}>
-                        ✓
-                      </div>
-                    )}
-                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-                      {stats.approved}
+                      <CheckCircle size={28} />
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      APPROVED
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 2px 0', lineHeight: 1, fontWeight: '800' }}>{stats.approved}</h3>
+                      <p style={{ fontSize: '15px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Approved</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Approved by staff</span>
                     </div>
                   </div>
 
@@ -1837,54 +1767,40 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     onClick={() => handleStatCardClick('posted')}
                     style={{
                       background: activeFilter === 'posted'
-                        ? 'linear-gradient(135deg, #d81b60 0%, #f06292 100%)'
-                        : 'linear-gradient(135deg, #e91e63 0%, #f48fb1 100%)',
-                      borderRadius: '16px',
-                      padding: '28px 20px',
+                        ? 'linear-gradient(135deg, #1C85A0 0%, #66BED4 100%)'
+                        : 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
+                      borderRadius: '20px',
+                      padding: '24px',
                       color: 'white',
                       boxShadow: activeFilter === 'posted'
-                        ? '0 8px 20px rgba(233,30,99,0.4)'
-                        : '0 4px 12px rgba(233,30,99,0.2)',
+                        ? '0 10px 25px rgba(33, 147, 176, 0.4)'
+                        : '0 4px 15px rgba(33, 147, 176, 0.15)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'posted' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-                      position: 'relative'
+                      transform: activeFilter === 'posted' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
+                      border: activeFilter === 'posted' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      textAlign: 'left'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(233,30,99,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeFilter !== 'posted') {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(233,30,99,0.2)';
-                      } else {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      }
+                  >
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                    {activeFilter === 'posted' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        backgroundColor: 'rgba(255,255,255,0.25)',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold'
-                      }}>
-                        ✓
-                      </div>
-                    )}
-                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-                      {stats.posted}
+                      <Send size={28} />
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      POSTED
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 2px 0', lineHeight: 1, fontWeight: '800' }}>{stats.posted}</h3>
+                      <p style={{ fontSize: '15px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Posted</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Tasks published</span>
                     </div>
                   </div>
 
@@ -1893,58 +1809,43 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                     onClick={() => handleStatCardClick('revision-required')}
                     style={{
                       background: activeFilter === 'revision-required'
-                        ? 'linear-gradient(135deg, #6a4190 0%, #5a6fd8 100%)'
-                        : 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-                      borderRadius: '16px',
-                      padding: '28px 20px',
+                        ? 'linear-gradient(135deg, #E08AFB 0%, #E5475C 100%)'
+                        : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      borderRadius: '20px',
+                      padding: '24px',
                       color: 'white',
                       boxShadow: activeFilter === 'revision-required'
-                        ? '0 8px 20px rgba(118,75,162,0.4)'
-                        : '0 4px 12px rgba(118,75,162,0.2)',
+                        ? '0 10px 25px rgba(240, 147, 251, 0.4)'
+                        : '0 4px 15px rgba(240, 147, 251, 0.15)',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
-                      transform: activeFilter === 'revision-required' ? 'translateY(-4px) scale(1.02)' : 'translateY(0)',
-                      position: 'relative'
+                      transform: activeFilter === 'revision-required' ? 'translateY(-5px) scale(1.02)' : 'scale(1)',
+                      border: activeFilter === 'revision-required' ? '3px solid white' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      textAlign: 'left'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(118,75,162,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeFilter !== 'revision-required') {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(118,75,162,0.2)';
-                      } else {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                      }
+                  >
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                    {activeFilter === 'revision-required' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        backgroundColor: 'rgba(255,255,255,0.25)',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold'
-                      }}>
-                        ✓
-                      </div>
-                    )}
-                    <div style={{ fontSize: '42px', fontWeight: '700', lineHeight: 1, marginBottom: '8px' }}>
-                      {stats.revisionRequired}
+                      <AlertCircle size={28} />
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      REVISION REQUIRED
+                    <div>
+                      <h3 style={{ fontSize: '32px', margin: '0 0 2px 0', lineHeight: 1, fontWeight: '800' }}>{stats.revisionRequired}</h3>
+                      <p style={{ fontSize: '15px', margin: 0, fontWeight: '700', textTransform: 'uppercase' }}>Revision</p>
+                      <span style={{ fontSize: '11px', opacity: 0.8, display: 'block', marginTop: '2px' }}>Needs correction</span>
                     </div>
                   </div>
                 </div>
-
                 {/* Daily Report and Team Performance Cards */}
                 <div style={{
                   display: 'grid',
@@ -2331,888 +2232,214 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                 </div>
               </>
             )}
-          </>
-        )}
 
-        {/* Tasks Table - Only show when not in dashboard view and not in reports view */}
-        {!showDashboard && !showReports && (
-          <div className="card full-width" style={{ marginBottom: '30px' }}>
-            <div className="card-header" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', marginBottom: '16px' }}>
-                <div>
-                  <h2>My Tasks ({getSearchFilteredTasks().length})</h2>
-                  <p style={{ fontSize: '14px', color: '#666', margin: '5px 0 0 0' }}>Tasks assigned to you, organized by client. Select tasks to download report.</p>
-                </div>
-              </div>
-
-              {/* Search Bar, View Toggle, and Download All Button */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                width: '100%',
-                flexWrap: 'wrap'
-              }}>
-                {/* Search Bar */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 16px',
-                  background: '#f8f9fa',
-                  borderRadius: '8px',
-                  border: '1px solid #e5e7eb',
-                  flex: '1',
-                  minWidth: '250px'
-                }}>
-                  <Search size={18} style={{ color: '#6b7280' }} />
-                  <input
-                    type="text"
-                    placeholder="Search clients, tasks..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                      padding: '6px 8px',
-                      border: 'none',
-                      background: 'transparent',
-                      fontSize: '14px',
-                      flex: 1,
-                      outline: 'none'
-                    }}
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#6b7280',
-                        cursor: 'pointer',
-                        fontSize: '18px',
-                        padding: '0 4px',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-
-                {/* View Toggle Buttons */}
-                <div style={{
-                  display: 'flex',
-                  gap: '4px',
-                  padding: '4px',
-                  background: '#f8f9fa',
-                  borderRadius: '8px',
-                  border: '1px solid #e5e7eb'
-                }}>
-                  <button
-                    onClick={() => {
-                      setViewMode('list');
-                      setSelectedClientForCardView(null);
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 16px',
-                      backgroundColor: viewMode === 'list' ? '#3b82f6' : 'transparent',
-                      color: viewMode === 'list' ? 'white' : '#6b7280',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <List size={16} />
-                    List View
-                  </button>
-                  <button
-                    onClick={() => {
-                      setViewMode('card');
-                      setSelectedClientForCardView(null);
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 16px',
-                      backgroundColor: viewMode === 'card' ? '#3b82f6' : 'transparent',
-                      color: viewMode === 'card' ? 'white' : '#6b7280',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <Grid size={16} />
-                    Card View
-                  </button>
-                </div>
-
-                {/* Download All Reports Button - Hide when viewing specific client tasks in card view */}
-                {!(viewMode === 'card' && selectedClientForCardView) && (
-                  <button
-                    onClick={() => downloadAllClientsReport()}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '10px 20px',
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      whiteSpace: 'nowrap',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = '#3b82f6'}
-                  >
-                    <Download size={18} />
-                    Download All Reports (PDF)
-                  </button>
-                )}
-              </div>
-
-              {/* Search Results Info */}
-              {searchQuery && (
-                <div style={{
-                  padding: '12px 16px',
-                  backgroundColor: '#e3f2fd',
-                  borderRadius: '8px',
-                  marginTop: '16px',
-                  fontSize: '14px',
-                  color: '#1976d2'
-                }}>
-                  Found {getSearchFilteredTasks().length} task(s) matching "{searchQuery}"
-                  {getSearchFilteredTasks().length !== filteredTasks.length && (
-                    <span style={{ marginLeft: '8px', opacity: 0.8 }}>
-                      (filtered from {filteredTasks.length} total)
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-            {getSearchFilteredTasks().length === 0 ? (
-              <div className="empty-state">
-                <p>{searchQuery ? `No tasks found matching "${searchQuery}"` : 'No tasks assigned to you yet.'}</p>
-              </div>
-            ) : viewMode === 'card' ? (
-              /* Card View - Client Cards */
-              selectedClientForCardView ? (
-                /* Show tasks for selected client */
-                <div style={{ padding: '20px' }}>
-                  {/* Back Button */}
-                  <button
-                    onClick={() => setSelectedClientForCardView(null)}
-                    style={{
-                      padding: '10px 20px',
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      marginBottom: '20px'
-                    }}
-                  >
-                    ← Back to All Clients
-                  </button>
-
-                  {/* Client Header */}
-                  <div style={{
-                    backgroundColor: 'white',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                    overflow: 'hidden',
-                    marginBottom: '20px'
-                  }}>
-                    <div style={{
-                      padding: '20px',
-                      background: currentDepartment === 'video'
-                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                        : currentDepartment === 'graphics'
-                          ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
-                          : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
-                      color: 'white',
-                      textAlign: 'center'
-                    }}>
-                      <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '600' }}>
-                        {selectedClientForCardView}
-                      </h3>
-                      <p style={{ margin: '8px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
-                        {groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView]?.length || 0} task(s)
-                      </p>
+            {/* Tasks Table - Only show when not in dashboard view and not in reports view */}
+            {!showDashboard && !showReports && (
+              <div className="card full-width" style={{ marginBottom: '30px' }}>
+                <div className="card-header" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', marginBottom: '16px' }}>
+                    <div>
+                      <h2>My Tasks ({getSearchFilteredTasks().length})</h2>
+                      <p style={{ fontSize: '14px', color: '#666', margin: '5px 0 0 0' }}>Tasks assigned to you, organized by client. Select tasks to download report.</p>
                     </div>
                   </div>
 
-                  {/* Task Cards Grid */}
+                  {/* Search Bar, View Toggle, and Download All Button */}
                   <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                    gap: '20px'
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    width: '100%',
+                    flexWrap: 'wrap'
                   }}>
-                    {(groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView] || []).map(task => {
-                      const gradientColors = currentDepartment === 'video'
-                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                        : currentDepartment === 'graphics'
-                          ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
-                          : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
-
-                      const clientInitial = (task.clientName || 'U').charAt(0).toUpperCase();
-                      const isOverdue = isTaskOverdue(task.deadline);
-
-                      return (
-                        <div
-                          key={task.id}
-                          style={{
-                            backgroundColor: 'white',
-                            borderRadius: '12px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                            overflow: 'hidden',
-                            transition: 'all 0.3s ease',
-                            border: '1px solid #e9ecef',
-                            position: 'relative',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            height: '100%'
-                          }}
-                        >
-                          {/* Overdue Badge - Top Right */}
-                          {isOverdue && task.status !== 'completed' && task.status !== 'posted' && (
-                            <div style={{
-                              position: 'absolute',
-                              top: '12px',
-                              right: '12px',
-                              backgroundColor: '#dc3545',
-                              color: 'white',
-                              padding: '4px 12px',
-                              borderRadius: '12px',
-                              fontSize: '11px',
-                              fontWeight: 'bold',
-                              zIndex: 10
-                            }}>
-                              OVERDUE
-                            </div>
-                          )}
-
-                          {/* Notification Bell Icon for Revision - Below Overdue Badge */}
-                          {task.revisionMessage && (
-                            <button
-                              onClick={() => {
-                                setSelectedRevisionNote(task.revisionMessage);
-                                setShowRevisionNoteModal(true);
-                              }}
-                              style={{
-                                position: 'absolute',
-                                top: isOverdue && task.status !== 'completed' && task.status !== 'posted' ? '48px' : '12px',
-                                right: '12px',
-                                backgroundColor: '#ffc107',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '32px',
-                                height: '32px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                zIndex: 10,
-                                boxShadow: '0 2px 8px rgba(255, 193, 7, 0.4)',
-                                transition: 'all 0.2s'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.target.style.transform = 'scale(1.1)';
-                                e.target.style.boxShadow = '0 4px 12px rgba(255, 193, 7, 0.6)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.transform = 'scale(1)';
-                                e.target.style.boxShadow = '0 2px 8px rgba(255, 193, 7, 0.4)';
-                              }}
-                            >
-                              <AlertCircle size={18} />
-                            </button>
-                          )}
-
-                          {/* Checkbox - Top Left Corner */}
-                          <input
-                            type="checkbox"
-                            checked={isTaskSelected(task.clientName, task.id)}
-                            onChange={() => toggleTaskSelection(task.clientName, task.id)}
-                            style={{
-                              position: 'absolute',
-                              top: '8px',
-                              left: '8px',
-                              width: '18px',
-                              height: '18px',
-                              cursor: 'pointer',
-                              zIndex: 10,
-                              accentColor: '#3b82f6'
-                            }}
-                          />
-
-                          {/* Card Header with Gradient */}
-                          <div style={{
-                            background: gradientColors,
-                            padding: '20px',
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexShrink: 0,
-                            gap: '12px'
-                          }}>
-                            <div style={{
-                              width: '50px',
-                              height: '50px',
-                              borderRadius: '50%',
-                              backgroundColor: 'rgba(255,255,255,0.3)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '20px',
-                              fontWeight: '700',
-                              flexShrink: 0
-                            }}>
-                              {clientInitial}
-                            </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {task.taskName}
-                              </div>
-                              <div style={{ fontSize: '13px', opacity: 0.9 }}>
-                                {task.clientName}
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Card Body - Info Grid */}
-                          <div style={{ padding: '16px', backgroundColor: '#f8f9fa', flex: 1 }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                              {/* Project Name */}
-                              <div>
-                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Project</div>
-                                <div style={{
-                                  padding: '6px 10px',
-                                  borderRadius: '6px',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                  backgroundColor: '#e3f2fd',
-                                  color: '#1976d2',
-                                  textAlign: 'center'
-                                }}>
-                                  {task.projectName || 'N/A'}
-                                </div>
-                              </div>
-
-                              {/* Deadline */}
-                              <div>
-                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Due Date</div>
-                                <div style={{
-                                  padding: '6px 10px',
-                                  borderRadius: '6px',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                  backgroundColor: isOverdue ? '#fee2e2' : '#f3f4f6',
-                                  color: isOverdue ? '#dc2626' : '#374151',
-                                  textAlign: 'center'
-                                }}>
-                                  {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Not set'}
-                                </div>
-                              </div>
-
-                              {/* Revisions */}
-                              <div>
-                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Revisions</div>
-                                <div style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  padding: '6px',
-                                  borderRadius: '6px',
-                                  backgroundColor: 'white'
-                                }}>
-                                  <span style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    minWidth: '28px',
-                                    height: '28px',
-                                    borderRadius: '50%',
-                                    fontSize: '14px',
-                                    fontWeight: '700',
-                                    backgroundColor: (task.revisionCount || 0) > 0 ? '#dc3545' : '#10b981',
-                                    color: 'white'
-                                  }}>
-                                    {task.revisionCount || 0}
-                                  </span>
-                                </div>
-                              </div>
-
-                              {/* Department */}
-                              <div>
-                                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Department</div>
-                                <div style={{
-                                  padding: '6px 10px',
-                                  borderRadius: '6px',
-                                  fontSize: '11px',
-                                  fontWeight: '600',
-                                  backgroundColor: getDepartmentColor(task.department),
-                                  color: 'white',
-                                  textAlign: 'center',
-                                  textTransform: 'uppercase'
-                                }}>
-                                  {task.department}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Assigned To */}
-                            <div style={{ marginBottom: '12px' }}>
-                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Assigned To:</div>
-                              <div style={{ fontSize: '13px', fontWeight: '600', color: '#374151' }}>
-                                {task.assignedTo || 'Unassigned'}
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Card Footer - Status & Actions */}
-                          <div style={{ padding: '16px', backgroundColor: 'white', flexShrink: 0 }}>
-                            {/* Status Dropdown */}
-                            <div style={{ marginBottom: '12px' }}>
-                              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '6px', textAlign: 'center' }}>Status:</div>
-                              <select
-                                value={task.status}
-                                onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                                style={{
-                                  width: '100%',
-                                  padding: '8px 12px',
-                                  borderRadius: '8px',
-                                  border: '2px solid #e5e7eb',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                  cursor: 'pointer',
-                                  backgroundColor: getStatusColor(task.status),
-                                  color: 'white',
-                                  textAlign: 'center'
-                                }}
-                              >
-                                <option value="assigned" style={{ backgroundColor: '#fff', color: '#333' }}>Assigned</option>
-                                <option value="in-progress" style={{ backgroundColor: '#fff', color: '#333' }}>In Progress</option>
-                                <option value="completed" style={{ backgroundColor: '#fff', color: '#333' }}>Completed</option>
-                                <option value="pending-client-approval" style={{ backgroundColor: '#fff', color: '#333' }}>Pending Approval</option>
-                                <option value="approved" style={{ backgroundColor: '#fff', color: '#333' }}>Approved</option>
-                                <option value="posted" style={{ backgroundColor: '#fff', color: '#333' }}>Posted</option>
-                                <option value="revision-required" style={{ backgroundColor: '#fff', color: '#333' }}>Revision Required</option>
-                              </select>
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              {task.status === 'assigned' && (
-                                <button
-                                  onClick={() => handleStartWork(task.id)}
-                                  style={{
-                                    width: '100%',
-                                    backgroundColor: '#3b82f6',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '10px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '13px',
-                                    fontWeight: '600',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '6px'
-                                  }}
-                                >
-                                  <PlayCircle size={14} /> Start Work
-                                </button>
-                              )}
-
-                              {task.status === 'revision-required' && (
-                                <button
-                                  onClick={() => handleStartRevision(task.id)}
-                                  style={{
-                                    width: '100%',
-                                    backgroundColor: '#f59e0b',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '10px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '13px',
-                                    fontWeight: '600',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '6px'
-                                  }}
-                                >
-                                  <PlayCircle size={14} /> Start Revision
-                                </button>
-                              )}
-
-                              {/* Start Button - Shows when task is assigned or pending */}
-                              {(task.status === 'assigned' || task.status === 'assigned-to-department' || task.status === 'pending' || task.status === 'approved') && (
-                                <button
-                                  onClick={() => handleStartTask(task.id)}
-                                  style={{
-                                    width: '100%',
-                                    backgroundColor: '#3b82f6',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '10px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '13px',
-                                    fontWeight: '600',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '6px',
-                                    transition: 'all 0.2s'
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.target.style.backgroundColor = '#2563eb';
-                                    e.target.style.transform = 'translateY(-2px)';
-                                    e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.target.style.backgroundColor = '#3b82f6';
-                                    e.target.style.transform = 'translateY(0)';
-                                    e.target.style.boxShadow = 'none';
-                                  }}
-                                >
-                                  <PlayCircle size={14} /> Start Task
-                                </button>
-                              )}
-
-                              {/* Complete Button - Shows when task is in progress */}
-                              {task.status === 'in-progress' && (
-                                <button
-                                  onClick={() => handleMarkComplete(task.id)}
-                                  style={{
-                                    width: '100%',
-                                    backgroundColor: '#10b981',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '10px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '13px',
-                                    fontWeight: '600',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '6px',
-                                    transition: 'all 0.2s'
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.target.style.backgroundColor = '#059669';
-                                    e.target.style.transform = 'translateY(-2px)';
-                                    e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.target.style.backgroundColor = '#10b981';
-                                    e.target.style.transform = 'translateY(0)';
-                                    e.target.style.boxShadow = 'none';
-                                  }}
-                                >
-                                  <CheckCircle size={14} /> Mark Complete
-                                </button>
-                              )}
-
-                              {/* Send for Approval Button - Shows when task is completed */}
-                              {task.status === 'completed' && (
-                                <button
-                                  onClick={() => handleSendForApproval(task.id, task)}
-                                  style={{
-                                    width: '100%',
-                                    backgroundColor: '#8b5cf6',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '10px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '13px',
-                                    fontWeight: '600',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '6px'
-                                  }}
-                                >
-                                  <Send size={14} /> Send for Approval
-                                </button>
-                              )}
-
-                              {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
-                                <div style={{
-                                  width: '100%',
-                                  padding: '10px 16px',
-                                  backgroundColor: '#e7f3ff',
-                                  borderRadius: '8px',
-                                  fontSize: '13px',
-                                  color: '#0066cc',
-                                  fontWeight: '600',
-                                  textAlign: 'center',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '6px'
-                                }}>
-                                  <CheckCircle size={14} /> {task.status === 'pending-client-approval' ? '✓ Awaiting Approval' : task.status === 'approved' ? '✓ Approved' : '✓ Posted'}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                /* Show client cards */
-                <div style={{ padding: '20px' }}>
-                  {/* Action Buttons Row */}
-                  <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    {/* Download All Button */}
-                    <button
-                      onClick={() => downloadAllClientsReport()}
-                      style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#3b82f6',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      📥 Download All
-                    </button>
-                  </div>
-
-                  {/* Client Cards Grid */}
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                    gap: '20px'
-                  }}>
-                    {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientTasks]) => {
-                      // Determine gradient color based on employee department
-                      let gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-
-                      if (currentDepartment === 'video') {
-                        gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                      } else if (currentDepartment === 'graphics') {
-                        gradientColors = 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)';
-                      } else if (currentDepartment === 'social-media') {
-                        gradientColors = 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
-                      }
-
-                      const clientInitial = (clientName || 'U').charAt(0).toUpperCase();
-                      const totalTasks = clientTasks.length;
-                      const completedTasks = clientTasks.filter(t => t.status === 'completed' || t.status === 'posted').length;
-                      const inProgressTasks = clientTasks.filter(t => t.status === 'in-progress').length;
-
-                      return (
-                        <div
-                          key={clientName}
-                          onClick={() => setSelectedClientForCardView(clientName)}
-                          style={{
-                            backgroundColor: 'white',
-                            borderRadius: '16px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                            overflow: 'hidden',
-                            transition: 'all 0.3s ease',
-                            cursor: 'pointer',
-                            border: '1px solid #e9ecef'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-4px)';
-                            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                          }}
-                        >
-                          {/* Client Header */}
-                          <div style={{
-                            background: gradientColors,
-                            padding: '24px 20px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '16px'
-                          }}>
-                            {/* Client Avatar */}
-                            <div style={{
-                              width: '60px',
-                              height: '60px',
-                              borderRadius: '50%',
-                              background: 'rgba(255,255,255,0.3)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '24px',
-                              fontWeight: '700',
-                              color: 'white',
-                              flexShrink: 0
-                            }}>
-                              {clientInitial}
-                            </div>
-
-                            {/* Client Info */}
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <h3 style={{
-                                margin: 0,
-                                fontSize: '18px',
-                                fontWeight: '600',
-                                color: 'white',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }}>
-                                {clientName}
-                              </h3>
-                              <p style={{
-                                margin: '4px 0 0 0',
-                                fontSize: '13px',
-                                color: 'rgba(255,255,255,0.9)'
-                              }}>
-                                {totalTasks} task{totalTasks !== 1 ? 's' : ''}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Task Stats */}
-                          <div style={{
-                            padding: '20px',
-                            display: 'flex',
-                            justifyContent: 'space-around',
-                            gap: '12px'
-                          }}>
-                            {/* Total Tasks */}
-                            <div style={{ textAlign: 'center', flex: 1 }}>
-                              <div style={{
-                                fontSize: '28px',
-                                fontWeight: '700',
-                                color: '#667eea',
-                                marginBottom: '4px'
-                              }}>
-                                {totalTasks}
-                              </div>
-                              <div style={{
-                                fontSize: '12px',
-                                color: '#6b7280',
-                                fontWeight: '500'
-                              }}>
-                                Total Tasks
-                              </div>
-                            </div>
-
-                            {/* Completed */}
-                            <div style={{ textAlign: 'center', flex: 1 }}>
-                              <div style={{
-                                fontSize: '28px',
-                                fontWeight: '700',
-                                color: '#10b981',
-                                marginBottom: '4px'
-                              }}>
-                                {completedTasks}
-                              </div>
-                              <div style={{
-                                fontSize: '12px',
-                                color: '#6b7280',
-                                fontWeight: '500'
-                              }}>
-                                Completed
-                              </div>
-                            </div>
-
-                            {/* In Progress */}
-                            <div style={{ textAlign: 'center', flex: 1 }}>
-                              <div style={{
-                                fontSize: '28px',
-                                fontWeight: '700',
-                                color: '#f59e0b',
-                                marginBottom: '4px'
-                              }}>
-                                {inProgressTasks}
-                              </div>
-                              <div style={{
-                                fontSize: '12px',
-                                color: '#6b7280',
-                                fontWeight: '500'
-                              }}>
-                                In Progress
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* View Details Button */}
-                          <div style={{
-                            padding: '0 20px 20px 20px'
-                          }}>
-                            <div style={{
-                              background: '#f3f4f6',
-                              padding: '12px',
-                              borderRadius: '8px',
-                              textAlign: 'center',
-                              fontSize: '13px',
-                              color: '#6b7280',
-                              fontWeight: '500'
-                            }}>
-                              Click to view all tasks
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )
-            ) : (
-              /* List View - Grouped by Client */
-              <div style={{ padding: '0' }}>
-                {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientGroup]) => {
-                  const isExpanded = expandedClients[clientName];
-                  const totalTasks = clientGroup.length;
-                  const completedTasks = clientGroup.filter(t => t.status === 'completed' || t.status === 'posted').length;
-                  const inProgressTasks = clientGroup.filter(t => t.status === 'in-progress').length;
-
-                  return (
-                    <div key={clientName} style={{
-                      backgroundColor: 'white',
-                      borderRadius: '12px',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                      overflow: 'hidden',
-                      border: '1px solid #e9ecef',
-                      marginBottom: '16px'
+                    {/* Search Bar */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 16px',
+                      background: '#f8f9fa',
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb',
+                      flex: '1',
+                      minWidth: '250px'
                     }}>
-                      <div
-                        onClick={() => toggleClientExpansion(clientName)}
+                      <Search size={18} style={{ color: '#6b7280' }} />
+                      <input
+                        type="text"
+                        placeholder="Search clients, tasks..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         style={{
+                          padding: '6px 8px',
+                          border: 'none',
+                          background: 'transparent',
+                          fontSize: '14px',
+                          flex: 1,
+                          outline: 'none'
+                        }}
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#6b7280',
+                            cursor: 'pointer',
+                            fontSize: '18px',
+                            padding: '0 4px',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+
+                    {/* View Toggle Buttons */}
+                    <div style={{
+                      display: 'flex',
+                      gap: '4px',
+                      padding: '4px',
+                      background: '#f8f9fa',
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb'
+                    }}>
+                      <button
+                        onClick={() => {
+                          setViewMode('list');
+                          setSelectedClientForCardView(null);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '8px 16px',
+                          backgroundColor: viewMode === 'list' ? '#3b82f6' : 'transparent',
+                          color: viewMode === 'list' ? 'white' : '#6b7280',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <List size={16} />
+                        List View
+                      </button>
+                      <button
+                        onClick={() => {
+                          setViewMode('card');
+                          setSelectedClientForCardView(null);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '8px 16px',
+                          backgroundColor: viewMode === 'card' ? '#3b82f6' : 'transparent',
+                          color: viewMode === 'card' ? 'white' : '#6b7280',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <Grid size={16} />
+                        Card View
+                      </button>
+                    </div>
+
+                    {/* Download All Reports Button - Hide when viewing specific client tasks in card view */}
+                    {!(viewMode === 'card' && selectedClientForCardView) && (
+                      <button
+                        onClick={() => downloadAllClientsReport()}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '10px 20px',
+                          backgroundColor: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          whiteSpace: 'nowrap',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = '#3b82f6'}
+                      >
+                        <Download size={18} />
+                        Download All Reports (PDF)
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Search Results Info */}
+                  {searchQuery && (
+                    <div style={{
+                      padding: '12px 16px',
+                      backgroundColor: '#e3f2fd',
+                      borderRadius: '8px',
+                      marginTop: '16px',
+                      fontSize: '14px',
+                      color: '#1976d2'
+                    }}>
+                      Found {getSearchFilteredTasks().length} task(s) matching "{searchQuery}"
+                      {getSearchFilteredTasks().length !== filteredTasks.length && (
+                        <span style={{ marginLeft: '8px', opacity: 0.8 }}>
+                          (filtered from {filteredTasks.length} total)
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {getSearchFilteredTasks().length === 0 ? (
+                  <div className="empty-state">
+                    <p>{searchQuery ? `No tasks found matching "${searchQuery}"` : 'No tasks assigned to you yet.'}</p>
+                  </div>
+                ) : viewMode === 'card' ? (
+                  /* Card View - Client Cards */
+                  selectedClientForCardView ? (
+                    /* Show tasks for selected client */
+                    <div style={{ padding: '20px' }}>
+                      {/* Back Button */}
+                      <button
+                        onClick={() => setSelectedClientForCardView(null)}
+                        style={{
+                          padding: '10px 20px',
+                          backgroundColor: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          marginBottom: '20px'
+                        }}
+                      >
+                        ← Back to All Clients
+                      </button>
+
+                      {/* Client Header */}
+                      <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '12px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        overflow: 'hidden',
+                        marginBottom: '20px'
+                      }}>
+                        <div style={{
                           padding: '20px',
                           background: currentDepartment === 'video'
                             ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
@@ -3220,441 +2447,1115 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
                               ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
                               : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
                           color: 'white',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{
-                            backgroundColor: 'rgba(255,255,255,0.2)',
-                            padding: '8px 12px',
-                            borderRadius: '8px',
-                            fontSize: '14px',
-                            fontWeight: '600'
-                          }}>
-                            {totalTasks}
-                          </div>
-                          <div>
-                            <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
-                              {clientName}
-                            </h3>
-                            <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>
-                              {totalTasks} task{totalTasks !== 1 ? 's' : ''} • {completedTasks} completed • {inProgressTasks} in progress
-                            </div>
-                          </div>
-                        </div>
-                        <div style={{
-                          fontSize: '24px',
-                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: 'transform 0.3s ease'
+                          textAlign: 'center'
                         }}>
-                          ▼
+                          <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '600' }}>
+                            {selectedClientForCardView}
+                          </h3>
+                          <p style={{ margin: '8px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
+                            {groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView]?.length || 0} task(s)
+                          </p>
                         </div>
                       </div>
 
-                      {isExpanded && (
-                        <div style={{ padding: '0', overflowX: 'auto', width: '100%' }}>
-                          <table style={{
-                            width: '100%',
-                            minWidth: '1400px',
-                            borderCollapse: 'collapse'
-                          }}>
-                            <thead>
-                              <tr style={{
-                                backgroundColor: '#f8f9fa',
-                                borderBottom: '2px solid #e9ecef'
-                              }}>
-                                <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '150px' }}>Task Name</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Content</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Reference Link</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Special Notes</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Deadline</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Start</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Done</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Revision Timeline</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Status</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '80px' }}>Revisions</th>
-                                <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {clientGroup.map(task => (
-                                <tr key={task.id} style={{
-                                  borderBottom: '1px solid #f1f3f4'
+                      {/* Task Cards Grid */}
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                        gap: '20px'
+                      }}>
+                        {(groupTasksByClient(getSearchFilteredTasks())[selectedClientForCardView] || []).map(task => {
+                          const gradientColors = currentDepartment === 'video'
+                            ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                            : currentDepartment === 'graphics'
+                              ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
+                              : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
+
+                          const clientInitial = (task.clientName || 'U').charAt(0).toUpperCase();
+                          const isOverdue = isTaskOverdue(task.deadline);
+
+                          return (
+                            <div
+                              key={task.id}
+                              style={{
+                                backgroundColor: 'white',
+                                borderRadius: '12px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                overflow: 'hidden',
+                                transition: 'all 0.3s ease',
+                                border: '1px solid #e9ecef',
+                                position: 'relative',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                height: '100%'
+                              }}
+                            >
+                              {/* Overdue Badge - Top Right */}
+                              {isOverdue && task.status !== 'completed' && task.status !== 'posted' && (
+                                <div style={{
+                                  position: 'absolute',
+                                  top: '12px',
+                                  right: '12px',
+                                  backgroundColor: '#dc3545',
+                                  color: 'white',
+                                  padding: '4px 12px',
+                                  borderRadius: '12px',
+                                  fontSize: '11px',
+                                  fontWeight: 'bold',
+                                  zIndex: 10
                                 }}>
-                                  <td style={{ padding: '12px 16px', textAlign: 'left', color: '#495057', fontSize: '14px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                      {getStatusIcon(task.status)}
-                                      <div style={{ flex: 1 }}>
-                                        <div style={{ fontWeight: '600', marginBottom: '4px' }}>{task.taskName}</div>
-                                        {isTaskOverdue(task.deadline) && task.status !== 'posted' && task.status !== 'completed' && (
-                                          <span style={{
-                                            backgroundColor: '#dc3545',
-                                            color: 'white',
-                                            padding: '2px 6px',
-                                            borderRadius: '4px',
-                                            fontSize: '10px',
-                                            fontWeight: 'bold',
-                                            marginRight: '6px'
-                                          }}>
-                                            OVERDUE
-                                          </span>
-                                        )}
-                                        {task.revisionMessage && (
-                                          <div style={{
-                                            marginTop: '8px',
-                                            padding: '8px 12px',
-                                            backgroundColor: '#fff3cd',
-                                            border: '1px solid #ffc107',
-                                            borderRadius: '6px',
-                                            fontSize: '12px',
-                                            color: '#856404'
-                                          }}>
-                                            <strong>⚠️ Revision Required:</strong> {task.revisionMessage}
-                                          </div>
-                                        )}
-                                      </div>
+                                  OVERDUE
+                                </div>
+                              )}
+
+                              {/* Notification Bell Icon for Revision - Below Overdue Badge */}
+                              {task.revisionMessage && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedRevisionNote(task.revisionMessage);
+                                    setShowRevisionNoteModal(true);
+                                  }}
+                                  style={{
+                                    position: 'absolute',
+                                    top: isOverdue && task.status !== 'completed' && task.status !== 'posted' ? '48px' : '12px',
+                                    right: '12px',
+                                    backgroundColor: '#ffc107',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: '32px',
+                                    height: '32px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    zIndex: 10,
+                                    boxShadow: '0 2px 8px rgba(255, 193, 7, 0.4)',
+                                    transition: 'all 0.2s'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.transform = 'scale(1.1)';
+                                    e.target.style.boxShadow = '0 4px 12px rgba(255, 193, 7, 0.6)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.transform = 'scale(1)';
+                                    e.target.style.boxShadow = '0 2px 8px rgba(255, 193, 7, 0.4)';
+                                  }}
+                                >
+                                  <AlertCircle size={18} />
+                                </button>
+                              )}
+
+                              {/* Checkbox - Top Left Corner */}
+                              <input
+                                type="checkbox"
+                                checked={isTaskSelected(task.clientName, task.id)}
+                                onChange={() => toggleTaskSelection(task.clientName, task.id)}
+                                style={{
+                                  position: 'absolute',
+                                  top: '8px',
+                                  left: '8px',
+                                  width: '18px',
+                                  height: '18px',
+                                  cursor: 'pointer',
+                                  zIndex: 10,
+                                  accentColor: '#3b82f6'
+                                }}
+                              />
+
+                              {/* Card Header with Gradient */}
+                              <div style={{
+                                background: gradientColors,
+                                padding: '20px',
+                                color: 'white',
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexShrink: 0,
+                                gap: '12px'
+                              }}>
+                                <div style={{
+                                  width: '50px',
+                                  height: '50px',
+                                  borderRadius: '50%',
+                                  backgroundColor: 'rgba(255,255,255,0.3)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '20px',
+                                  fontWeight: '700',
+                                  flexShrink: 0
+                                }}>
+                                  {clientInitial}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {task.taskName}
+                                  </div>
+                                  <div style={{ fontSize: '13px', opacity: 0.9 }}>
+                                    {task.clientName}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Card Body - Info Grid */}
+                              <div style={{ padding: '16px', backgroundColor: '#f8f9fa', flex: 1 }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                                  {/* Project Name */}
+                                  <div>
+                                    <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Project</div>
+                                    <div style={{
+                                      padding: '6px 10px',
+                                      borderRadius: '6px',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      backgroundColor: '#e3f2fd',
+                                      color: '#1976d2',
+                                      textAlign: 'center'
+                                    }}>
+                                      {task.projectName || 'N/A'}
                                     </div>
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
-                                    {(task.content || task.taskDescription || task.description) ? (
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div style={{
-                                          overflow: 'hidden',
-                                          textOverflow: 'ellipsis',
-                                          whiteSpace: 'nowrap',
-                                          lineHeight: '1.4',
-                                          flex: 1
-                                        }}>
-                                          {task.content || task.taskDescription || task.description}
-                                        </div>
-                                        <button
-                                          onClick={() => {
-                                            setModalTitle('Content');
-                                            setModalContent(task.content || task.taskDescription || task.description);
-                                            setShowContentModal(true);
-                                          }}
-                                          style={{
-                                            padding: '4px 8px',
-                                            background: '#667eea',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            fontSize: '11px',
-                                            fontWeight: '600',
-                                            cursor: 'pointer',
-                                            whiteSpace: 'nowrap'
-                                          }}
-                                        >
-                                          View More
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      <span style={{ color: '#adb5bd' }}>-</span>
-                                    )}
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                                    {task.referenceLink ? (
-                                      <a
-                                        href={task.referenceLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                          color: '#667eea',
-                                          textDecoration: 'none',
-                                          fontWeight: '500',
-                                          fontSize: '13px',
-                                          display: 'inline-flex',
-                                          alignItems: 'center',
-                                          gap: '4px'
-                                        }}
-                                        onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
-                                        onMouseOut={(e) => e.target.style.textDecoration = 'none'}
-                                      >
-                                        🔗 View
-                                      </a>
-                                    ) : (
-                                      <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
-                                    )}
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
-                                    {task.specialNotes ? (
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div style={{
-                                          overflow: 'hidden',
-                                          textOverflow: 'ellipsis',
-                                          whiteSpace: 'nowrap',
-                                          lineHeight: '1.4',
-                                          flex: 1
-                                        }}>
-                                          {task.specialNotes}
-                                        </div>
-                                        <button
-                                          onClick={() => {
-                                            setModalTitle('Special Notes');
-                                            setModalContent(task.specialNotes);
-                                            setShowNotesModal(true);
-                                          }}
-                                          style={{
-                                            padding: '4px 8px',
-                                            background: '#667eea',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            fontSize: '11px',
-                                            fontWeight: '600',
-                                            cursor: 'pointer',
-                                            whiteSpace: 'nowrap'
-                                          }}
-                                        >
-                                          View More
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      <span style={{ color: '#adb5bd' }}>-</span>
-                                    )}
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '13px' }}>
-                                    {task.deadline ? (
+                                  </div>
+
+                                  {/* Deadline */}
+                                  <div>
+                                    <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Due Date</div>
+                                    <div style={{
+                                      padding: '6px 10px',
+                                      borderRadius: '6px',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      backgroundColor: isOverdue ? '#fee2e2' : '#f3f4f6',
+                                      color: isOverdue ? '#dc2626' : '#374151',
+                                      textAlign: 'center'
+                                    }}>
+                                      {task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Not set'}
+                                    </div>
+                                  </div>
+
+                                  {/* Revisions */}
+                                  <div>
+                                    <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Revisions</div>
+                                    <div style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      padding: '6px',
+                                      borderRadius: '6px',
+                                      backgroundColor: 'white'
+                                    }}>
                                       <span style={{
                                         display: 'inline-flex',
                                         alignItems: 'center',
-                                        gap: '4px',
-                                        color: isTaskOverdue(task.deadline) ? '#dc3545' : '#495057'
+                                        justifyContent: 'center',
+                                        minWidth: '28px',
+                                        height: '28px',
+                                        borderRadius: '50%',
+                                        fontSize: '14px',
+                                        fontWeight: '700',
+                                        backgroundColor: (task.revisionCount || 0) > 0 ? '#dc3545' : '#10b981',
+                                        color: 'white'
                                       }}>
-                                        <Calendar size={14} />
-                                        {new Date(task.deadline).toLocaleDateString()}
+                                        {task.revisionCount || 0}
                                       </span>
-                                    ) : '-'}
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
-                                    {task.startedAt ? (
-                                      <div>
-                                        <div style={{ fontWeight: '600', color: '#10b981' }}>
-                                          {new Date(task.startedAt).toLocaleDateString()}
-                                        </div>
-                                        <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                                          {new Date(task.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
-                                    )}
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
-                                    {task.completedAt ? (
-                                      <div>
-                                        <div style={{ fontWeight: '600', color: '#8b5cf6' }}>
-                                          {new Date(task.completedAt).toLocaleDateString()}
-                                        </div>
-                                        <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                                          {new Date(task.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </div>
-                                      </div>
-                                    ) : '-'}
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '11px' }}>
-                                    {task.lastRevisionAt || task.submittedAt ? (
-                                      <div style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '8px',
-                                        alignItems: 'center'
-                                      }}>
-                                        {task.lastRevisionAt && (
-                                          <div style={{
-                                            padding: '6px 10px',
-                                            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                                            borderRadius: '6px',
-                                            border: '1px solid #fbbf24',
-                                            width: '100%'
-                                          }}>
-                                            <div style={{ fontWeight: '700', color: '#92400e', fontSize: '10px', marginBottom: '2px' }}>
-                                              ⚠️ REVISION
-                                            </div>
-                                            <div style={{ fontWeight: '600', color: '#78350f' }}>
-                                              {new Date(task.lastRevisionAt).toLocaleDateString()}
-                                            </div>
-                                            <div style={{ fontSize: '10px', color: '#92400e' }}>
-                                              {new Date(task.lastRevisionAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </div>
-                                          </div>
-                                        )}
-                                        {task.submittedAt && (
-                                          <div style={{
-                                            padding: '6px 10px',
-                                            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-                                            borderRadius: '6px',
-                                            border: '1px solid #60a5fa',
-                                            width: '100%'
-                                          }}>
-                                            <div style={{ fontWeight: '700', color: '#1e40af', fontSize: '10px', marginBottom: '2px' }}>
-                                              ✓ SUBMITTED
-                                            </div>
-                                            <div style={{ fontWeight: '600', color: '#1e3a8a' }}>
-                                              {new Date(task.submittedAt).toLocaleDateString()}
-                                            </div>
-                                            <div style={{ fontSize: '10px', color: '#1e40af' }}>
-                                              {new Date(task.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </div>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ) : (
-                                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>No timeline</span>
-                                    )}
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                                    <span style={{
-                                      display: 'inline-block',
-                                      padding: '10px 20px',
+                                    </div>
+                                  </div>
+
+                                  {/* Department */}
+                                  <div>
+                                    <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Department</div>
+                                    <div style={{
+                                      padding: '6px 10px',
+                                      borderRadius: '6px',
+                                      fontSize: '11px',
+                                      fontWeight: '600',
+                                      backgroundColor: getDepartmentColor(task.department),
+                                      color: 'white',
+                                      textAlign: 'center',
+                                      textTransform: 'uppercase'
+                                    }}>
+                                      {task.department}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Assigned To */}
+                                <div style={{ marginBottom: '12px' }}>
+                                  <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>Assigned To:</div>
+                                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#374151' }}>
+                                    {task.assignedTo || 'Unassigned'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Card Footer - Status & Actions */}
+                              <div style={{ padding: '16px', backgroundColor: 'white', flexShrink: 0 }}>
+                                {/* Status Dropdown */}
+                                <div style={{ marginBottom: '12px' }}>
+                                  <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '6px', textAlign: 'center' }}>Status:</div>
+                                  <select
+                                    value={task.status}
+                                    onChange={(e) => handleStatusChange(task.id, e.target.value)}
+                                    style={{
+                                      width: '100%',
+                                      padding: '8px 12px',
                                       borderRadius: '8px',
-                                      fontSize: '13px',
-                                      fontWeight: '700',
+                                      border: '2px solid #e5e7eb',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer',
                                       backgroundColor: getStatusColor(task.status),
                                       color: 'white',
-                                      textTransform: 'capitalize',
-                                      whiteSpace: 'nowrap',
-                                      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                                      letterSpacing: '0.3px'
-                                    }}>
-                                      {getSimplifiedStatus(task.status)}
-                                    </span>
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                                    <span style={{
-                                      display: 'inline-block',
-                                      minWidth: '24px',
-                                      height: '24px',
-                                      lineHeight: '24px',
-                                      borderRadius: '50%',
-                                      fontSize: '12px',
-                                      fontWeight: '700',
-                                      backgroundColor: (task.revisionCount || 0) > 0 ? '#ff4757' : '#2ed573',
-                                      color: 'white',
                                       textAlign: 'center'
+                                    }}
+                                  >
+                                    <option value="assigned" style={{ backgroundColor: '#fff', color: '#333' }}>Assigned</option>
+                                    <option value="in-progress" style={{ backgroundColor: '#fff', color: '#333' }}>In Progress</option>
+                                    <option value="completed" style={{ backgroundColor: '#fff', color: '#333' }}>Completed</option>
+                                    <option value="pending-client-approval" style={{ backgroundColor: '#fff', color: '#333' }}>Pending Approval</option>
+                                    <option value="approved" style={{ backgroundColor: '#fff', color: '#333' }}>Approved</option>
+                                    <option value="posted" style={{ backgroundColor: '#fff', color: '#333' }}>Posted</option>
+                                    <option value="revision-required" style={{ backgroundColor: '#fff', color: '#333' }}>Revision Required</option>
+                                  </select>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                  {task.status === 'assigned' && (
+                                    <button
+                                      onClick={() => handleStartWork(task.id)}
+                                      style={{
+                                        width: '100%',
+                                        backgroundColor: '#3b82f6',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px 16px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '6px'
+                                      }}
+                                    >
+                                      <PlayCircle size={14} /> Start Work
+                                    </button>
+                                  )}
+
+                                  {task.status === 'revision-required' && (
+                                    <button
+                                      onClick={() => handleStartRevision(task.id)}
+                                      style={{
+                                        width: '100%',
+                                        backgroundColor: '#f59e0b',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px 16px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '6px'
+                                      }}
+                                    >
+                                      <PlayCircle size={14} /> Start Revision
+                                    </button>
+                                  )}
+
+                                  {/* Start Button - Shows when task is assigned or pending */}
+                                  {(task.status === 'assigned' || task.status === 'assigned-to-department' || task.status === 'pending' || task.status === 'approved') && (
+                                    <button
+                                      onClick={() => handleStartTask(task.id)}
+                                      style={{
+                                        width: '100%',
+                                        backgroundColor: '#3b82f6',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px 16px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '6px',
+                                        transition: 'all 0.2s'
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        e.target.style.backgroundColor = '#2563eb';
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.target.style.backgroundColor = '#3b82f6';
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                      }}
+                                    >
+                                      <PlayCircle size={14} /> Start Task
+                                    </button>
+                                  )}
+
+                                  {/* Complete Button - Shows when task is in progress */}
+                                  {task.status === 'in-progress' && (
+                                    <button
+                                      onClick={() => handleMarkComplete(task.id)}
+                                      style={{
+                                        width: '100%',
+                                        backgroundColor: '#10b981',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px 16px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '6px',
+                                        transition: 'all 0.2s'
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        e.target.style.backgroundColor = '#059669';
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.target.style.backgroundColor = '#10b981';
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                      }}
+                                    >
+                                      <CheckCircle size={14} /> Mark Complete
+                                    </button>
+                                  )}
+
+                                  {/* Send for Approval Button - Shows when task is completed */}
+                                  {task.status === 'completed' && (
+                                    <button
+                                      onClick={() => handleSendForApproval(task.id, task)}
+                                      style={{
+                                        width: '100%',
+                                        backgroundColor: '#8b5cf6',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px 16px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '6px'
+                                      }}
+                                    >
+                                      <Send size={14} /> Send for Approval
+                                    </button>
+                                  )}
+
+                                  {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
+                                    <div style={{
+                                      width: '100%',
+                                      padding: '10px 16px',
+                                      backgroundColor: '#e7f3ff',
+                                      borderRadius: '8px',
+                                      fontSize: '13px',
+                                      color: '#0066cc',
+                                      fontWeight: '600',
+                                      textAlign: 'center',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      gap: '6px'
                                     }}>
-                                      {task.revisionCount || 0}
-                                    </span>
-                                  </td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                      {task.status === 'assigned' && (
-                                        <button
-                                          onClick={() => handleStartWork(task.id)}
-                                          style={{
-                                            backgroundColor: '#3b82f6',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '6px 12px',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '12px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            fontWeight: '500'
-                                          }}
-                                        >
-                                          <PlayCircle size={12} /> Start
-                                        </button>
-                                      )}
-
-                                      {task.status === 'revision-required' && (
-                                        <button
-                                          onClick={() => handleStartRevision(task.id)}
-                                          style={{
-                                            backgroundColor: '#f59e0b',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '6px 12px',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '12px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            fontWeight: '500'
-                                          }}
-                                        >
-                                          <PlayCircle size={12} /> Start Revision
-                                        </button>
-                                      )}
-
-                                      {task.status === 'in-progress' && (
-                                        <button
-                                          onClick={() => handleMarkComplete(task.id)}
-                                          style={{
-                                            backgroundColor: '#10b981',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '6px 12px',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '12px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            fontWeight: '500'
-                                          }}
-                                        >
-                                          <CheckCircle size={12} /> Complete
-                                        </button>
-                                      )}
-
-                                      {task.status === 'completed' && (
-                                        <button
-                                          onClick={() => handleSendForApproval(task.id, task)}
-                                          style={{
-                                            backgroundColor: '#8b5cf6',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '6px 12px',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '12px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            fontWeight: '500'
-                                          }}
-                                        >
-                                          <Send size={12} /> Send for Approval
-                                        </button>
-                                      )}
-
-                                      {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
-                                        <span style={{
-                                          padding: '6px 12px',
-                                          backgroundColor: '#e7f3ff',
-                                          borderRadius: '6px',
-                                          fontSize: '11px',
-                                          color: '#0066cc',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          gap: '4px',
-                                          fontWeight: '500'
-                                        }}>
-                                          <CheckCircle size={12} /> {task.status === 'pending-client-approval' ? 'Awaiting Approval' : task.status === 'approved' ? 'Approved' : 'Posted'}
-                                        </span>
-                                      )}
+                                      <CheckCircle size={14} /> {task.status === 'pending-client-approval' ? '✓ Awaiting Approval' : task.status === 'approved' ? '✓ Approved' : '✓ Posted'}
                                     </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  );
-                })}
+                  ) : (
+                    /* Show client cards */
+                    <div style={{ padding: '20px' }}>
+                      {/* Action Buttons Row */}
+                      <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        {/* Download All Button */}
+                        <button
+                          onClick={() => downloadAllClientsReport()}
+                          style={{
+                            padding: '10px 20px',
+                            backgroundColor: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          📥 Download All
+                        </button>
+                      </div>
+
+                      {/* Client Cards Grid */}
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                        gap: '20px'
+                      }}>
+                        {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientTasks]) => {
+                          // Determine gradient color based on employee department
+                          let gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+                          if (currentDepartment === 'video') {
+                            gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                          } else if (currentDepartment === 'graphics') {
+                            gradientColors = 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)';
+                          } else if (currentDepartment === 'social-media') {
+                            gradientColors = 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)';
+                          }
+
+                          const clientInitial = (clientName || 'U').charAt(0).toUpperCase();
+                          const totalTasks = clientTasks.length;
+                          const completedTasks = clientTasks.filter(t => t.status === 'completed' || t.status === 'posted').length;
+                          const inProgressTasks = clientTasks.filter(t => t.status === 'in-progress').length;
+
+                          return (
+                            <div
+                              key={clientName}
+                              onClick={() => setSelectedClientForCardView(clientName)}
+                              style={{
+                                backgroundColor: 'white',
+                                borderRadius: '16px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                overflow: 'hidden',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                                border: '1px solid #e9ecef'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-4px)';
+                                e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                              }}
+                            >
+                              {/* Client Header */}
+                              <div style={{
+                                background: gradientColors,
+                                padding: '24px 20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '16px'
+                              }}>
+                                {/* Client Avatar */}
+                                <div style={{
+                                  width: '60px',
+                                  height: '60px',
+                                  borderRadius: '50%',
+                                  background: 'rgba(255,255,255,0.3)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '24px',
+                                  fontWeight: '700',
+                                  color: 'white',
+                                  flexShrink: 0
+                                }}>
+                                  {clientInitial}
+                                </div>
+
+                                {/* Client Info */}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <h3 style={{
+                                    margin: 0,
+                                    fontSize: '18px',
+                                    fontWeight: '600',
+                                    color: 'white',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                  }}>
+                                    {clientName}
+                                  </h3>
+                                  <p style={{
+                                    margin: '4px 0 0 0',
+                                    fontSize: '13px',
+                                    color: 'rgba(255,255,255,0.9)'
+                                  }}>
+                                    {totalTasks} task{totalTasks !== 1 ? 's' : ''}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Task Stats */}
+                              <div style={{
+                                padding: '20px',
+                                display: 'flex',
+                                justifyContent: 'space-around',
+                                gap: '12px'
+                              }}>
+                                {/* Total Tasks */}
+                                <div style={{ textAlign: 'center', flex: 1 }}>
+                                  <div style={{
+                                    fontSize: '28px',
+                                    fontWeight: '700',
+                                    color: '#667eea',
+                                    marginBottom: '4px'
+                                  }}>
+                                    {totalTasks}
+                                  </div>
+                                  <div style={{
+                                    fontSize: '12px',
+                                    color: '#6b7280',
+                                    fontWeight: '500'
+                                  }}>
+                                    Total Tasks
+                                  </div>
+                                </div>
+
+                                {/* Completed */}
+                                <div style={{ textAlign: 'center', flex: 1 }}>
+                                  <div style={{
+                                    fontSize: '28px',
+                                    fontWeight: '700',
+                                    color: '#10b981',
+                                    marginBottom: '4px'
+                                  }}>
+                                    {completedTasks}
+                                  </div>
+                                  <div style={{
+                                    fontSize: '12px',
+                                    color: '#6b7280',
+                                    fontWeight: '500'
+                                  }}>
+                                    Completed
+                                  </div>
+                                </div>
+
+                                {/* In Progress */}
+                                <div style={{ textAlign: 'center', flex: 1 }}>
+                                  <div style={{
+                                    fontSize: '28px',
+                                    fontWeight: '700',
+                                    color: '#f59e0b',
+                                    marginBottom: '4px'
+                                  }}>
+                                    {inProgressTasks}
+                                  </div>
+                                  <div style={{
+                                    fontSize: '12px',
+                                    color: '#6b7280',
+                                    fontWeight: '500'
+                                  }}>
+                                    In Progress
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* View Details Button */}
+                              <div style={{
+                                padding: '0 20px 20px 20px'
+                              }}>
+                                <div style={{
+                                  background: '#f3f4f6',
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  textAlign: 'center',
+                                  fontSize: '13px',
+                                  color: '#6b7280',
+                                  fontWeight: '500'
+                                }}>
+                                  Click to view all tasks
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  /* List View - Grouped by Client */
+                  <div style={{ padding: '0' }}>
+                    {Object.entries(groupTasksByClient(getSearchFilteredTasks())).map(([clientName, clientGroup]) => {
+                      const isExpanded = expandedClients[clientName];
+                      const totalTasks = clientGroup.length;
+                      const completedTasks = clientGroup.filter(t => t.status === 'completed' || t.status === 'posted').length;
+                      const inProgressTasks = clientGroup.filter(t => t.status === 'in-progress').length;
+
+                      return (
+                        <div key={clientName} style={{
+                          backgroundColor: 'white',
+                          borderRadius: '12px',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                          overflow: 'hidden',
+                          border: '1px solid #e9ecef',
+                          marginBottom: '16px'
+                        }}>
+                          <div
+                            onClick={() => toggleClientExpansion(clientName)}
+                            style={{
+                              padding: '20px',
+                              background: currentDepartment === 'video'
+                                ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                : currentDepartment === 'graphics'
+                                  ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)'
+                                  : 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
+                              color: 'white',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                              <div style={{
+                                backgroundColor: 'rgba(255,255,255,0.2)',
+                                padding: '8px 12px',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                                fontWeight: '600'
+                              }}>
+                                {totalTasks}
+                              </div>
+                              <div>
+                                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
+                                  {clientName}
+                                </h3>
+                                <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>
+                                  {totalTasks} task{totalTasks !== 1 ? 's' : ''} • {completedTasks} completed • {inProgressTasks} in progress
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{
+                              fontSize: '24px',
+                              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.3s ease'
+                            }}>
+                              ▼
+                            </div>
+                          </div>
+
+                          {isExpanded && (
+                            <div style={{ padding: '0', overflowX: 'auto', width: '100%' }}>
+                              <table style={{
+                                width: '100%',
+                                minWidth: '1400px',
+                                borderCollapse: 'collapse'
+                              }}>
+                                <thead>
+                                  <tr style={{
+                                    backgroundColor: '#f8f9fa',
+                                    borderBottom: '2px solid #e9ecef'
+                                  }}>
+                                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '150px' }}>Task Name</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Content</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Reference Link</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '180px' }}>Special Notes</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Deadline</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Start</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Done</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Revision Timeline</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '100px' }}>Status</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '80px' }}>Revisions</th>
+                                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6c757d', textTransform: 'uppercase', width: '120px' }}>Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {clientGroup.map(task => (
+                                    <tr key={task.id} style={{
+                                      borderBottom: '1px solid #f1f3f4'
+                                    }}>
+                                      <td style={{ padding: '12px 16px', textAlign: 'left', color: '#495057', fontSize: '14px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                          {getStatusIcon(task.status)}
+                                          <div style={{ flex: 1 }}>
+                                            <div style={{ fontWeight: '600', marginBottom: '4px' }}>{task.taskName}</div>
+                                            {isTaskOverdue(task.deadline) && task.status !== 'posted' && task.status !== 'completed' && (
+                                              <span style={{
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                padding: '2px 6px',
+                                                borderRadius: '4px',
+                                                fontSize: '10px',
+                                                fontWeight: 'bold',
+                                                marginRight: '6px'
+                                              }}>
+                                                OVERDUE
+                                              </span>
+                                            )}
+                                            {task.revisionMessage && (
+                                              <div style={{
+                                                marginTop: '8px',
+                                                padding: '8px 12px',
+                                                backgroundColor: '#fff3cd',
+                                                border: '1px solid #ffc107',
+                                                borderRadius: '6px',
+                                                fontSize: '12px',
+                                                color: '#856404'
+                                              }}>
+                                                <strong>⚠️ Revision Required:</strong> {task.revisionMessage}
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
+                                        {(task.content || task.taskDescription || task.description) ? (
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div style={{
+                                              overflow: 'hidden',
+                                              textOverflow: 'ellipsis',
+                                              whiteSpace: 'nowrap',
+                                              lineHeight: '1.4',
+                                              flex: 1
+                                            }}>
+                                              {task.content || task.taskDescription || task.description}
+                                            </div>
+                                            <button
+                                              onClick={() => {
+                                                setModalTitle('Content');
+                                                setModalContent(task.content || task.taskDescription || task.description);
+                                                setShowContentModal(true);
+                                              }}
+                                              style={{
+                                                padding: '4px 8px',
+                                                background: '#667eea',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                fontSize: '11px',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                whiteSpace: 'nowrap'
+                                              }}
+                                            >
+                                              View More
+                                            </button>
+                                          </div>
+                                        ) : (
+                                          <span style={{ color: '#adb5bd' }}>-</span>
+                                        )}
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                        {task.referenceLink ? (
+                                          <a
+                                            href={task.referenceLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                              color: '#667eea',
+                                              textDecoration: 'none',
+                                              fontWeight: '500',
+                                              fontSize: '13px',
+                                              display: 'inline-flex',
+                                              alignItems: 'center',
+                                              gap: '4px'
+                                            }}
+                                            onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
+                                            onMouseOut={(e) => e.target.style.textDecoration = 'none'}
+                                          >
+                                            🔗 View
+                                          </a>
+                                        ) : (
+                                          <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
+                                        )}
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'left', color: '#6c757d', fontSize: '13px', maxWidth: '200px' }}>
+                                        {task.specialNotes ? (
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div style={{
+                                              overflow: 'hidden',
+                                              textOverflow: 'ellipsis',
+                                              whiteSpace: 'nowrap',
+                                              lineHeight: '1.4',
+                                              flex: 1
+                                            }}>
+                                              {task.specialNotes}
+                                            </div>
+                                            <button
+                                              onClick={() => {
+                                                setModalTitle('Special Notes');
+                                                setModalContent(task.specialNotes);
+                                                setShowNotesModal(true);
+                                              }}
+                                              style={{
+                                                padding: '4px 8px',
+                                                background: '#667eea',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                fontSize: '11px',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                whiteSpace: 'nowrap'
+                                              }}
+                                            >
+                                              View More
+                                            </button>
+                                          </div>
+                                        ) : (
+                                          <span style={{ color: '#adb5bd' }}>-</span>
+                                        )}
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '13px' }}>
+                                        {task.deadline ? (
+                                          <span style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            color: isTaskOverdue(task.deadline) ? '#dc3545' : '#495057'
+                                          }}>
+                                            <Calendar size={14} />
+                                            {new Date(task.deadline).toLocaleDateString()}
+                                          </span>
+                                        ) : '-'}
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
+                                        {task.startedAt ? (
+                                          <div>
+                                            <div style={{ fontWeight: '600', color: '#10b981' }}>
+                                              {new Date(task.startedAt).toLocaleDateString()}
+                                            </div>
+                                            <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                                              {new Date(task.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <span style={{ color: '#adb5bd', fontSize: '13px' }}>-</span>
+                                        )}
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '12px' }}>
+                                        {task.completedAt ? (
+                                          <div>
+                                            <div style={{ fontWeight: '600', color: '#8b5cf6' }}>
+                                              {new Date(task.completedAt).toLocaleDateString()}
+                                            </div>
+                                            <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                                              {new Date(task.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                          </div>
+                                        ) : '-'}
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center', color: '#495057', fontSize: '11px' }}>
+                                        {task.lastRevisionAt || task.submittedAt ? (
+                                          <div style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                            alignItems: 'center'
+                                          }}>
+                                            {task.lastRevisionAt && (
+                                              <div style={{
+                                                padding: '6px 10px',
+                                                background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                                borderRadius: '6px',
+                                                border: '1px solid #fbbf24',
+                                                width: '100%'
+                                              }}>
+                                                <div style={{ fontWeight: '700', color: '#92400e', fontSize: '10px', marginBottom: '2px' }}>
+                                                  ⚠️ REVISION
+                                                </div>
+                                                <div style={{ fontWeight: '600', color: '#78350f' }}>
+                                                  {new Date(task.lastRevisionAt).toLocaleDateString()}
+                                                </div>
+                                                <div style={{ fontSize: '10px', color: '#92400e' }}>
+                                                  {new Date(task.lastRevisionAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                              </div>
+                                            )}
+                                            {task.submittedAt && (
+                                              <div style={{
+                                                padding: '6px 10px',
+                                                background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+                                                borderRadius: '6px',
+                                                border: '1px solid #60a5fa',
+                                                width: '100%'
+                                              }}>
+                                                <div style={{ fontWeight: '700', color: '#1e40af', fontSize: '10px', marginBottom: '2px' }}>
+                                                  ✓ SUBMITTED
+                                                </div>
+                                                <div style={{ fontWeight: '600', color: '#1e3a8a' }}>
+                                                  {new Date(task.submittedAt).toLocaleDateString()}
+                                                </div>
+                                                <div style={{ fontSize: '10px', color: '#1e40af' }}>
+                                                  {new Date(task.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        ) : (
+                                          <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>No timeline</span>
+                                        )}
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                        <span style={{
+                                          display: 'inline-block',
+                                          padding: '10px 20px',
+                                          borderRadius: '8px',
+                                          fontSize: '13px',
+                                          fontWeight: '700',
+                                          backgroundColor: getStatusColor(task.status),
+                                          color: 'white',
+                                          textTransform: 'capitalize',
+                                          whiteSpace: 'nowrap',
+                                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                          letterSpacing: '0.3px'
+                                        }}>
+                                          {getSimplifiedStatus(task.status)}
+                                        </span>
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                        <span style={{
+                                          display: 'inline-block',
+                                          minWidth: '24px',
+                                          height: '24px',
+                                          lineHeight: '24px',
+                                          borderRadius: '50%',
+                                          fontSize: '12px',
+                                          fontWeight: '700',
+                                          backgroundColor: (task.revisionCount || 0) > 0 ? '#ff4757' : '#2ed573',
+                                          color: 'white',
+                                          textAlign: 'center'
+                                        }}>
+                                          {task.revisionCount || 0}
+                                        </span>
+                                      </td>
+                                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                                        <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                          {task.status === 'assigned' && (
+                                            <button
+                                              onClick={() => handleStartWork(task.id)}
+                                              style={{
+                                                backgroundColor: '#3b82f6',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '6px 12px',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                fontWeight: '500'
+                                              }}
+                                            >
+                                              <PlayCircle size={12} /> Start
+                                            </button>
+                                          )}
+
+                                          {task.status === 'revision-required' && (
+                                            <button
+                                              onClick={() => handleStartRevision(task.id)}
+                                              style={{
+                                                backgroundColor: '#f59e0b',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '6px 12px',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                fontWeight: '500'
+                                              }}
+                                            >
+                                              <PlayCircle size={12} /> Start Revision
+                                            </button>
+                                          )}
+
+                                          {task.status === 'in-progress' && (
+                                            <button
+                                              onClick={() => handleMarkComplete(task.id)}
+                                              style={{
+                                                backgroundColor: '#10b981',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '6px 12px',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                fontWeight: '500'
+                                              }}
+                                            >
+                                              <CheckCircle size={12} /> Complete
+                                            </button>
+                                          )}
+
+                                          {task.status === 'completed' && (
+                                            <button
+                                              onClick={() => handleSendForApproval(task.id, task)}
+                                              style={{
+                                                backgroundColor: '#8b5cf6',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '6px 12px',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                fontWeight: '500'
+                                              }}
+                                            >
+                                              <Send size={12} /> Send for Approval
+                                            </button>
+                                          )}
+
+                                          {(task.status === 'pending-client-approval' || task.status === 'approved' || task.status === 'posted') && (
+                                            <span style={{
+                                              padding: '6px 12px',
+                                              backgroundColor: '#e7f3ff',
+                                              borderRadius: '6px',
+                                              fontSize: '11px',
+                                              color: '#0066cc',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              gap: '4px',
+                                              fontWeight: '500'
+                                            }}>
+                                              <CheckCircle size={12} /> {task.status === 'pending-client-approval' ? 'Awaiting Approval' : task.status === 'approved' ? 'Approved' : 'Posted'}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
-          </div>
+          </>
         )}
 
         {/* Reports Section */}
@@ -5122,320 +5023,327 @@ const EmployeeDashboard = ({ employeeData = null, isEmbedded = false }) => {
             </div>
           );
         })()}
-      </div>
 
-      {/* Revision Note Modal */}
-      {showRevisionNoteModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 2000
-        }}>
+        {/* Revision Note Modal */}
+        {showRevisionNoteModal && (
           <div style={{
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: '32px',
-            maxWidth: '500px',
-            width: '90%',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 2000
           }}>
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginBottom: '16px'
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              maxWidth: '500px',
+              width: '90%',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
             }}>
               <div style={{
-                backgroundColor: '#ffc107',
-                borderRadius: '50%',
-                width: '40px',
-                height: '40px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white'
+                gap: '12px',
+                marginBottom: '16px'
               }}>
-                <AlertCircle size={24} />
+                <div style={{
+                  backgroundColor: '#ffc107',
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white'
+                }}>
+                  <AlertCircle size={24} />
+                </div>
+                <h3 style={{
+                  margin: 0,
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: '#1f2937'
+                }}>Revision Required</h3>
               </div>
-              <h3 style={{
-                margin: 0,
-                fontSize: '20px',
-                fontWeight: '700',
-                color: '#1f2937'
-              }}>Revision Required</h3>
-            </div>
 
-            <div style={{
-              padding: '16px',
-              backgroundColor: '#fff3cd',
-              border: '1px solid #ffc107',
-              borderRadius: '8px',
-              marginBottom: '24px'
-            }}>
-              <p style={{
-                margin: 0,
-                fontSize: '14px',
-                color: '#856404',
-                lineHeight: '1.6'
+              <div style={{
+                padding: '16px',
+                backgroundColor: '#fff3cd',
+                border: '1px solid #ffc107',
+                borderRadius: '8px',
+                marginBottom: '24px'
               }}>
-                {selectedRevisionNote}
-              </p>
-            </div>
+                <p style={{
+                  margin: 0,
+                  fontSize: '14px',
+                  color: '#856404',
+                  lineHeight: '1.6'
+                }}>
+                  {selectedRevisionNote}
+                </p>
+              </div>
 
-            <button
-              onClick={() => {
-                setShowRevisionNoteModal(false);
-                setSelectedRevisionNote('');
-              }}
-              style={{
-                width: '100%',
-                padding: '12px 24px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
-            >
-              Close
-            </button>
+              <button
+                onClick={() => {
+                  setShowRevisionNoteModal(false);
+                  setSelectedRevisionNote('');
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {/* )} */}
+        )
+        }
+        {/* )} */}
 
-      {/* Social Media Employee Selection Modal */}
-      {showSocialMediaEmployeeModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 2000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '20px',
-            padding: '40px',
-            maxWidth: '500px',
-            width: '90%',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
-          }}>
-            <h3 style={{
-              margin: '0 0 12px 0',
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#1f2937',
-              textAlign: 'center'
-            }}>Select Social Media Employee</h3>
-            <p style={{
-              margin: '0 0 32px 0',
-              fontSize: '14px',
-              color: '#6b7280',
-              textAlign: 'center'
-            }}>Choose who will handle client approval for this task</p>
-
+        {/* Social Media Employee Selection Modal */}
+        {
+          showSocialMediaEmployeeModal && (
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '12px',
-              marginBottom: '24px'
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 2000
             }}>
-              {employees
-                .filter(emp => emp.department === 'social-media' && emp.status === 'active')
-                .map(emp => (
-                  <button
-                    key={emp.id}
-                    onClick={() => handleSendToSocialMediaEmployee(emp.employeeName)}
-                    style={{
-                      background: 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '12px',
-                      padding: '16px 20px',
-                      fontSize: '15px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      boxShadow: '0 4px 12px rgba(29, 209, 161, 0.3)'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 6px 16px rgba(29, 209, 161, 0.4)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = '0 4px 12px rgba(29, 209, 161, 0.3)';
-                    }}
-                  >
-                    {emp.employeeName}
-                  </button>
-                ))}
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '20px',
+                padding: '40px',
+                maxWidth: '500px',
+                width: '90%',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+              }}>
+                <h3 style={{
+                  margin: '0 0 12px 0',
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#1f2937',
+                  textAlign: 'center'
+                }}>Select Social Media Employee</h3>
+                <p style={{
+                  margin: '0 0 32px 0',
+                  fontSize: '14px',
+                  color: '#6b7280',
+                  textAlign: 'center'
+                }}>Choose who will handle client approval for this task</p>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '12px',
+                  marginBottom: '24px'
+                }}>
+                  {employees
+                    .filter(emp => emp.department === 'social-media' && emp.status === 'active')
+                    .map(emp => (
+                      <button
+                        key={emp.id}
+                        onClick={() => handleSendToSocialMediaEmployee(emp.employeeName)}
+                        style={{
+                          background: 'linear-gradient(135deg, #1dd1a1 0%, #55efc4 100%)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '12px',
+                          padding: '16px 20px',
+                          fontSize: '15px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          boxShadow: '0 4px 12px rgba(29, 209, 161, 0.3)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = 'translateY(-2px)';
+                          e.target.style.boxShadow = '0 6px 16px rgba(29, 209, 161, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = '0 4px 12px rgba(29, 209, 161, 0.3)';
+                        }}
+                      >
+                        {emp.employeeName}
+                      </button>
+                    ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    setShowSocialMediaEmployeeModal(false);
+                    setSelectedTaskForSending(null);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 24px',
+                    background: '#f3f4f6',
+                    color: '#374151',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
+          )
+        }
 
-            <button
-              onClick={() => {
-                setShowSocialMediaEmployeeModal(false);
-                setSelectedTaskForSending(null);
-              }}
-              style={{
-                width: '100%',
-                padding: '12px 24px',
-                background: '#f3f4f6',
-                color: '#374151',
-                border: '1px solid #d1d5db',
-                borderRadius: '12px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Content Modal */}
-      {showContentModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 2000
-        }}
-          onClick={() => setShowContentModal(false)}
-        >
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: '32px',
-            maxWidth: '600px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-          }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{
-              margin: '0 0 20px 0',
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#1f2937'
-            }}>{modalTitle}</h3>
+        {/* Content Modal */}
+        {
+          showContentModal && (
             <div style={{
-              fontSize: '15px',
-              lineHeight: '1.6',
-              color: '#4b5563',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word'
-            }}>
-              {modalContent}
-            </div>
-            <button
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 2000
+            }}
               onClick={() => setShowContentModal(false)}
-              style={{
-                marginTop: '24px',
-                padding: '10px 24px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
             >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Special Notes Modal */}
-      {showNotesModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 2000
-        }}
-          onClick={() => setShowNotesModal(false)}
-        >
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: '32px',
-            maxWidth: '600px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-          }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{
-              margin: '0 0 20px 0',
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#1f2937'
-            }}>{modalTitle}</h3>
-            <div style={{
-              fontSize: '15px',
-              lineHeight: '1.6',
-              color: '#4b5563',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word'
-            }}>
-              {modalContent}
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '16px',
+                padding: '32px',
+                maxWidth: '600px',
+                width: '90%',
+                maxHeight: '80vh',
+                overflow: 'auto',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+              }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 style={{
+                  margin: '0 0 20px 0',
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#1f2937'
+                }}>{modalTitle}</h3>
+                <div style={{
+                  fontSize: '15px',
+                  lineHeight: '1.6',
+                  color: '#4b5563',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word'
+                }}>
+                  {modalContent}
+                </div>
+                <button
+                  onClick={() => setShowContentModal(false)}
+                  style={{
+                    marginTop: '24px',
+                    padding: '10px 24px',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close
+                </button>
+              </div>
             </div>
-            <button
+          )
+        }
+
+        {/* Special Notes Modal */}
+        {
+          showNotesModal && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 2000
+            }}
               onClick={() => setShowNotesModal(false)}
-              style={{
-                marginTop: '24px',
-                padding: '10px 24px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
             >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '16px',
+                padding: '32px',
+                maxWidth: '600px',
+                width: '90%',
+                maxHeight: '80vh',
+                overflow: 'auto',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+              }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 style={{
+                  margin: '0 0 20px 0',
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#1f2937'
+                }}>{modalTitle}</h3>
+                <div style={{
+                  fontSize: '15px',
+                  lineHeight: '1.6',
+                  color: '#4b5563',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word'
+                }}>
+                  {modalContent}
+                </div>
+                <button
+                  onClick={() => setShowNotesModal(false)}
+                  style={{
+                    marginTop: '24px',
+                    padding: '10px 24px',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )
+        }
+      </div >
+    </div >
   );
 }
 
