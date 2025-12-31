@@ -2063,7 +2063,7 @@ const ProductionIncharge = () => {
           </div>
 
           <div className="production-sidebar-section">
-            {/* <div className="production-sidebar-section-title">Actions</div> */}
+            {/* <div className="production-sidebar-section-title"></div> */}
             <ul className="production-sidebar-menu">
               <li className="production-sidebar-menu-item">
                 <button
@@ -2408,7 +2408,7 @@ const ProductionIncharge = () => {
                           POST DATE
                         </th>
                         <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
-                          ACTIONS
+                          
                         </th>
                       </tr>
                     </thead>
