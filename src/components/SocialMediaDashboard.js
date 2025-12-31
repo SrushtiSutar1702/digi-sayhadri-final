@@ -1895,60 +1895,48 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                   <div
                     onClick={() => handleStatCardClick('all')}
                     style={{
+                      background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
                       borderRadius: '16px',
                       padding: '24px',
-                      background: activeFilter === 'all'
-                        ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
-                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
+                      boxShadow: '0 4px 15px rgba(255, 94, 98, 0.3)',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      boxShadow: activeFilter === 'all'
-                        ? '0 8px 20px rgba(102,126,234,0.4)'
-                        : '0 4px 12px rgba(102,126,234,0.2)',
-                      transform: activeFilter === 'all' ? 'translateY(-2px)' : 'translateY(0)',
-                      border: activeFilter === 'all' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                      position: 'relative',
                       display: 'flex',
-                      flexDirection: 'row',
                       alignItems: 'center',
-                      textAlign: 'left',
-                      gap: '16px'
+                      gap: '20px',
+                      transform: activeFilter === 'all' ? 'translateY(-5px)' : 'translateY(0)',
+                      border: activeFilter === 'all' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                      position: 'relative'
                     }}
                     onMouseEnter={(e) => {
                       if (activeFilter !== 'all') {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.transform = 'translateY(-5px)';
                         e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'all') {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102,126,234,0.2)';
+                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 94, 98, 0.3)';
                       }
                     }}>
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
                       background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <Briefcase size={24} />
+                      <Briefcase size={30} color="white" />
                     </div>
                     <div>
-                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                        {allMonthTasks.length}
-                      </h3>
-                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                        Total Tasks
-                      </p>
-                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
-                        📊 Tasks for selected month
-                      </small>
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.length}</h3>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Total Tasks</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Tasks for selected month</p>
                     </div>
                     {activeFilter === 'all' && (
                       <div style={{
@@ -1973,60 +1961,48 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                   <div
                     onClick={() => handleStatCardClick('approved')}
                     style={{
+                      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
                       borderRadius: '16px',
                       padding: '24px',
-                      background: activeFilter === 'approved'
-                        ? 'linear-gradient(135deg, #4a9625 0%, #96d9b8 100%)'
-                        : 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
                       color: 'white',
+                      boxShadow: '0 4px 15px rgba(56, 239, 125, 0.3)',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      boxShadow: activeFilter === 'approved'
-                        ? '0 8px 20px rgba(86,171,47,0.4)'
-                        : '0 4px 12px rgba(86,171,47,0.2)',
-                      transform: activeFilter === 'approved' ? 'translateY(-2px)' : 'translateY(0)',
-                      border: activeFilter === 'approved' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                      position: 'relative',
                       display: 'flex',
-                      flexDirection: 'row',
                       alignItems: 'center',
-                      textAlign: 'left',
-                      gap: '16px'
+                      gap: '20px',
+                      transform: activeFilter === 'approved' ? 'translateY(-5px)' : 'translateY(0)',
+                      border: activeFilter === 'approved' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                      position: 'relative'
                     }}
                     onMouseEnter={(e) => {
                       if (activeFilter !== 'approved') {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.transform = 'translateY(-5px)';
                         e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'approved') {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(86,171,47,0.2)';
+                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(56, 239, 125, 0.3)';
                       }
                     }}>
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
                       background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <CheckCircle size={24} />
+                      <CheckCircle size={30} color="white" />
                     </div>
                     <div>
-                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                        {allMonthTasks.filter(t => t.status === 'approved').length}
-                      </h3>
-                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                        Ready to Post
-                      </p>
-                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
-                        ✅ Approved and ready
-                      </small>
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.filter(t => t.status === 'approved').length}</h3>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Ready to Post</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Approved and ready</p>
                     </div>
                     {activeFilter === 'approved' && (
                       <div style={{
@@ -2051,60 +2027,48 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                   <div
                     onClick={() => handleStatCardClick('posted')}
                     style={{
+                      background: 'linear-gradient(135deg, #EA384D 0%, #D31027 100%)',
                       borderRadius: '16px',
                       padding: '24px',
-                      background: activeFilter === 'posted'
-                        ? 'linear-gradient(135deg, #17b584 0%, #4dd9b2 100%)'
-                        : 'linear-gradient(135deg, #37B46F 0%, #55efc4 100%)',
                       color: 'white',
+                      boxShadow: '0 4px 15px rgba(211, 16, 39, 0.3)',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      boxShadow: activeFilter === 'posted'
-                        ? '0 8px 20px rgba(0,184,148,0.4)'
-                        : '0 4px 12px rgba(0,184,148,0.2)',
-                      transform: activeFilter === 'posted' ? 'translateY(-2px)' : 'translateY(0)',
-                      border: activeFilter === 'posted' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent',
-                      position: 'relative',
                       display: 'flex',
-                      flexDirection: 'row',
                       alignItems: 'center',
-                      textAlign: 'left',
-                      gap: '16px'
+                      gap: '20px',
+                      transform: activeFilter === 'posted' ? 'translateY(-5px)' : 'translateY(0)',
+                      border: activeFilter === 'posted' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                      position: 'relative'
                     }}
                     onMouseEnter={(e) => {
                       if (activeFilter !== 'posted') {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.transform = 'translateY(-5px)';
                         e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (activeFilter !== 'posted') {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,184,148,0.2)';
+                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(211, 16, 39, 0.3)';
                       }
                     }}>
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
                       background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <Send size={24} />
+                      <Send size={30} color="white" />
                     </div>
                     <div>
-                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                        {allMonthTasks.filter(t => t.status === 'posted').length}
-                      </h3>
-                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                        Posted
-                      </p>
-                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
-                        📤 Published on social media
-                      </small>
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{allMonthTasks.filter(t => t.status === 'posted').length}</h3>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Posted</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Published on social media</p>
                     </div>
                     {activeFilter === 'posted' && (
                       <div style={{
@@ -2128,50 +2092,43 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                   {/* Completion Rate */}
                   <div
                     style={{
+                      background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
                       borderRadius: '16px',
                       padding: '24px',
-                      background: 'linear-gradient(135deg, #e91e63 0%, #f48fb1 100%)',
                       color: 'white',
+                      boxShadow: '0 4px 15px rgba(74, 0, 224, 0.3)',
                       transition: 'all 0.2s ease',
-                      boxShadow: '0 4px 12px rgba(233,30,99,0.2)',
-                      position: 'relative',
                       display: 'flex',
-                      flexDirection: 'row',
                       alignItems: 'center',
-                      textAlign: 'left',
-                      gap: '16px'
+                      gap: '20px'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(233,30,99,0.3)';
+                      e.currentTarget.style.transform = 'translateY(-5px)';
+                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(74, 0, 224, 0.4)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(233,30,99,0.2)';
+                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(74, 0, 224, 0.3)';
                     }}>
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
                       background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '50%',
+                      width: '60px',
+                      height: '60px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <TrendingUp size={24} />
+                      <TrendingUp size={30} color="white" />
                     </div>
                     <div>
-                      <h3 style={{ margin: '0 0 4px 0', fontSize: '32px', fontWeight: '700', lineHeight: 1 }}>
-                        {allMonthTasks.filter(t => t.status === 'approved').length > 0 ?
+                      <h3 style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>
+                        {allMonthTasks.filter(t => t.status === 'approved' || t.status === 'posted').length > 0 ?
                           Math.round((allMonthTasks.filter(t => t.status === 'posted').length / allMonthTasks.filter(t => t.status === 'approved' || t.status === 'posted').length) * 100) : 0}%
                       </h3>
-                      <p style={{ margin: '0 0 2px 0', fontSize: '16px', fontWeight: '600', opacity: 0.9 }}>
-                        Completion Rate
-                      </p>
-                      <small style={{ display: 'block', fontSize: '11px', opacity: 0.8, fontWeight: '500' }}>
-                        📈 Posted vs approved ratio
-                      </small>
+                      <p style={{ margin: '4px 0', fontSize: '16px', fontWeight: '600' }}>Completion Rate</p>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Posted vs approved ratio</p>
                     </div>
                   </div>
                 </div>
@@ -2231,63 +2188,63 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                   marginBottom: '32px'
                 }}>
                   {/* Daily Report Card */}
-                  <div style={{
-                    borderRadius: '20px',
-                    padding: '32px',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  <div className="employee-card daily-report-card" style={{
+                    background: 'linear-gradient(135deg, #37B46F 0%, #2d9159 100%)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    boxShadow: '0 4px 12px rgba(102,126,234,0.2)',
+                    border: 'none',
                     color: 'white',
-                    boxShadow: '0 8px 24px rgba(102, 126, 234, 0.25)',
                     transition: 'all 0.3s ease'
                   }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-4px)';
-                      e.currentTarget.style.boxShadow = '0 12px 32px rgba(102, 126, 234, 0.35)';
+                      e.currentTarget.style.boxShadow = '0 8px 16px rgba(102, 126, 234, 0.3)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
                     }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '12px',
-                          background: 'rgba(255, 255, 255, 0.2)',
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '20px',
+                      flexWrap: 'wrap',
+                      gap: '16px'
+                    }}>
+                      <div>
+                        <h2 style={{
+                          fontSize: '20px',
+                          fontWeight: '700',
+                          margin: '0 0 8px 0',
+                          color: 'white',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '24px'
+                          gap: '8px'
+                        }}>📊 Daily Report</h2>
+                        <p style={{
+                          fontSize: '14px',
+                          margin: 0,
+                          opacity: 0.9
                         }}>
-                          📊
-                        </div>
-                        <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '700' }}>Daily Report</h3>
+                          {today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        </p>
                       </div>
                       <div style={{
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        padding: '6px 14px',
+                        background: 'rgba(255,255,255,0.2)',
+                        padding: '8px 16px',
                         borderRadius: '20px',
-                        fontSize: '13px',
+                        fontSize: '14px',
                         fontWeight: '600'
                       }}>
-                        📈 Graphics
+                        📋 Social Media
                       </div>
-                    </div>
-
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      marginBottom: '20px'
-                    }}>
-                      <p style={{ margin: '0 0 4px 0', fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>
-                        {today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                      </p>
                     </div>
 
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
                       gap: '16px',
                       marginBottom: '20px'
                     }}>
@@ -2297,7 +2254,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{todayTasks.length}</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{todayTasks.length}</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>Today's Tasks</div>
                       </div>
                       <div style={{
@@ -2306,7 +2263,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{todayCompleted}</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{todayCompleted}</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>Completed</div>
                       </div>
                       <div style={{
@@ -2315,7 +2272,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{todayInProgress}</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{todayInProgress}</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>In Progress</div>
                       </div>
                       <div style={{
@@ -2324,7 +2281,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{todaySuccessRate}%</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{todaySuccessRate}%</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>Success Rate</div>
                       </div>
                     </div>
@@ -2339,7 +2296,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         width: '100%',
                         padding: '14px',
                         background: 'rgba(255, 255, 255, 0.2)',
-                        border: 'none',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
                         borderRadius: '10px',
                         color: 'white',
                         fontSize: '14px',
@@ -2353,53 +2310,66 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                        e.currentTarget.style.transform = 'translateY(0)';
                       }}
                     >
-                      👁️ View Today's Tasks
+                      🎯 View Today's Tasks
                     </button>
                   </div>
 
                   {/* Weekly Summary Card */}
-                  <div style={{
+                  <div className="employee-card team-performance-card" style={{
+                    background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
                     borderRadius: '20px',
-                    padding: '32px',
-                    background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                    padding: '24px',
                     color: 'white',
-                    boxShadow: '0 8px 24px rgba(17, 153, 142, 0.25)',
-                    transition: 'all 0.3s ease'
+                    boxShadow: '0 4px 12px rgba(86,171,47,0.2)',
+                    transition: 'all 0.3s ease',
+                    border: 'none'
                   }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-4px)';
-                      e.currentTarget.style.boxShadow = '0 12px 32px rgba(17, 153, 142, 0.35)';
+                      e.currentTarget.style.boxShadow = '0 8px 16px rgba(86, 171, 47, 0.3)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(17, 153, 142, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(86, 171, 47, 0.2)';
                     }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '12px',
-                          background: 'rgba(255, 255, 255, 0.2)',
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '20px',
+                      flexWrap: 'wrap',
+                      gap: '16px'
+                    }}>
+                      <div>
+                        <h2 style={{
+                          fontSize: '20px',
+                          fontWeight: '700',
+                          margin: '0 0 8px 0',
+                          color: 'white',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '24px'
+                          gap: '8px'
+                        }}>📈 Weekly Summary</h2>
+                        <p style={{
+                          fontSize: '14px',
+                          margin: 0,
+                          opacity: 0.9
                         }}>
-                          📅
-                        </div>
-                        <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '700' }}>Weekly Summary</h3>
+                          {weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </p>
                       </div>
                       <div style={{
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        padding: '6px 14px',
+                        background: 'rgba(255,255,255,0.2)',
+                        padding: '8px 16px',
                         borderRadius: '20px',
-                        fontSize: '13px',
+                        fontSize: '14px',
                         fontWeight: '600'
                       }}>
                         This Week
@@ -2407,19 +2377,8 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                     </div>
 
                     <div style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      marginBottom: '20px'
-                    }}>
-                      <p style={{ margin: '0 0 4px 0', fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>
-                        {weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </p>
-                    </div>
-
-                    <div style={{
                       display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
                       gap: '16px',
                       marginBottom: '20px'
                     }}>
@@ -2429,7 +2388,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{weekTasks.length}</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{weekTasks.length}</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>Weekly Tasks</div>
                       </div>
                       <div style={{
@@ -2438,7 +2397,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{weekCompleted}</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{weekCompleted}</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>Completed</div>
                       </div>
                       <div style={{
@@ -2447,7 +2406,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{weekOverdue}</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{weekOverdue}</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>Overdue</div>
                       </div>
                       <div style={{
@@ -2456,7 +2415,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         padding: '20px',
                         textAlign: 'center'
                       }}>
-                        <div style={{ fontSize: '32px', fontWeight: '700', marginBottom: '4px' }}>{weekEfficiency}%</div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>{weekEfficiency}%</div>
                         <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '500' }}>My Efficiency</div>
                       </div>
                     </div>
@@ -2471,7 +2430,7 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                         width: '100%',
                         padding: '14px',
                         background: 'rgba(255, 255, 255, 0.2)',
-                        border: 'none',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
                         borderRadius: '10px',
                         color: 'white',
                         fontSize: '14px',
@@ -2485,12 +2444,14 @@ const SocialMediaDashboard = ({ initialView = 'dashboard', isSuperAdmin = false,
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                        e.currentTarget.style.transform = 'translateY(0)';
                       }}
                     >
-                      📋 View All Tasks
+                      📊 View All Tasks
                     </button>
                   </div>
                 </div>

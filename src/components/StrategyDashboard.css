@@ -18,7 +18,7 @@
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 1000;
+  z-index: 1100;
   box-shadow: 4px 0 12px rgba(52, 58, 64, 0.15);
 }
 
@@ -935,17 +935,17 @@
   .strategy-sidebar {
     width: 240px;
   }
-  
+
   .strategy-main-content {
     margin-left: 240px;
   }
-  
+
   /* Make tables scrollable on tablets */
   .strategy-table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .strategy-clients-table {
     min-width: 900px;
   }
@@ -958,16 +958,16 @@
     position: relative;
     min-height: auto;
   }
-  
+
   .strategy-main-content {
     margin-left: 0;
     padding: 16px;
   }
-  
+
   .strategy-dashboard {
     flex-direction: column;
   }
-  
+
   .strategy-sidebar-user {
     position: relative;
     bottom: auto;
@@ -975,111 +975,111 @@
     right: auto;
     margin-top: 24px;
   }
-  
+
   .strategy-stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
-  
+
   .strategy-form-row {
     grid-template-columns: 1fr;
   }
-  
+
   /* Header responsive */
   .strategy-header {
     padding: 16px;
   }
-  
+
   .strategy-header-content {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .strategy-header-right {
     width: 100%;
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .strategy-filter-group {
     width: 100%;
   }
-  
+
   .strategy-filter-input {
     width: 100%;
   }
-  
+
   /* Table responsive - make scrollable */
   .strategy-table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border-radius: 8px;
   }
-  
+
   .strategy-clients-table {
     min-width: 800px;
     font-size: 13px;
   }
-  
+
   .strategy-clients-table th,
   .strategy-clients-table td {
     padding: 10px 8px;
     white-space: nowrap;
   }
-  
+
   /* Client tasks section responsive */
   .strategy-client-section {
     margin-bottom: 20px;
   }
-  
+
   /* Search and action buttons responsive */
-  .strategy-client-section > div:first-child {
+  .strategy-client-section>div:first-child {
     flex-direction: column;
     align-items: stretch !important;
   }
-  
-  .strategy-client-section > div:first-child > div:last-child {
+
+  .strategy-client-section>div:first-child>div:last-child {
     flex-direction: column;
     gap: 12px !important;
   }
-  
+
   /* Calendar responsive */
   .strategy-calendar-grid {
     gap: 1px;
     padding: 8px;
   }
-  
+
   .strategy-calendar-day {
     min-height: 60px;
     padding: 4px;
     font-size: 12px;
   }
-  
+
   .strategy-calendar-day-name {
     padding: 10px 2px;
     font-size: 12px;
   }
-  
+
   /* Modal responsive */
   .strategy-modal {
     padding: 10px;
   }
-  
+
   .strategy-modal-content {
     max-width: 100%;
     max-height: 90vh;
   }
-  
+
   /* Stat cards responsive */
   .strategy-stat-card {
     padding: 20px 16px;
   }
-  
+
   .strategy-stat-card h3 {
     font-size: 28px;
   }
-  
+
   .strategy-stat-card p {
     font-size: 14px;
   }
@@ -1090,28 +1090,28 @@
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .strategy-sidebar {
     padding: 12px 0;
   }
-  
+
   .strategy-main-content {
     padding: 12px;
   }
-  
+
   .strategy-header {
     padding: 12px;
     margin-bottom: 16px;
   }
-  
+
   .strategy-header-title h1 {
     font-size: 20px;
   }
-  
+
   .strategy-header-title p {
     font-size: 14px;
   }
-  
+
   /* Make tables fully scrollable on mobile */
   .strategy-table-container {
     overflow-x: auto;
@@ -1119,114 +1119,114 @@
     margin: 0 -12px;
     padding: 0 12px;
   }
-  
+
   .strategy-clients-table {
     min-width: 700px;
     font-size: 12px;
   }
-  
+
   .strategy-clients-table th,
   .strategy-clients-table td {
     padding: 8px 6px;
   }
-  
+
   /* Compact buttons on mobile */
   .strategy-btn {
     padding: 10px 16px;
     font-size: 13px;
   }
-  
+
   /* Calendar more compact on mobile */
   .strategy-calendar-grid {
     padding: 4px;
     gap: 1px;
   }
-  
+
   .strategy-calendar-day {
     min-height: 45px;
     padding: 2px;
     font-size: 11px;
   }
-  
+
   .strategy-calendar-day-name {
     padding: 8px 2px;
     font-size: 11px;
   }
-  
+
   .strategy-day-number {
     font-size: 12px;
   }
-  
+
   /* Form inputs more compact */
   .strategy-form-input {
     padding: 10px 12px;
     font-size: 14px;
   }
-  
+
   /* Stat cards more compact */
   .strategy-stat-card {
     padding: 16px 12px;
   }
-  
+
   .strategy-stat-card h3 {
     font-size: 24px;
   }
-  
+
   .strategy-stat-card p {
     font-size: 13px;
   }
-  
+
   .strategy-stat-card small {
     font-size: 11px;
   }
-  
+
   /* Client avatar smaller */
   .client-avatar {
     width: 32px;
     height: 32px;
     font-size: 14px;
   }
-  
+
   /* Stage badges more compact */
-  .strategy-client-section td > div {
+  .strategy-client-section td>div {
     flex-wrap: wrap;
     gap: 4px !important;
   }
-  
-  .strategy-client-section td > div > div {
+
+  .strategy-client-section td>div>div {
     min-width: 45px !important;
     padding: 3px 6px !important;
     font-size: 10px !important;
   }
-  
+
   /* Notification panel responsive */
-  .strategy-header-right > div[style*="position: relative"] > div[style*="position: absolute"] {
+  .strategy-header-right>div[style*="position: relative"]>div[style*="position: absolute"] {
     width: 95vw !important;
     right: -10px !important;
     left: auto !important;
   }
-  
+
   /* Modal full screen on mobile */
   .strategy-modal-content {
     border-radius: 12px;
     max-height: 95vh;
   }
-  
+
   .strategy-modal-body {
     padding: 16px;
   }
-  
+
   /* Form container responsive */
   .strategy-form-container {
     padding: 16px;
     margin-bottom: 16px;
   }
-  
+
   /* Client section search bar */
   .strategy-client-section input[type="text"] {
     min-width: 100% !important;
   }
-  
+
   /* Action buttons stack on mobile */
   .strategy-client-section button {
     width: 100%;
@@ -1244,6 +1244,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1259,6 +1260,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1283,8 +1285,13 @@
 }
 
 @keyframes strategySpinner {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Utility Classes */
@@ -1348,7 +1355,7 @@
   right: 0;
   bottom: 0;
   width: 30px;
-  background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
@@ -1358,21 +1365,21 @@
   .strategy-table-container::after {
     opacity: 1;
   }
-  
+
   .strategy-table-container::-webkit-scrollbar {
     height: 8px;
   }
-  
+
   .strategy-table-container::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
   }
-  
+
   .strategy-table-container::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 4px;
   }
-  
+
   .strategy-table-container::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
@@ -1829,12 +1836,12 @@
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .strategy-header-right {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .strategy-month-filter {
     order: -1;
   }
@@ -2187,7 +2194,7 @@
   background-color: white;
   border: 2px solid #4B49AC;
   border-radius: 12px;
-  box-shadow: 0 12px 28px rgba(75, 73, 172, 0.3), 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 28px rgba(75, 73, 172, 0.3), 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 10001;
   min-width: 220px;
   max-height: 300px;
@@ -2219,10 +2226,13 @@
 
 /* Notification Badge Pulse Animation */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
   }
+
   50% {
     transform: scale(1.05);
     box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);
@@ -2235,6 +2245,7 @@
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -2243,9 +2254,12 @@
 
 /* Pulse animation for notification badge */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.7;
   }
@@ -2258,16 +2272,17 @@
 }
 
 @media (max-width: 768px) {
+
   /* Hide table view on mobile */
   .strategy-clients-table {
     display: none;
   }
-  
+
   /* Show card view on mobile */
   .client-card-view {
     display: block;
   }
-  
+
   .client-card {
     background: white;
     border-radius: 12px;
@@ -2276,7 +2291,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #e5e7eb;
   }
-  
+
   .client-card-header {
     display: flex;
     align-items: center;
@@ -2285,14 +2300,14 @@
     padding-bottom: 12px;
     border-bottom: 1px solid #f3f4f6;
   }
-  
+
   .client-card-header-left {
     display: flex;
     align-items: center;
     gap: 12px;
     flex: 1;
   }
-  
+
   .client-card-avatar {
     width: 48px;
     height: 48px;
@@ -2306,12 +2321,12 @@
     font-size: 18px;
     flex-shrink: 0;
   }
-  
+
   .client-card-info {
     flex: 1;
     min-width: 0;
   }
-  
+
   .client-card-name {
     font-size: 16px;
     font-weight: 600;
@@ -2321,33 +2336,33 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
+
   .client-card-id {
     font-size: 13px;
     color: #6366f1;
     font-weight: 600;
   }
-  
+
   .client-card-checkbox {
     width: 20px;
     height: 20px;
     cursor: pointer;
     flex-shrink: 0;
   }
-  
+
   .client-card-body {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .client-card-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 0;
   }
-  
+
   .client-card-label {
     font-size: 12px;
     color: #6b7280;
@@ -2355,20 +2370,20 @@
     text-transform: uppercase;
     letter-spacing: 0.025em;
   }
-  
+
   .client-card-value {
     font-size: 14px;
     color: #1f2937;
     font-weight: 600;
   }
-  
+
   .client-card-stages {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
     margin-top: 4px;
   }
-  
+
   .client-card-stage-badge {
     background: #f3f4f6;
     border: 2px solid #e5e7eb;
@@ -2380,35 +2395,35 @@
     min-width: 50px;
     text-align: center;
   }
-  
+
   .client-card-stage-badge.active {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
-  
+
   .client-card-stage-badge.info-gathering {
     background: #dbeafe;
     border-color: #1e40af;
     color: #1e40af;
   }
-  
+
   .client-card-stage-badge.strategy-prep {
     background: #e0e7ff;
     border-color: #4338ca;
     color: #4338ca;
   }
-  
+
   .client-card-stage-badge.internal-approval {
     background: #fce7f3;
     border-color: #ec4899;
     color: #ec4899;
   }
-  
+
   .client-card-stage-badge.client-approval {
     background: #fef3c7;
     border-color: #f59e0b;
     color: #f59e0b;
   }
-  
+
   .client-card-status-badge {
     padding: 6px 12px;
     border-radius: 16px;
@@ -2416,24 +2431,24 @@
     font-weight: 600;
     text-transform: uppercase;
   }
-  
+
   .client-card-status-badge.active {
     background: #dcfce7;
     color: #166534;
   }
-  
+
   .client-card-status-badge.pending {
     background: #fef3c7;
     color: #92400e;
   }
-  
+
   .client-card-notification {
     width: 8px;
     height: 8px;
     background: #ef4444;
     border-radius: 50%;
   }
-  
+
   .client-card-footer {
     margin-top: 12px;
     padding-top: 12px;
@@ -2442,12 +2457,12 @@
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .client-card-date {
     font-size: 12px;
     color: #6b7280;
   }
-  
+
   .client-card-view-btn {
     background: linear-gradient(135deg, #4B49AC 0%, #7DA0FA 100%);
     color: white;
@@ -2459,7 +2474,7 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  
+
   .client-card-view-btn:active {
     transform: scale(0.95);
   }
@@ -2470,21 +2485,21 @@
     padding: 14px;
     margin-bottom: 12px;
   }
-  
+
   .client-card-avatar {
     width: 40px;
     height: 40px;
     font-size: 16px;
   }
-  
+
   .client-card-name {
     font-size: 15px;
   }
-  
+
   .client-card-stages {
     gap: 4px;
   }
-  
+
   .client-card-stage-badge {
     padding: 5px 8px;
     font-size: 10px;
@@ -2499,15 +2514,16 @@
 }
 
 @media (max-width: 768px) {
+
   /* Hide table on mobile, show cards instead */
   .strategy-clients-table {
     display: none;
   }
-  
+
   .client-card-mobile {
     display: block;
   }
-  
+
   .client-card {
     background: white;
     border-radius: 12px;
@@ -2517,12 +2533,12 @@
     border: 1px solid #e5e7eb;
     transition: all 0.2s ease;
   }
-  
+
   .client-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
   }
-  
+
   .client-card-header {
     display: flex;
     align-items: center;
@@ -2531,14 +2547,14 @@
     padding-bottom: 12px;
     border-bottom: 1px solid #f3f4f6;
   }
-  
+
   .client-card-info {
     display: flex;
     align-items: center;
     gap: 12px;
     flex: 1;
   }
-  
+
   .client-card .client-avatar {
     width: 48px;
     height: 48px;
@@ -2552,12 +2568,12 @@
     font-size: 18px;
     flex-shrink: 0;
   }
-  
+
   .client-card-name-section {
     flex: 1;
     min-width: 0;
   }
-  
+
   .client-card-name {
     font-size: 16px;
     font-weight: 600;
@@ -2567,33 +2583,33 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   .client-card-id {
     font-size: 13px;
     color: #6366f1;
     font-weight: 600;
   }
-  
+
   .client-card-checkbox {
     width: 20px;
     height: 20px;
     cursor: pointer;
     flex-shrink: 0;
   }
-  
+
   .client-card-body {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .client-card-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 0;
   }
-  
+
   .client-card-label {
     font-size: 12px;
     font-weight: 600;
@@ -2601,20 +2617,20 @@
     text-transform: uppercase;
     letter-spacing: 0.025em;
   }
-  
+
   .client-card-value {
     font-size: 14px;
     font-weight: 600;
     color: #374151;
   }
-  
+
   .client-card-stages {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     justify-content: flex-end;
   }
-  
+
   .client-card-stage-badge {
     background: #f3f4f6;
     border: 2px solid #e5e7eb;
@@ -2626,35 +2642,35 @@
     min-width: 50px;
     text-align: center;
   }
-  
+
   .client-card-stage-badge.active {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
-  
+
   .client-card-stage-badge.stage-info {
     background: #dbeafe;
     border-color: #1e40af;
     color: #1e40af;
   }
-  
+
   .client-card-stage-badge.stage-strategy {
     background: #e0e7ff;
     border-color: #4338ca;
     color: #4338ca;
   }
-  
+
   .client-card-stage-badge.stage-internal {
     background: #fce7f3;
     border-color: #ec4899;
     color: #ec4899;
   }
-  
+
   .client-card-stage-badge.stage-client {
     background: #fef3c7;
     border-color: #f59e0b;
     color: #f59e0b;
   }
-  
+
   .client-card-status {
     display: inline-block;
     padding: 6px 12px;
@@ -2663,23 +2679,23 @@
     font-weight: 600;
     text-transform: uppercase;
   }
-  
+
   .client-card-status.active {
     background: #dcfce7;
     color: #166534;
   }
-  
+
   .client-card-status.pending {
     background: #fef3c7;
     color: #92400e;
   }
-  
+
   .client-card-footer {
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid #f3f4f6;
   }
-  
+
   .client-card-view-btn {
     width: 100%;
     padding: 12px;
@@ -2696,12 +2712,12 @@
     gap: 8px;
     transition: all 0.2s ease;
   }
-  
+
   .client-card-view-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   }
-  
+
   .client-card-notification {
     display: flex;
     align-items: center;
@@ -2714,7 +2730,7 @@
     font-size: 11px;
     font-weight: 700;
   }
-  
+
   .client-card-updated {
     font-size: 11px;
     color: #9ca3af;
@@ -2728,21 +2744,21 @@
     padding: 14px;
     margin-bottom: 12px;
   }
-  
+
   .client-card .client-avatar {
     width: 40px;
     height: 40px;
     font-size: 16px;
   }
-  
+
   .client-card-name {
     font-size: 15px;
   }
-  
+
   .client-card-stages {
     gap: 4px;
   }
-  
+
   .client-card-stage-badge {
     padding: 3px 8px;
     font-size: 10px;
@@ -2757,15 +2773,16 @@
 }
 
 @media (max-width: 768px) {
+
   /* Hide ALL tables on mobile in modal */
   .strategy-modal-body table {
     display: none !important;
   }
-  
+
   .client-progress-card-mobile {
     display: block;
   }
-  
+
   .progress-stage-card {
     background: white;
     border-radius: 10px;
@@ -2775,22 +2792,22 @@
     border: 1px solid #e5e7eb;
     transition: all 0.2s ease;
   }
-  
+
   .progress-stage-card.active {
     border: 2px solid;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
-  
+
   .progress-stage-card.completed {
     background: #f0fdf4;
     border-color: #16a34a;
   }
-  
+
   .progress-stage-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
-  
+
   .progress-card-header {
     display: flex;
     align-items: center;
@@ -2799,37 +2816,37 @@
     padding-bottom: 10px;
     border-bottom: 1px solid #f3f4f6;
   }
-  
+
   .progress-card-client-info {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  
+
   .progress-card-client-id {
     font-size: 14px;
     font-weight: 700;
     color: #6366f1;
   }
-  
+
   .progress-card-client-name {
     font-size: 14px;
     font-weight: 600;
     color: #374151;
   }
-  
+
   .progress-card-body {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .progress-card-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .progress-card-label {
     font-size: 11px;
     font-weight: 600;
@@ -2837,13 +2854,13 @@
     text-transform: uppercase;
     letter-spacing: 0.025em;
   }
-  
+
   .progress-card-value {
     font-size: 13px;
     font-weight: 500;
     color: #374151;
   }
-  
+
   .progress-card-stage-badge {
     display: inline-flex;
     align-items: center;
@@ -2853,31 +2870,31 @@
     font-weight: 600;
     border: 1px solid;
   }
-  
+
   .progress-card-stage-badge.info-gathering {
     background: #dbeafe;
     color: #1e40af;
     border-color: #1e40af;
   }
-  
+
   .progress-card-stage-badge.strategy-prep {
     background: #e0e7ff;
     color: #4338ca;
     border-color: #4338ca;
   }
-  
+
   .progress-card-stage-badge.internal-approval {
     background: #fce7f3;
     color: #ec4899;
     border-color: #ec4899;
   }
-  
+
   .progress-card-stage-badge.client-approval {
     background: #fef3c7;
     color: #f59e0b;
     border-color: #f59e0b;
   }
-  
+
   .progress-card-status {
     display: inline-block;
     padding: 5px 10px;
@@ -2886,28 +2903,28 @@
     font-weight: 600;
     text-transform: uppercase;
   }
-  
+
   .progress-card-status.completed {
     background: #dcfce7;
     color: #16a34a;
   }
-  
+
   .progress-card-status.in-progress {
     background: #fef3c7;
     color: #f59e0b;
   }
-  
+
   .progress-card-status.pending {
     background: #f3f4f6;
     color: #9ca3af;
   }
-  
+
   .progress-card-action {
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid #f3f4f6;
   }
-  
+
   .progress-card-action button {
     width: 100%;
     padding: 8px 16px;
@@ -2918,29 +2935,29 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  
+
   .progress-card-action button.complete-btn {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   }
-  
+
   .progress-card-action button.complete-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
   }
-  
+
   .progress-card-action button.show-tasks-btn {
     background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     color: white;
     box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
   }
-  
+
   .progress-card-action button.show-tasks-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
   }
-  
+
   .progress-card-action .completed-badge {
     display: inline-flex;
     align-items: center;
@@ -2960,12 +2977,12 @@
     padding: 12px;
     margin-bottom: 10px;
   }
-  
+
   .progress-card-client-id,
   .progress-card-client-name {
     font-size: 13px;
   }
-  
+
   .progress-card-stage-badge {
     font-size: 11px;
     padding: 5px 10px;

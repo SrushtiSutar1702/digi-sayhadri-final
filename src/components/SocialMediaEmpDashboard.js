@@ -1155,324 +1155,364 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
             <div className="stats-row" style={{
               marginBottom: '32px',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gridTemplateColumns: 'repeat(4, 1fr)',
               gap: '24px'
             }}>
               <div
-                className="stat-card stat-total"
+                className="stat-card"
                 onClick={() => handleStatCardClick('all')}
                 style={{
-                  background: 'linear-gradient(135deg, #FF9F43 0%, #ff6b6b 100%)',
+                  background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(255, 159, 67, 0.4)',
+                  boxShadow: '0 4px 15px rgba(255, 94, 98, 0.3)',
                   borderRadius: '20px',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '32px 24px',
+                  padding: '24px',
                   gap: '20px',
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative',
+                  border: activeFilter === 'all' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                  transform: activeFilter === 'all' ? 'translateY(-5px)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(255, 159, 67, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 94, 98, 0.4)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 159, 67, 0.4)';
+                  e.currentTarget.style.transform = activeFilter === 'all' ? 'translateY(-5px)' : 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 94, 98, 0.3)';
                 }}
               >
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <Briefcase size={32} strokeWidth={2.5} />
+                  <Briefcase size={30} color="white" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.total}</h3>
-                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Total Tasks</p>
-                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Tasks for selected month</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '32px', margin: 0, fontWeight: 'bold' }}>{stats.total}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, fontWeight: '600' }}>TOTAL TASKS</p>
+                  <p style={{ fontSize: '12px', margin: 0, opacity: 0.9 }}>Tasks for selected month</p>
                 </div>
+                {activeFilter === 'all' && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>✓</div>
+                )}
               </div>
+
               <div
                 className="stat-card"
                 onClick={() => handleStatCardClick('in-progress')}
                 style={{
-                  background: 'linear-gradient(135deg, #54a0ff 0%, #2e86de 100%)',
+                  background: 'linear-gradient(135deg, #00B4DB 0%, #0083B0 100%)',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(84, 160, 255, 0.4)',
+                  boxShadow: '0 4px 15px rgba(0, 131, 176, 0.3)',
                   borderRadius: '20px',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '32px 24px',
+                  padding: '24px',
                   gap: '20px',
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative',
+                  border: activeFilter === 'in-progress' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                  transform: activeFilter === 'in-progress' ? 'translateY(-5px)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(84, 160, 255, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 131, 176, 0.4)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(84, 160, 255, 0.4)';
+                  e.currentTarget.style.transform = activeFilter === 'in-progress' ? 'translateY(-5px)' : 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 131, 176, 0.3)';
                 }}
               >
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <Clock size={32} strokeWidth={2.5} />
+                  <Clock size={30} color="white" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.inProgress}</h3>
-                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>In Progress</p>
-                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Currently working</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '32px', margin: 0, fontWeight: 'bold' }}>{stats.inProgress}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, fontWeight: '600' }}>IN PROGRESS</p>
+                  <p style={{ fontSize: '12px', margin: 0, opacity: 0.9 }}>Currently working</p>
                 </div>
+                {activeFilter === 'in-progress' && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>✓</div>
+                )}
               </div>
+
               <div
-                className="stat-card stat-progress"
+                className="stat-card"
                 onClick={() => handleStatCardClick('completed')}
                 style={{
-                  background: 'linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%)',
+                  background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(29, 209, 161, 0.4)',
+                  boxShadow: '0 4px 15px rgba(56, 239, 125, 0.3)',
                   borderRadius: '20px',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '32px 24px',
+                  padding: '24px',
                   gap: '20px',
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative',
+                  border: activeFilter === 'completed' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                  transform: activeFilter === 'completed' ? 'translateY(-5px)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(29, 209, 161, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(56, 239, 125, 0.4)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(29, 209, 161, 0.4)';
+                  e.currentTarget.style.transform = activeFilter === 'completed' ? 'translateY(-5px)' : 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(56, 239, 125, 0.3)';
                 }}
               >
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <CheckCircle size={32} strokeWidth={2.5} />
+                  <CheckCircle size={30} color="white" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.completed}</h3>
-                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Completed</p>
-                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Successfully finished</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '32px', margin: 0, fontWeight: 'bold' }}>{stats.completed}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, fontWeight: '600' }}>COMPLETED</p>
+                  <p style={{ fontSize: '12px', margin: 0, opacity: 0.9 }}>Successfully finished</p>
                 </div>
+                {activeFilter === 'completed' && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>✓</div>
+                )}
               </div>
+
               <div
-                className="stat-card stat-pending"
+                className="stat-card"
                 onClick={() => handleStatCardClick('pending-client-approval')}
                 style={{
-                  background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+                  background: 'linear-gradient(135deg, #FF512F 0%, #DD2476 100%)',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(255, 107, 107, 0.4)',
+                  boxShadow: '0 4px 15px rgba(221, 36, 118, 0.3)',
                   borderRadius: '20px',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '32px 24px',
+                  padding: '24px',
                   gap: '20px',
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative',
+                  border: activeFilter === 'pending-client-approval' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                  transform: activeFilter === 'pending-client-approval' ? 'translateY(-5px)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(255, 107, 107, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(221, 36, 118, 0.4)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
+                  e.currentTarget.style.transform = activeFilter === 'pending-client-approval' ? 'translateY(-5px)' : 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(221, 36, 118, 0.3)';
                 }}
               >
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <AlertCircle size={32} strokeWidth={2.5} />
+                  <AlertCircle size={30} color="white" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.pendingApproval}</h3>
-                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Pending</p>
-                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Awaiting approval</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '32px', margin: 0, fontWeight: 'bold' }}>{stats.pendingApproval}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, fontWeight: '600' }}>PENDING</p>
+                  <p style={{ fontSize: '12px', margin: 0, opacity: 0.9 }}>Awaiting approval</p>
                 </div>
+                {activeFilter === 'pending-client-approval' && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>✓</div>
+                )}
               </div>
+
               <div
                 className="stat-card"
                 onClick={() => handleStatCardClick('approved')}
                 style={{
-                  background: 'linear-gradient(135deg, #00b894 0%, #00cec9 100%)',
+                  background: 'linear-gradient(135deg, #37B46F 0%, #2d9159 100%)',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(0, 184, 148, 0.4)',
+                  boxShadow: '0 4px 15px rgba(45, 145, 89, 0.3)',
                   borderRadius: '20px',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '32px 24px',
+                  padding: '24px',
                   gap: '20px',
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative',
+                  border: activeFilter === 'approved' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                  transform: activeFilter === 'approved' ? 'translateY(-5px)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 184, 148, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(45, 145, 89, 0.4)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 184, 148, 0.4)';
+                  e.currentTarget.style.transform = activeFilter === 'approved' ? 'translateY(-5px)' : 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(45, 145, 89, 0.3)';
                 }}
               >
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <CheckCircle size={32} strokeWidth={2.5} />
+                  <CheckCircle size={30} color="white" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.approved}</h3>
-                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Approved</p>
-                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Ready for production</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '32px', margin: 0, fontWeight: 'bold' }}>{stats.approved}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, fontWeight: '600' }}>APPROVED</p>
+                  <p style={{ fontSize: '12px', margin: 0, opacity: 0.9 }}>Ready for production</p>
                 </div>
+                {activeFilter === 'approved' && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>✓</div>
+                )}
               </div>
+
               <div
                 className="stat-card"
                 onClick={() => handleStatCardClick('posted')}
                 style={{
-                  background: 'linear-gradient(135deg, #a55eea 0%, #a55eea 100%)',
+                  background: 'linear-gradient(135deg, #EA384D 0%, #D31027 100%)',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(165, 94, 234, 0.4)',
+                  boxShadow: '0 4px 15px rgba(211, 16, 39, 0.3)',
                   borderRadius: '20px',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '32px 24px',
+                  padding: '24px',
                   gap: '20px',
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative',
+                  border: activeFilter === 'posted' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                  transform: activeFilter === 'posted' ? 'translateY(-5px)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(165, 94, 234, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(211, 16, 39, 0.4)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(165, 94, 234, 0.4)';
+                  e.currentTarget.style.transform = activeFilter === 'posted' ? 'translateY(-5px)' : 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(211, 16, 39, 0.3)';
                 }}
               >
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <Send size={32} strokeWidth={2.5} />
+                  <Send size={30} color="white" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.posted}</h3>
-                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Posted</p>
-                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Published live</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '32px', margin: 0, fontWeight: 'bold' }}>{stats.posted}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, fontWeight: '600' }}>POSTED</p>
+                  <p style={{ fontSize: '12px', margin: 0, opacity: 0.9 }}>Published live</p>
                 </div>
+                {activeFilter === 'posted' && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>✓</div>
+                )}
               </div>
+
               <div
                 className="stat-card"
                 onClick={() => handleStatCardClick('revision-required')}
                 style={{
-                  background: 'linear-gradient(135deg, #eb4d4b 0%, #ff7979 100%)',
+                  background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
                   color: 'white',
-                  boxShadow: '0 8px 25px rgba(235, 77, 75, 0.4)',
+                  boxShadow: '0 4px 15px rgba(74, 0, 224, 0.3)',
                   borderRadius: '20px',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '32px 24px',
+                  padding: '24px',
                   gap: '20px',
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative',
+                  border: activeFilter === 'revision-required' ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                  transform: activeFilter === 'revision-required' ? 'translateY(-5px)' : 'none'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(235, 77, 75, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(74, 0, 224, 0.4)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(235, 77, 75, 0.4)';
+                  e.currentTarget.style.transform = activeFilter === 'revision-required' ? 'translateY(-5px)' : 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(74, 0, 224, 0.3)';
                 }}
               >
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <XCircle size={32} strokeWidth={2.5} />
+                  <XCircle size={30} color="white" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '42px', margin: '0 0 4px 0', lineHeight: 1, fontWeight: '700' }}>{stats.revisionRequired}</h3>
-                  <p style={{ fontSize: '16px', margin: 0, opacity: 0.95, fontWeight: '600' }}>Revision Req.</p>
-                  <span style={{ fontSize: '13px', opacity: 0.8, display: 'block', marginTop: '4px' }}>Needs attention</span>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '32px', margin: 0, fontWeight: 'bold' }}>{stats.revisionRequired}</h3>
+                  <p style={{ fontSize: '16px', margin: 0, fontWeight: '600' }}>REVISION REQ.</p>
+                  <p style={{ fontSize: '12px', margin: 0, opacity: 0.9 }}>Needs attention</p>
                 </div>
+                {activeFilter === 'revision-required' && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>✓</div>
+                )}
               </div>
             </div>
 
@@ -1486,20 +1526,20 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
               }}>
                 {/* Daily Report Card */}
                 <div style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background: 'linear-gradient(135deg, #37B46F 0%, #2d9159 100%)',
                   borderRadius: '16px',
                   padding: '28px',
                   color: 'white',
-                  boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)',
+                  boxShadow: '0 8px 24px rgba(45, 145, 89, 0.3)',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease'
                 }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(102, 126, 234, 0.4)';
+                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(45, 145, 89, 0.4)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.3)';
+                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(45, 145, 89, 0.3)';
                   }}>
                   <div style={{
                     display: 'flex',
@@ -1509,21 +1549,21 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                   }}>
                     <h3 style={{
                       margin: 0,
-                      fontSize: '20px',
+                      fontSize: '22px',
                       fontWeight: '700',
-                      color: 'white'
-                    }}>Daily Report</h3>
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '12px',
+                      color: 'white',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Calendar size={24} />
-                    </div>
+                      gap: '10px'
+                    }}>📊 Daily Report</h3>
+                    <div style={{
+                      padding: '4px 12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      letterSpacing: '0.5px'
+                    }}>📋 SOCIAL MEDIA</div>
                   </div>
 
                   <div style={{
@@ -1535,8 +1575,9 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1548,15 +1589,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>Today's Tasks</div>
+                        fontWeight: '600'
+                      }}>TODAY'S TASKS</div>
                     </div>
 
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1568,15 +1610,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>Completed</div>
+                        fontWeight: '600'
+                      }}>COMPLETED</div>
                     </div>
 
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1588,15 +1631,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>Overdue</div>
+                        fontWeight: '600'
+                      }}>OVERDUE</div>
                     </div>
 
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1610,8 +1654,8 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>Success Rate</div>
+                        fontWeight: '600'
+                      }}>SUCCESS RATE</div>
                     </div>
                   </div>
 
@@ -1624,24 +1668,26 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     style={{
                       width: '100%',
                       padding: '14px',
-                      background: 'rgba(255, 255, 255, 0.25)',
-                      border: 'none',
-                      borderRadius: '10px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      borderRadius: '12px',
                       color: 'white',
                       fontSize: '15px',
                       fontWeight: '600',
                       cursor: 'pointer',
-                      transition: 'all 0.2s',
+                      transition: 'all 0.3s ease',
                       backdropFilter: 'blur(10px)'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.background = 'rgba(255, 255, 255, 0.35)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+                      e.target.style.transform = 'translateY(-2px)';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                      e.target.style.transform = 'translateY(0)';
                     }}
                   >
-                    View Today's Tasks
+                    View Details
                   </button>
                 </div>
 
@@ -1670,21 +1716,21 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                   }}>
                     <h3 style={{
                       margin: 0,
-                      fontSize: '20px',
+                      fontSize: '22px',
                       fontWeight: '700',
-                      color: 'white'
-                    }}>Weekly Summary</h3>
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '12px',
+                      color: 'white',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <TrendingUp size={24} />
-                    </div>
+                      gap: '10px'
+                    }}>📈 Weekly Summary</h3>
+                    <div style={{
+                      padding: '4px 12px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      letterSpacing: '0.5px'
+                    }}>THIS WEEK</div>
                   </div>
 
                   <div style={{
@@ -1696,8 +1742,9 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1709,15 +1756,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>Weekly Tasks</div>
+                        fontWeight: '600'
+                      }}>WEEKLY TASKS</div>
                     </div>
 
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1729,15 +1777,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>Completed</div>
+                        fontWeight: '600'
+                      }}>COMPLETED</div>
                     </div>
 
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1749,15 +1798,16 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>In Progress</div>
+                        fontWeight: '600'
+                      }}>IN PROGRESS</div>
                     </div>
 
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.15)',
                       borderRadius: '12px',
-                      padding: '16px',
-                      backdropFilter: 'blur(10px)'
+                      padding: '20px',
+                      backdropFilter: 'blur(10px)',
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '32px',
@@ -1771,8 +1821,8 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                       <div style={{
                         fontSize: '13px',
                         opacity: 0.9,
-                        fontWeight: '500'
-                      }}>My Efficiency</div>
+                        fontWeight: '600'
+                      }}>EFFICIENCY</div>
                     </div>
                   </div>
 
@@ -1785,24 +1835,26 @@ const SocialMediaEmpDashboard = ({ employeeData = null, isEmbedded = false }) =>
                     style={{
                       width: '100%',
                       padding: '14px',
-                      background: 'rgba(255, 255, 255, 0.25)',
-                      border: 'none',
-                      borderRadius: '10px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      borderRadius: '12px',
                       color: 'white',
                       fontSize: '15px',
                       fontWeight: '600',
                       cursor: 'pointer',
-                      transition: 'all 0.2s',
+                      transition: 'all 0.3s ease',
                       backdropFilter: 'blur(10px)'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.background = 'rgba(255, 255, 255, 0.35)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+                      e.target.style.transform = 'translateY(-2px)';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                      e.target.style.transform = 'translateY(0)';
                     }}
                   >
-                    View All Tasks
+                    View Details
                   </button>
                 </div>
               </div>

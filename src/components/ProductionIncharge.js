@@ -2454,13 +2454,8 @@ const ProductionIncharge = () => {
                         <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           POST DATE
                         </th>
-<<<<<<< HEAD
-                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
-                          
-=======
                         <th style={{ padding: '10px 8px', textAlign: 'center', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', borderBottom: '2px solid #e5e7eb' }}>
                           ACTIONS
->>>>>>> main
                         </th>
                       </tr>
                     </thead>

@@ -12,7 +12,7 @@
 /* Sidebar Navigation */
 .socialmedia-sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #37B46F 0%, #2d9459 50%, #25a35a 100%);
+  background: #1F7D53;
   min-height: 100vh;
   padding: 24px 0;
   position: fixed;
@@ -263,7 +263,7 @@
   .socialmedia-sidebar {
     width: 240px;
   }
-  
+
   .socialmedia-main-content {
     margin-left: 240px;
   }
@@ -276,15 +276,15 @@
     position: relative;
     min-height: auto;
   }
-  
+
   .socialmedia-main-content {
     margin-left: 0;
   }
-  
+
   .socialmedia-dashboard {
     flex-direction: column;
   }
-  
+
   .socialmedia-sidebar-user {
     position: relative;
     bottom: auto;
