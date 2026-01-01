@@ -672,11 +672,18 @@
 
 /* Sidebar Navigation */
 .strategy-sidebar {
+<<<<<<< HEAD
   width: 280px;
   background: linear-gradient(180deg, #1F7D53 100%, #1F7D53 100%);
   min-height: 100vh;
+=======
+  width: 280px; 
+  background: linear-gradient(180deg, #1F7D53 100%, #1F7D53 100%); 
+  background: linear-gradient(#1F7D53);
+  min-height: 100vh; 
+>>>>>>> vaishnavi
   padding: 24px 0;
-  position: fixed;
+  position: fixed;    
   left: 0;
   top: 0;
   z-index: 1000;
