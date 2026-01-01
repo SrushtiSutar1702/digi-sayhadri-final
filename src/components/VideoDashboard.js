@@ -2147,18 +2147,22 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                     border: '1px solid #e5e7eb'
                   }}>
                     <Calendar size={18} />
-                    <label style={{ fontSize: '14px', fontWeight: '500' }}>Month:</label>
-                    <input
-                      type="month"
-                      value={selectedMonth}
-                      onChange={(e) => setSelectedMonth(e.target.value)}
-                      style={{
-                        padding: '4px 8px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        fontSize: '14px'
-                      }}
-                    />
+                    {!showCalendar && (
+                      <>
+                        <label style={{ fontSize: '14px', fontWeight: '500' }}>Month:</label>
+                        <input
+                          type="month"
+                          value={selectedMonth}
+                          onChange={(e) => setSelectedMonth(e.target.value)}
+                          style={{
+                            padding: '4px 8px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '14px'
+                          }}
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -6463,35 +6467,21 @@ const VideoDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, emplo
                           }}>
                             📹 VIDEO
                           </span>
-                          <select
-                            value={task.status}
-                            onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
+                          <div
                             style={{
                               padding: '6px 12px',
-                              borderRadius: '12px',
+                              borderRadius: '20px',
                               fontSize: '11px',
                               fontWeight: '600',
                               backgroundColor: getStatusColor(task.status),
                               color: 'white',
-                              border: 'none',
-                              cursor: 'pointer',
-                              outline: 'none',
-                              appearance: 'none',
-                              paddingRight: '24px',
-                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                              backgroundRepeat: 'no-repeat',
-                              backgroundPosition: 'right 6px center',
-                              minWidth: '150px'
+                              textAlign: 'center',
+                              minWidth: '120px',
+                              display: 'inline-block'
                             }}
                           >
-                            <option value="assigned-to-department" style={{ backgroundColor: '#fff', color: '#333' }}>Assigned to Department</option>
-                            <option value="in-progress" style={{ backgroundColor: '#fff', color: '#333' }}>In Progress</option>
-                            <option value="completed" style={{ backgroundColor: '#fff', color: '#333' }}>Completed</option>
-                            <option value="pending-client-approval" style={{ backgroundColor: '#fff', color: '#333' }}>Pending Client Approval</option>
-                            <option value="approved" style={{ backgroundColor: '#fff', color: '#333' }}>Approved</option>
-                            <option value="posted" style={{ backgroundColor: '#fff', color: '#333' }}>Posted</option>
-                            <option value="revision-required" style={{ backgroundColor: '#fff', color: '#333' }}>Revision Required</option>
-                          </select>
+                            {task.status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                          </div>
                           {task.revisionCount > 0 && (
                             <span style={{
                               padding: '4px 8px',
