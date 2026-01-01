@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { ref, onValue, push, get, update } from 'firebase/database';
 import { database, auth } from '../firebase';
@@ -134,17 +134,17 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
   // Handle sending clients to Strategy Department Employee
   const handleSendToStrategyDepartment = async () => {
     if (selectedClients.size === 0) {
-      showToast('❌ Please select at least one client', 'error', 3000);
+      showToast('? Please select at least one client', 'error', 3000);
       return;
     }
 
     if (!selectedEmployee) {
-      showToast('❌ Please select an employee first', 'error', 3000);
+      showToast('? Please select an employee first', 'error', 3000);
       return;
     }
 
     if (!database) {
-      showToast('❌ Database not available', 'error', 3000);
+      showToast('? Database not available', 'error', 3000);
       return;
     }
 
@@ -171,7 +171,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
       );
 
       if (newClientsToSend.length === 0) {
-        showToast('ℹ️ All selected clients have already been sent to Strategy Department', 'info', 3000);
+        showToast('?? All selected clients have already been sent to Strategy Department', 'info', 3000);
         return;
       }
 
@@ -208,7 +208,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
         });
       }
 
-      let successMessage = `✅ ${newClientsToSend.length} new client(s) sent to ${employee ? employee.employeeName : 'Strategy Employee'}!`;
+      let successMessage = `? ${newClientsToSend.length} new client(s) sent to ${employee ? employee.employeeName : 'Strategy Employee'}!`;
       if (alreadySentClients.length > 0) {
         successMessage += ` (${alreadySentClients.length} already sent)`;
       }
@@ -217,7 +217,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
       setSelectedEmployee('');
     } catch (error) {
       console.error('Error sending clients to Strategy Department:', error);
-      showToast('❌ Error sending clients to Strategy Department', 'error', 3000);
+      showToast('? Error sending clients to Strategy Department', 'error', 3000);
     }
   };
 
@@ -368,7 +368,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
       console.log('Selected tasks data:', selectedTasksData);
 
       if (selectedTasksData.length === 0) {
-        showToast('❌ Please select at least one task', 'error', 3000);
+        showToast('? Please select at least one task', 'error', 3000);
         return;
       }
 
@@ -436,10 +436,10 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
         ? `${clientName}_Tasks_${new Date().toISOString().split('T')[0]}.pdf`
         : `Selected_Tasks_${new Date().toISOString().split('T')[0]}.pdf`;
       doc.save(filename);
-      showToast('✅ PDF downloaded successfully', 'success', 3000);
+      showToast('? PDF downloaded successfully', 'success', 3000);
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      showToast('❌ Error downloading PDF: ' + error.message, 'error', 3000);
+      showToast('? Error downloading PDF: ' + error.message, 'error', 3000);
     }
   };
 
@@ -459,7 +459,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
       console.log('Selected tasks data:', selectedTasksData);
 
       if (selectedTasksData.length === 0) {
-        showToast('❌ Please select at least one task', 'error', 3000);
+        showToast('? Please select at least one task', 'error', 3000);
         return;
       }
 
@@ -513,10 +513,10 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
         ? `${clientName}_Tasks_${new Date().toISOString().split('T')[0]}.xlsx`
         : `Selected_Tasks_${new Date().toISOString().split('T')[0]}.xlsx`;
       XLSX.writeFile(wb, filename);
-      showToast('✅ Excel downloaded successfully', 'success', 3000);
+      showToast('? Excel downloaded successfully', 'success', 3000);
     } catch (error) {
       console.error('Error downloading Excel:', error);
-      showToast('❌ Error downloading Excel: ' + error.message, 'error', 3000);
+      showToast('? Error downloading Excel: ' + error.message, 'error', 3000);
     }
   };
 
@@ -532,7 +532,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
   // Download multiple clients as PDF
   const downloadMultipleClientsPDF = () => {
     if (selectedClientsForDownload.length === 0) {
-      showToast('❌ Please select at least one client', 'error', 3000);
+      showToast('? Please select at least one client', 'error', 3000);
       return;
     }
 
@@ -661,17 +661,17 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
       });
 
       doc.save(`Strategy_Employee_Report_${new Date().toISOString().split('T')[0]}.pdf`);
-      showToast('✅ PDF downloaded successfully', 'success', 3000);
+      showToast('? PDF downloaded successfully', 'success', 3000);
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      showToast('❌ Error downloading PDF: ' + error.message, 'error', 3000);
+      showToast('? Error downloading PDF: ' + error.message, 'error', 3000);
     }
   };
 
   // Download multiple clients as Excel
   const downloadMultipleClientsExcel = () => {
     if (selectedClientsForDownload.length === 0) {
-      showToast('❌ Please select at least one client', 'error', 3000);
+      showToast('? Please select at least one client', 'error', 3000);
       return;
     }
 
@@ -767,10 +767,10 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Employee Report');
       XLSX.writeFile(wb, `Strategy_Employee_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
-      showToast('✅ Excel downloaded successfully', 'success', 3000);
+      showToast('? Excel downloaded successfully', 'success', 3000);
     } catch (error) {
       console.error('Error downloading Excel:', error);
-      showToast('❌ Error downloading Excel: ' + error.message, 'error', 3000);
+      showToast('? Error downloading Excel: ' + error.message, 'error', 3000);
     }
   };
 
@@ -908,10 +908,10 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
       });
 
       doc.save(`Strategy_Department_Report_${new Date().toISOString().split('T')[0]}.pdf`);
-      showToast('✅ Report downloaded successfully', 'success', 3000);
+      showToast('? Report downloaded successfully', 'success', 3000);
     } catch (error) {
       console.error('Error downloading report:', error);
-      showToast('❌ Error downloading report: ' + error.message, 'error', 3000);
+      showToast('? Error downloading report: ' + error.message, 'error', 3000);
     }
   };
 
@@ -1333,7 +1333,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                       fontWeight: '700',
                       margin: '0 0 8px 0',
                       color: 'white'
-                    }}>📊 Daily Report</h2>
+                    }}>?? Daily Report</h2>
                     <p style={{
                       fontSize: '14px',
                       margin: 0,
@@ -1354,7 +1354,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                     fontSize: '14px',
                     fontWeight: '600'
                   }}>
-                    📋 Strategy
+                    ?? Strategy
                   </div>
                 </div>
 
@@ -1482,7 +1482,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                     e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  🎯 View Today's Tasks
+                  ?? View Today's Tasks
                 </button>
               </div>
 
@@ -1509,7 +1509,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                       fontWeight: '700',
                       margin: '0 0 8px 0',
                       color: 'white'
-                    }}>📈 Weekly Summary</h2>
+                    }}>?? Weekly Summary</h2>
                     <p style={{
                       fontSize: '14px',
                       margin: 0,
@@ -1702,7 +1702,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                     e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  📊 View All Tasks
+                  ?? View All Tasks
                 </button>
               </div>
             </div>
@@ -1717,7 +1717,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 borderTopRightRadius: '16px'
               }}>
                 <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>
-                  👥 All Clients ({clients.length})
+                  ?? All Clients ({clients.length})
                 </h2>
                 <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
                   Clients sent from Production Incharge
@@ -1762,25 +1762,10 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           }}
                         >
                           <option value="">Select Strategy Employee</option>
-                          <option value="head@gmail.com" style={{ fontWeight: '600', color: '#37B46F' }}>👤 Assign to Myself (Strategy Head)</option>
-                          <option disabled>──────────</option>
+                          <option value="head@gmail.com" style={{ fontWeight: '600', color: '#37B46F' }}>?? Assign to Myself (Strategy Head)</option>
+                          <option disabled>----------</option>
                           {(() => {
-                            console.log('All employees:', employees);
-                            const strategyEmployees = employees.filter(emp => {
-                              console.log('Checking employee:', emp.employeeName, 'Department:', emp.department);
-                              return emp.department &&
-                                (emp.department.toLowerCase().includes('strategy'));
-                            });
-                            console.log('Filtered Strategy employees:', strategyEmployees);
-
-                            // If no strategy employees found, show all employees for debugging
-                            const employeesToShow = strategyEmployees.length > 0 ? strategyEmployees : employees;
-
-                            return employeesToShow.map(emp => (
-                              <option key={emp.id} value={emp.email}>
-                                {emp.employeeName} {strategyEmployees.length === 0 ? `(${emp.department || 'No Dept'})` : ''}
-                              </option>
-                            ));
+                            return employees.filter(emp => emp.department && emp.department.toLowerCase() === 'strategy' && emp.status === 'active' && !emp.deleted).map(emp => (<option key={emp.id} value={emp.email}>{emp.employeeName}</option>));
                           })()}
                         </select>
 
@@ -1913,7 +1898,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                       color: '#16a34a',
                                       display: 'inline-block'
                                     }}>
-                                      ✓ Allocated
+                                      ? Allocated
                                     </span>
                                   ) : (
                                     <span style={{
@@ -1971,7 +1956,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                               boxShadow: currentPage === 1 ? 'none' : '0 2px 4px rgba(102, 126, 234, 0.2)'
                             }}
                           >
-                            ← Previous
+                            ? Previous
                           </button>
                           <div style={{
                             padding: '8px 16px',
@@ -2002,7 +1987,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                               boxShadow: currentPage >= Math.ceil(clients.length / itemsPerPage) ? 'none' : '0 2px 4px rgba(102, 126, 234, 0.2)'
                             }}
                           >
-                            Next →
+                            Next ?
                           </button>
                         </div>
                       </div>
@@ -2104,7 +2089,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                                 <td style={{ textAlign: 'left', verticalAlign: 'middle', padding: '8px 12px', borderBottom: '1px solid #f9fafb' }}>
                                                   <div className="task-name-cell" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                     <span className="task-icon">
-                                                      📋
+                                                      ??
                                                     </span>
                                                     <span className="task-name" style={{ fontSize: '13px', color: '#374151' }}>{task.taskName || 'Untitled Task'}</span>
                                                   </div>
@@ -2123,7 +2108,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                                 </td>
                                                 <td style={{ textAlign: 'center', verticalAlign: 'middle', padding: '8px 12px', borderBottom: '1px solid #f9fafb' }}>
                                                   <span style={{ fontSize: '12px', color: '#6b7280' }}>
-                                                    📅 {formatDate(task.postDate)}
+                                                    ?? {formatDate(task.postDate)}
                                                   </span>
                                                 </td>
                                                 <td style={{ textAlign: 'center', verticalAlign: 'middle', padding: '8px 12px', borderBottom: '1px solid #f9fafb' }}>
@@ -2187,7 +2172,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                             gap: '4px'
                           }}
                         >
-                          Today's Tasks ✕
+                          Today's Tasks ?
                         </button>
                       )}
                     </div>
@@ -2219,7 +2204,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 borderTopRightRadius: '16px'
               }}>
                 <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>
-                  📋 My Clients ({clients.filter(c => c.assignedToEmployee === 'head@gmail.com').length})
+                  ?? My Clients ({clients.filter(c => c.assignedToEmployee === 'head@gmail.com').length})
                 </h2>
                 <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
                   Clients assigned to you - Work through all 4 stages
@@ -2407,7 +2392,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 borderTopRightRadius: '16px'
               }}>
                 <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>
-                  👥 All Clients ({clients.length})
+                  ?? All Clients ({clients.length})
                 </h2>
                 <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
                   Clients sent from Production Incharge
@@ -2452,25 +2437,10 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           }}
                         >
                           <option value="">Select Strategy Employee</option>
-                          <option value="head@gmail.com" style={{ fontWeight: '600', color: '#37B46F' }}>👤 Assign to Myself (Strategy Head)</option>
-                          <option disabled>──────────</option>
+                          <option value="head@gmail.com" style={{ fontWeight: '600', color: '#37B46F' }}>?? Assign to Myself (Strategy Head)</option>
+                          <option disabled>----------</option>
                           {(() => {
-                            console.log('All employees:', employees);
-                            const strategyEmployees = employees.filter(emp => {
-                              console.log('Checking employee:', emp.employeeName, 'Department:', emp.department);
-                              return emp.department &&
-                                (emp.department.toLowerCase().includes('strategy'));
-                            });
-                            console.log('Filtered Strategy employees:', strategyEmployees);
-
-                            // If no strategy employees found, show all employees for debugging
-                            const employeesToShow = strategyEmployees.length > 0 ? strategyEmployees : employees;
-
-                            return employeesToShow.map(emp => (
-                              <option key={emp.id} value={emp.email}>
-                                {emp.employeeName} {strategyEmployees.length === 0 ? `(${emp.department || 'No Dept'})` : ''}
-                              </option>
-                            ));
+                            return employees.filter(emp => emp.department && emp.department.toLowerCase() === 'strategy' && emp.status === 'active' && !emp.deleted).map(emp => (<option key={emp.id} value={emp.email}>{emp.employeeName}</option>));
                           })()}
                         </select>
 
@@ -2608,7 +2578,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                       color: '#16a34a',
                                       display: 'inline-block'
                                     }}>
-                                      ✓ Allocated
+                                      ? Allocated
                                     </span>
                                   ) : (
                                     <span style={{
@@ -2666,7 +2636,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                               boxShadow: currentPage === 1 ? 'none' : '0 2px 4px rgba(102, 126, 234, 0.2)'
                             }}
                           >
-                            ← Previous
+                            ? Previous
                           </button>
                           <div style={{
                             padding: '8px 16px',
@@ -2697,7 +2667,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                               boxShadow: currentPage >= Math.ceil(clients.length / itemsPerPage) ? 'none' : '0 2px 4px rgba(102, 126, 234, 0.2)'
                             }}
                           >
-                            Next →
+                            Next ?
                           </button>
                         </div>
                       </div>
@@ -2730,7 +2700,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 borderTopRightRadius: '16px'
               }}>
                 <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>
-                  👥 All Clients ({clients.length})
+                  ?? All Clients ({clients.length})
                 </h2>
                 <p style={{ margin: '4px 0 0 0', fontSize: '14px', opacity: 0.9 }}>
                   Clients sent from Production Incharge
@@ -2775,9 +2745,9 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           }}
                         >
                           <option value="">Select Strategy Employee</option>
-                          <option value="head@gmail.com" style={{ fontWeight: '600', color: '#37B46F' }}>👤 Assign to Myself (Strategy Head)</option>
-                          <option disabled>──────────</option>
-                          {employees.filter(emp => emp.department && emp.department.toLowerCase().includes('strategy')).map(emp => (
+                          <option value="head@gmail.com" style={{ fontWeight: '600', color: '#37B46F' }}>?? Assign to Myself (Strategy Head)</option>
+                          <option disabled>----------</option>
+                          {employees.filter(emp => emp.department && emp.department.toLowerCase() === 'strategy' && emp.status === 'active' && !emp.deleted).map(emp => (
                             <option key={emp.id} value={emp.email}>
                               {emp.employeeName}
                             </option>
@@ -2913,7 +2883,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                       color: '#16a34a',
                                       display: 'inline-block'
                                     }}>
-                                      ✓ Allocated
+                                      ? Allocated
                                     </span>
                                   ) : (
                                     <span style={{
@@ -2971,7 +2941,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                               boxShadow: currentPage === 1 ? 'none' : '0 2px 4px rgba(102, 126, 234, 0.2)'
                             }}
                           >
-                            ← Previous
+                            ? Previous
                           </button>
                           <div style={{
                             padding: '8px 16px',
@@ -3002,7 +2972,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                               boxShadow: currentPage >= Math.ceil(clients.length / itemsPerPage) ? 'none' : '0 2px 4px rgba(102, 126, 234, 0.2)'
                             }}
                           >
-                            Next →
+                            Next ?
                           </button>
                         </div>
                       </div>
@@ -3170,9 +3140,9 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                     transition: 'all 0.2s'
                   }}
                 >
-                  <option value="day">📅 Day</option>
-                  <option value="week">📊 Week</option>
-                  <option value="month">📆 Month</option>
+                  <option value="day">?? Day</option>
+                  <option value="week">?? Week</option>
+                  <option value="month">?? Month</option>
                 </select>
 
                 {/* Search Bar */}
@@ -3215,7 +3185,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                         fontWeight: 'bold'
                       }}
                     >
-                      ×
+                      �
                     </button>
                   )}
                 </div>
@@ -3358,7 +3328,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                       e.currentTarget.style.boxShadow = '0 2px 4px rgba(239,68,68,0.2)';
                     }}
                   >
-                    ✕ Clear Filters
+                    ? Clear Filters
                   </button>
                 )}
               </div>
@@ -3838,7 +3808,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                       );
                     }) : (
                       <div style={{ textAlign: 'center', color: '#9ca3af', padding: '30px 20px' }}>
-                        <div style={{ fontSize: '40px', marginBottom: '8px', opacity: 0.3 }}>👤</div>
+                        <div style={{ fontSize: '40px', marginBottom: '8px', opacity: 0.3 }}>??</div>
                         <p style={{ fontSize: '12px', fontWeight: '500' }}>No employee data available</p>
                       </div>
                     );
@@ -4280,7 +4250,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                       toggleReportClientExpansion(client.clientName);
                                     }}
                                   >
-                                    ▶
+                                    ?
                                   </span>
                                 </div>
                               </td>
@@ -4415,7 +4385,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                         alignItems: 'center',
                                         gap: '8px'
                                       }}>
-                                        📋 Tasks for {client.clientName}
+                                        ?? Tasks for {client.clientName}
                                         <span style={{
                                           fontSize: '12px',
                                           color: '#6b7280',
@@ -4779,7 +4749,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                               color: '#9ca3af',
                                               fontSize: '13px'
                                             }}>
-                                              <div style={{ fontSize: '32px', marginBottom: '8px', opacity: 0.3 }}>📋</div>
+                                              <div style={{ fontSize: '32px', marginBottom: '8px', opacity: 0.3 }}>??</div>
                                               No tasks found for this client
                                             </td>
                                           </tr>
@@ -4801,7 +4771,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                             fontSize: '14px',
                             fontWeight: '500'
                           }}>
-                            <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>📊</div>
+                            <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>??</div>
                             No client data available for the selected month
                           </td>
                         </tr>
@@ -4873,7 +4843,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           e.target.style.boxShadow = 'none';
                         }}
                       >
-                        ← Previous
+                        ? Previous
                       </button>
 
                       <div style={{
@@ -4940,7 +4910,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           e.target.style.boxShadow = 'none';
                         }}
                       >
-                        Next →
+                        Next ?
                       </button>
                     </div>
                   </div>
@@ -4998,7 +4968,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 <div>
                   <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '700' }}>
 
-                    📋 Tasks for {selectedClientForTasks.clientName}
+                    ?? Tasks for {selectedClientForTasks.clientName}
                   </h2>
                 </div>
                 <button
@@ -5020,7 +4990,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                   onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
                   onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
                 >
-                  ×
+                  �
                 </button>
               </div>
 
@@ -5158,7 +5128,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                       textAlign: 'center',
                       color: '#9ca3af'
                     }}>
-                      <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>📋</div>
+                      <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>??</div>
                       <p style={{ fontSize: '14px', fontWeight: '500' }}>No tasks found for this client</p>
                     </div>
                   )}
@@ -5251,7 +5221,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                             marginBottom: '12px',
                             textAlign: 'center'
                           }}>
-                            {isCompleted ? '✅' : isCurrent ? '🔄' : '⏳'}
+                            {isCompleted ? '?' : isCurrent ? '??' : '?'}
                           </div>
                           <div style={{
                             fontSize: '15px',
@@ -5292,10 +5262,10 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                       stage: nextStage.status
                                     });
 
-                                    showToast(`✅ Moved to ${nextStage.name}!`, 'success', 3000);
+                                    showToast(`? Moved to ${nextStage.name}!`, 'success', 3000);
                                   } catch (error) {
                                     console.error('Error updating stage:', error);
-                                    showToast('❌ Error updating stage', 'error', 3000);
+                                    showToast('? Error updating stage', 'error', 3000);
                                   }
                                 }
                               }}
@@ -5359,16 +5329,16 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                                       });
 
                                       await Promise.all(updatePromises);
-                                      showToast(`✅ All stages completed! ${updatePromises.length} tasks assigned to departments!`, 'success', 3000);
+                                      showToast(`? All stages completed! ${updatePromises.length} tasks assigned to departments!`, 'success', 3000);
                                     } else {
-                                      showToast('✅ All stages completed!', 'success', 3000);
+                                      showToast('? All stages completed!', 'success', 3000);
                                     }
 
                                     setShowClientWorkflowModal(false);
                                     setSelectedClientForWorkflow(null);
                                   } catch (error) {
                                     console.error('Error completing final stage:', error);
-                                    showToast('❌ Error completing final stage', 'error', 3000);
+                                    showToast('? Error completing final stage', 'error', 3000);
                                   }
                                 }
                               }}
@@ -5471,7 +5441,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           textAlign: 'center',
                           color: '#9ca3af'
                         }}>
-                          <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>📋</div>
+                          <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>??</div>
                           <p style={{ fontSize: '14px', fontWeight: '500' }}>No tasks found for this month. Click "Add Task" to create tasks.</p>
                         </div>
                       );
@@ -5580,7 +5550,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                 const form = multipleTaskForms[0]; // Use first form for single task
 
                 if (!form.taskName || !form.department || !form.taskType || !form.postDate) {
-                  showToast('❌ Please fill in required fields (Ideas, Department, Task Type, Post Date)', 'error', 3000);
+                  showToast('? Please fill in required fields (Ideas, Department, Task Type, Post Date)', 'error', 3000);
                   return;
                 }
 
@@ -5608,7 +5578,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                     lastUpdated: new Date().toISOString()
                   });
 
-                  showToast('✅ Task created successfully!', 'success', 3000);
+                  showToast('? Task created successfully!', 'success', 3000);
                   setShowStrategyPrepForm(false);
                   setMultipleTaskForms([{
                     id: 1,
@@ -5623,7 +5593,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                   }]);
                 } catch (error) {
                   console.error('Error creating task:', error);
-                  showToast('❌ Error creating task', 'error', 3000);
+                  showToast('? Error creating task', 'error', 3000);
                 }
               }} style={{ padding: '24px' }}>
 
@@ -5930,3 +5900,4 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
 };
 
 export default StrategyHead;
+

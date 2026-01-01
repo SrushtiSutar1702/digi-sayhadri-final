@@ -7638,8 +7638,8 @@ const StrategyDashboard = ({ employeeData = null, isEmbedded = false }) => {
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {/* Add Task Button - Always visible */}
-                {selectedClient && (
+                {/* Add Task Button - only visible in strategy-preparation stage */}
+                {selectedClient && selectedClient.stage === 'strategy-preparation' && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -7979,6 +7979,19 @@ const StrategyDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                     <button
                                       onClick={async (e) => {
                                         e.stopPropagation();
+
+                                        // Check if there are any unsent tasks for this client
+                                        const clientTasks = tasks.filter(t =>
+                                          (t.clientId === selectedClient.clientId || t.clientName === selectedClient.clientName) &&
+                                          !t.deleted
+                                        );
+                                        const unsentTasks = clientTasks.filter(t => t.status !== 'assigned-to-department');
+
+                                        if (unsentTasks.length === 0) {
+                                          showToast('⚠️ Please add a new task first before completing this stage!', 'warning', 3000);
+                                          return;
+                                        }
+
                                         if (window.confirm('Mark Strategy Preparation as complete and move to Internal Approval?')) {
                                           try {
                                             const clientRef = ref(database, `strategyClients/${selectedClient.id}`);
@@ -8003,10 +8016,10 @@ const StrategyDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                             };
                                             setSelectedClient(updatedClient);
 
-                                            showToast('âœ… Moved to Internal Approval!', 'success', 3000);
+                                            showToast('✅ Moved to Internal Approval!', 'success', 3000);
                                           } catch (error) {
                                             console.error('Error updating stage:', error);
-                                            showToast('âŒ Error updating stage: ' + error.message, 'error', 3000);
+                                            showToast('❌ Error updating stage: ' + error.message, 'error', 3000);
                                           }
                                         }
                                       }}
@@ -8404,16 +8417,218 @@ const StrategyDashboard = ({ employeeData = null, isEmbedded = false }) => {
                                             };
                                             setSelectedClient(updatedClient);
 
-                                            showToast('âœ… Moved to Strategy Preparation!', 'success', 3000);
+                                            showToast('✅ Moved to Strategy Preparation!', 'success', 3000);
                                           } catch (error) {
                                             console.error('Error updating stage:', error);
-                                            showToast('âŒ Error updating stage: ' + error.message, 'error', 3000);
+                                            showToast('❌ Error updating stage: ' + error.message, 'error', 3000);
                                           }
                                         }
                                       }}
                                     >
                                       Complete
                                     </button>
+                                  )}
+                                  {isActive && stage.status === 'strategy-preparation' && (
+                                    <button
+                                      className="complete-btn"
+                                      onClick={async (e) => {
+                                        e.stopPropagation();
+
+                                        // Check if there are any unsent tasks for this client
+                                        const clientTasks = tasks.filter(t =>
+                                          (t.clientId === selectedClient.clientId || t.clientName === selectedClient.clientName) &&
+                                          !t.deleted
+                                        );
+                                        const unsentTasks = clientTasks.filter(t => t.status !== 'assigned-to-department');
+
+                                        if (unsentTasks.length === 0) {
+                                          showToast('⚠️ Please add a new task first before completing this stage!', 'warning', 3000);
+                                          return;
+                                        }
+
+                                        if (window.confirm('Mark Strategy Preparation as complete and move to Internal Approval?')) {
+                                          try {
+                                            const clientRef = ref(database, `strategyClients/${selectedClient.id}`);
+                                            const completionDate = new Date().toISOString();
+
+                                            const updates = {
+                                              stage: 'internal-approval',
+                                              lastUpdated: completionDate,
+                                              'stageCompletions/strategy-preparation': completionDate
+                                            };
+
+                                            await update(clientRef, updates);
+
+                                            const updatedClient = {
+                                              ...selectedClient,
+                                              stage: 'internal-approval',
+                                              lastUpdated: completionDate,
+                                              stageCompletions: {
+                                                ...selectedClient.stageCompletions,
+                                                'strategy-preparation': completionDate
+                                              }
+                                            };
+                                            setSelectedClient(updatedClient);
+
+                                            showToast('✅ Moved to Internal Approval!', 'success', 3000);
+                                          } catch (error) {
+                                            console.error('Error updating stage:', error);
+                                            showToast('❌ Error updating stage: ' + error.message, 'error', 3000);
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      Complete
+                                    </button>
+                                  )}
+                                  {isActive && stage.status === 'internal-approval' && (
+                                    <button
+                                      className="complete-btn"
+                                      style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+                                      onClick={async (e) => {
+                                        e.stopPropagation();
+                                        if (window.confirm('Move client to Client Approval?')) {
+                                          try {
+                                            const clientRef = ref(database, `strategyClients/${selectedClient.id}`);
+                                            const completionDate = new Date().toISOString();
+
+                                            const updates = {
+                                              stage: 'client-approval',
+                                              lastUpdated: completionDate,
+                                              'stageCompletions/internal-approval': completionDate
+                                            };
+
+                                            await update(clientRef, updates);
+
+                                            const updatedClient = {
+                                              ...selectedClient,
+                                              stage: 'client-approval',
+                                              lastUpdated: completionDate,
+                                              stageCompletions: {
+                                                ...selectedClient.stageCompletions,
+                                                'internal-approval': completionDate
+                                              }
+                                            };
+                                            setSelectedClient(updatedClient);
+
+                                            showToast('✅ Client moved to Client Approval!', 'success', 3000);
+                                          } catch (error) {
+                                            console.error('Error updating stage:', error);
+                                            showToast('❌ Error updating stage: ' + error.message, 'error', 3000);
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      Approve
+                                    </button>
+                                  )}
+                                  {isActive && stage.status === 'client-approval' && (
+                                    <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                                      <button
+                                        className="complete-btn"
+                                        style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', flex: 1 }}
+                                        onClick={async (e) => {
+                                          e.stopPropagation();
+                                          if (window.confirm('Approve all tasks and send to departments?')) {
+                                            try {
+                                              const clientTasks = tasks.filter(t =>
+                                                t.clientId === selectedClient.clientId ||
+                                                t.clientName === selectedClient.clientName
+                                              );
+
+                                              const updatePromises = clientTasks.map(task => {
+                                                const taskRef = ref(database, `tasks/${task.id}`);
+                                                return update(taskRef, {
+                                                  status: 'assigned-to-department',
+                                                  approvedAt: new Date().toISOString(),
+                                                  approvedBy: 'Strategy Department',
+                                                  approvedForCalendar: true,
+                                                  assignedToDepartmentAt: new Date().toISOString(),
+                                                  assignedBy: 'Strategy Department',
+                                                  assignedToDept: task.department,
+                                                  lastUpdated: new Date().toISOString()
+                                                });
+                                              });
+
+                                              await Promise.all(updatePromises);
+
+                                              const clientRef = ref(database, `strategyClients/${selectedClient.id}`);
+                                              const completionDate = new Date().toISOString();
+
+                                              const updates = {
+                                                stage: 'information-gathering',
+                                                completedAt: completionDate,
+                                                lastUpdated: completionDate,
+                                                'stageCompletions/information-gathering': null,
+                                                'stageCompletions/strategy-preparation': null,
+                                                'stageCompletions/internal-approval': null,
+                                                'stageCompletions/client-approval': null
+                                              };
+
+                                              await update(clientRef, updates);
+
+                                              const updatedClient = {
+                                                ...selectedClient,
+                                                stage: 'information-gathering',
+                                                completedAt: completionDate,
+                                                lastUpdated: completionDate,
+                                                stageCompletions: {}
+                                              };
+                                              setSelectedClient(updatedClient);
+
+                                              showToast(`✅ ${clientTasks.length} task(s) approved and sent!`, 'success', 3000);
+                                              closeClientTasksModal();
+                                            } catch (error) {
+                                              console.error('Error approving tasks:', error);
+                                              showToast('❌ Error approving tasks', 'error', 3000);
+                                            }
+                                          }
+                                        }}
+                                      >
+                                        Approve
+                                      </button>
+                                      <button
+                                        className="complete-btn"
+                                        style={{ background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', flex: 1 }}
+                                        onClick={async (e) => {
+                                          e.stopPropagation();
+                                          if (window.confirm('Reject and send back to Information Gathering?')) {
+                                            try {
+                                              const clientRef = ref(database, `strategyClients/${selectedClient.id}`);
+                                              const updates = {
+                                                stage: 'information-gathering',
+                                                rejectedAt: new Date().toISOString(),
+                                                rejectedBy: 'Strategy Department',
+                                                lastUpdated: new Date().toISOString(),
+                                                'stageCompletions/information-gathering': null,
+                                                'stageCompletions/strategy-preparation': null,
+                                                'stageCompletions/internal-approval': null,
+                                                'stageCompletions/client-approval': null
+                                              };
+
+                                              await update(clientRef, updates);
+
+                                              const updatedClient = {
+                                                ...selectedClient,
+                                                stage: 'information-gathering',
+                                                rejectedAt: new Date().toISOString(),
+                                                rejectedBy: 'Strategy Department',
+                                                lastUpdated: new Date().toISOString(),
+                                                stageCompletions: {}
+                                              };
+                                              setSelectedClient(updatedClient);
+
+                                              showToast('❌ Client rejected and reset.', 'success', 3000);
+                                            } catch (error) {
+                                              console.error('Error rejecting client:', error);
+                                              showToast('❌ Error rejecting client', 'error', 3000);
+                                            }
+                                          }
+                                        }}
+                                      >
+                                        Reject
+                                      </button>
+                                    </div>
                                   )}
                                 </div>
                               )}

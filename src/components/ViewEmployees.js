@@ -175,6 +175,9 @@ const ViewEmployees = () => {
             // Filter out deleted employees
             if (employee.deleted) return false;
 
+            // Filter out system employees (they should not be shown in the list)
+            if (employee.isSystem) return false;
+
             // Search filter
             if (employeeListSearch.trim()) {
                 const query = employeeListSearch.toLowerCase();
@@ -331,13 +334,17 @@ const ViewEmployees = () => {
                 });
             }
 
-            // 3. Mark as deleted in database (physical delete or soft delete depending on requirement, here we physically remove like SuperAdmin)
+            // 3. Mark as deleted in database (soft delete)
             if (employee.id) {
-                updates[`employees/${employee.id}`] = null;
+                updates[`employees/${employee.id}/deleted`] = true;
+                updates[`employees/${employee.id}/deletedAt`] = new Date().toISOString();
+                updates[`employees/${employee.id}/status`] = 'inactive';
             } else if (employee.email) {
                 const foundEmp = employees.find(e => e.email === employee.email);
                 if (foundEmp && foundEmp.id) {
-                    updates[`employees/${foundEmp.id}`] = null;
+                    updates[`employees/${foundEmp.id}/deleted`] = true;
+                    updates[`employees/${foundEmp.id}/deletedAt`] = new Date().toISOString();
+                    updates[`employees/${foundEmp.id}/status`] = 'inactive';
                 }
             }
 
@@ -527,7 +534,7 @@ const ViewEmployees = () => {
                                     <span style={{ flex: 1 }}>
                                         All Employees
                                     </span>
-                                    {employees.filter(e => !e.deleted).length > 0 && (
+                                    {employees.filter(e => !e.deleted && !e.isSystem).length > 0 && (
                                         <span style={{
                                             background: 'rgba(255, 255, 255, 0.2)',
                                             color: 'white',
@@ -538,7 +545,7 @@ const ViewEmployees = () => {
                                             minWidth: '24px',
                                             textAlign: 'center'
                                         }}>
-                                            {employees.filter(e => !e.deleted).length}
+                                            {employees.filter(e => !e.deleted && !e.isSystem).length}
                                         </span>
                                     )}
                                 </button>

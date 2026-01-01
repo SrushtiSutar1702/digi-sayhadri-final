@@ -673,11 +673,7 @@
 /* Sidebar Navigation */
 .strategy-sidebar {
   width: 280px;
-<<<<<<< HEAD
   background: linear-gradient(180deg, #1F7D53 100%, #1F7D53 100%);
-=======
-  background: linear-gradient(#1F7D53);
->>>>>>> 07e5b55f028f57b769b0ec6041612aa8002974ce
   min-height: 100vh;
   padding: 24px 0;
   position: fixed;

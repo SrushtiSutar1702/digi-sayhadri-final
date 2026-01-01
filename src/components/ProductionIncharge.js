@@ -930,14 +930,18 @@ const ProductionIncharge = () => {
         });
       }
 
-      // 3. Delete Employee from database
+      // 3. Mark Employee as deleted in database (soft delete)
       if (employee.id) {
-        updates[`employees/${employee.id}`] = null;
+        updates[`employees/${employee.id}/deleted`] = true;
+        updates[`employees/${employee.id}/deletedAt`] = new Date().toISOString();
+        updates[`employees/${employee.id}/status`] = 'inactive';
       } else if (employee.email) {
         // Fallback to finding ID by email
         const foundEmp = employees.find(e => e.email === employee.email);
         if (foundEmp && foundEmp.id) {
-          updates[`employees/${foundEmp.id}`] = null;
+          updates[`employees/${foundEmp.id}/deleted`] = true;
+          updates[`employees/${foundEmp.id}/deletedAt`] = new Date().toISOString();
+          updates[`employees/${foundEmp.id}/status`] = 'inactive';
         }
       }
 

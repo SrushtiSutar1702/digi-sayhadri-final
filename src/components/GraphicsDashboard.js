@@ -497,6 +497,7 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
           const isAssignedByAuthorized =
             task.assignedBy === 'Production Incharge' ||
             task.assignedBy === 'Strategy Department' ||
+            task.assignedBy === 'Strategy Head' || // Added Strategy Head
             task.assignedBy === 'Graphics Head' ||
             task.assignedBy === 'Super Admin' || // Added Super Admin
             task.assignedFromSocialMedia === true || // Tasks from Social Media Dashboard
@@ -6121,35 +6122,26 @@ const GraphicsDashboard = ({ initialView = 'dashboard', isSuperAdmin = false, em
                           }}>
                             🎨 GRAPHICS
                           </span>
-                          <select
-                            value={task.status}
-                            onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
-                            style={{
-                              padding: '6px 12px',
-                              borderRadius: '12px',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              backgroundColor: getStatusColor(task.status),
-                              color: 'white',
-                              border: 'none',
-                              cursor: 'pointer',
-                              outline: 'none',
-                              appearance: 'none',
-                              paddingRight: '24px',
-                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                              backgroundRepeat: 'no-repeat',
-                              backgroundPosition: 'right 6px center',
-                              minWidth: '150px'
-                            }}
-                          >
-                            <option value="assigned-to-department">Assigned to Department</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                            <option value="pending-client-approval">Pending Client Approval</option>
-                            <option value="approved">Approved</option>
-                            <option value="posted">Posted</option>
-                            <option value="revision-required">Revision Required</option>
-                          </select>
+                          <span style={{
+                            padding: '6px 12px',
+                            borderRadius: '12px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                            backgroundColor: getStatusColor(task.status),
+                            color: 'white',
+                            border: 'none',
+                            minWidth: '150px',
+                            textAlign: 'center'
+                          }}>
+                            {task.status === 'assigned-to-department' ? 'Assigned to Department' :
+                             task.status === 'in-progress' ? 'In Progress' :
+                             task.status === 'completed' ? 'Completed' :
+                             task.status === 'pending-client-approval' ? 'Pending Client Approval' :
+                             task.status === 'approved' ? 'Approved' :
+                             task.status === 'posted' ? 'Posted' :
+                             task.status === 'revision-required' ? 'Revision Required' :
+                             task.status || 'Unknown'}
+                          </span>
                         </div>
                       </div>
 
