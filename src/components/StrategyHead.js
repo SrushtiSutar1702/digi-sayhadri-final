@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { ref, onValue, push, get, update } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { TrendingUp, LogOut, BarChart3, Send, PieChart, Download, FileText, FileSpreadsheet, Search, ClipboardList, Users, Plus, Briefcase, CheckCircle, AlertCircle } from 'lucide-react';
+import { TrendingUp, LogOut, BarChart3, Send, PieChart, Download, FileText, FileSpreadsheet, Search, ClipboardList, Users, Plus, Briefcase, CheckCircle, AlertCircle, Clock, Circle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, ToastContainer } from './Toast';
 import './StrategyDashboard.css';
@@ -4771,7 +4771,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                             fontSize: '14px',
                             fontWeight: '500'
                           }}>
-                            <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>??</div>
+                            <div style={{ marginBottom: '16px', opacity: 0.3 }}><ClipboardList size={48} /></div>
                             No client data available for the selected month
                           </td>
                         </tr>
@@ -5128,7 +5128,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                       textAlign: 'center',
                       color: '#9ca3af'
                     }}>
-                      <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>??</div>
+                      <div style={{ marginBottom: '16px', opacity: 0.3 }}><Search size={48} /></div>
                       <p style={{ fontSize: '14px', fontWeight: '500' }}>No tasks found for this client</p>
                     </div>
                   )}
@@ -5217,11 +5217,17 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           transition: 'all 0.3s'
                         }}>
                           <div style={{
-                            fontSize: '32px',
-                            marginBottom: '12px',
-                            textAlign: 'center'
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginBottom: '12px'
                           }}>
-                            {isCompleted ? '?' : isCurrent ? '??' : '?'}
+                            {isCompleted ? (
+                              <CheckCircle size={32} color="#10b981" />
+                            ) : isCurrent ? (
+                              <Clock size={32} color={stage.borderColor} />
+                            ) : (
+                              <Circle size={32} color="#d1d5db" />
+                            )}
                           </div>
                           <div style={{
                             fontSize: '15px',
@@ -5441,7 +5447,7 @@ const StrategyHead = ({ initialView = 'dashboard', selectedMonth: propSelectedMo
                           textAlign: 'center',
                           color: '#9ca3af'
                         }}>
-                          <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.3 }}>??</div>
+                          <div style={{ marginBottom: '16px', opacity: 0.3 }}><ClipboardList size={48} /></div>
                           <p style={{ fontSize: '14px', fontWeight: '500' }}>No tasks found for this month. Click "Add Task" to create tasks.</p>
                         </div>
                       );
